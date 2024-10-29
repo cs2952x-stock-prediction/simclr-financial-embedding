@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 
 
 class TimeSeriesDataset(Dataset):
-    def __init__(self, series, segment_length, step=1, transform=None):
+    def __init__(self, series, segment_length, step=1):
         """
         Initializes the TimeSeriesDataset object.
         Should take a list of 2D ndarrays, where each ndarray is a time series.
@@ -13,7 +13,6 @@ class TimeSeriesDataset(Dataset):
         - series (list of ndarrays): List where each entry is an ndarray with shape (seq_len, n_features).
         - segment_length (int): The length of each segment to sample.
         - step (int): The step size to use between consecutive segment samples.
-        - transform (callable, optional): Optional transform to apply to each segment.
         """
         self.series = series
         self.segment_length = segment_length
@@ -21,7 +20,6 @@ class TimeSeriesDataset(Dataset):
         self.cum_lengths = np.cumsum(
             [(len(seq) - self.segment_length) // self.step + 1 for seq in series]
         )  # Cumulative lengths of the series --- makes it easier to sample from the dataset
-        self.transform = transform
 
     def __len__(self):
         """
@@ -41,6 +39,4 @@ class TimeSeriesDataset(Dataset):
         start_idx = idx * self.step
         end_idx = start_idx + self.segment_length
         segment = seq[start_idx:end_idx]
-        if self.transform is not None:
-            segment = self.transform(segment)
         return segment
