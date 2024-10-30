@@ -26,7 +26,8 @@ def train_one_epoch(model, data_loader, optimizer, temperature):
     model.train()
     total_loss = 0
 
-    for batch in tqdm(data_loader):
+    pbar = tqdm(data_loader)
+    for batch in pbar:
         # Apply two augmentations to the batch
         x_i = mask_with_added_gaussian(batch.numpy(), mask_prob=0.1, std_multiplier=0.1)
         x_j = batch.numpy()  # NOTE: currently just the identity function
@@ -42,6 +43,8 @@ def train_one_epoch(model, data_loader, optimizer, temperature):
         # Concatenate views and compute contrastive loss
         z = torch.stack([z_i, z_j], dim=0)
         loss = nt_xent_loss(z, temperature)
+
+        pbar.set_postfix({"Loss": f"{loss.item():.4f}"})
 
         # Backpropagation
         optimizer.zero_grad()
