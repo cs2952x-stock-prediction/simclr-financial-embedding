@@ -77,11 +77,13 @@ if __name__ == "__main__":
     print("Separating series by symbol...")
     series = []
     symbols = df["symbol"].unique()
-    for symbols in tqdm(symbols):
-        symbol_series = df[df["symbol"] == symbols]
+    for symbol in tqdm(symbols):
+        symbol_series = df[df["symbol"] == symbol]
         symbol_series = symbol_series.drop(columns=["symbol"])
+
         # Interpolate missing values
         symbol_series = symbol_series.interpolate(method="linear", axis=0)
+        symbol_series.dropna(inplace=True)
         series.append(symbol_series.values)
 
     print("Creating dataset and data loader...")
