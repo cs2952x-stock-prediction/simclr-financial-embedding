@@ -1,21 +1,23 @@
-import torch
 import torch.nn as nn
 
 
 class SimpleLstmEncoder(nn.Module):
-    def __init__(self, n_features, embedding_dim, hidden_dim, output_dim):
+    def __init__(self, input_size, hidden_size, output_size, proj_size=0):
         super(SimpleLstmEncoder, self).__init__()
-        self.embedding = nn.Linear(n_features, embedding_dim)
-        # NOTE: to set output dimension of the lstm, use the 'pro_size' parameter
-        # otherwise, it is identical to hidden_dim
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim, batch_first=True)
-        self.pooling = nn.AdaptiveAvgPool1d(1)
-        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.lstm = nn.LSTM(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            proj_size=proj_size,
+            batch_first=True,
+        )
+        proj_size = proj_size if proj_size > 0 else hidden_size
+        self.fc1 = nn.Linear(proj_size, proj_size)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(proj_size, output_size)
 
     def forward(self, x):
-        x = self.embedding(x)  # (batch_sz, seq_len, embedding_dim)
-        x, _ = self.lstm(x)  # (batch_sz, seq_len, hidden_dim)
-        x = x.permute(0, 2, 1)  # (batch_sz, hidden_dim, seq_len) for pooling
-        x = self.pooling(x).squeeze(-1)  # (batch_sz, hidden_dim)
-        output = self.fc(x)  # (batch_sz, output_dim)
-        return output
+        _, (h_n, _) = self.lstm(x)
+        z = self.fc1(h_n[-1])
+        z = self.relu(z)
+        z = self.fc2(z)
+        return z
