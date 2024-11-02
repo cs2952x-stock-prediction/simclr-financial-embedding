@@ -20,8 +20,8 @@ if __name__ == "__main__":
     print("Separating series by symbol, interpolating, removing nan values...")
     symbols = df["symbol"].unique()
     for symbol in tqdm(symbols):
-        symbol_series = df[df["symbol"] == symbol]
-        symbol_series = symbol_series.drop(columns=["symbol"])
+        symbol_df = df[df["symbol"] == symbol]
+        symbol_df = symbol_df.drop(columns=["symbol"])
 
         # Interpolate missing values
         col_to_interpolate = [
@@ -32,8 +32,8 @@ if __name__ == "__main__":
             "open",
             "volume",
         ]
-        symbol_series[col_to_interpolate] = symbol_series[
-            col_to_interpolate
-        ].interpolate(method="linear", axis=0)
-        symbol_series.dropna(inplace=True)
-        symbol_series.to_csv(f"{tgt_dirpath}/{symbol}.csv", index=False)
+        symbol_df[col_to_interpolate] = symbol_df[col_to_interpolate].interpolate(
+            method="linear", axis=0
+        ) symbol_df.dropna(inplace=True)
+        symbol_df = symbol_df.sort_values(by=["datetime"])
+        symbol_df.to_csv(f"{tgt_dirpath}/{symbol}.csv", index=False)
