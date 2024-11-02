@@ -14,7 +14,9 @@ def nt_xent_loss(z, temperature):
     Returns:
     loss: A float scalar representing the NT-Xent loss
     """
-    assert len(z.shape) == 3, "Input tensor must be 3D: (2, batch_size, latent_dim)"
+    assert (
+        len(z.shape) == 3 and z.shape[0] == 2
+    ), f"Input tensor must be of shape (2, batch_size, latent_dim) found {z.shape}"
 
     n_views, batch_sz, latent_dim = z.shape
 
