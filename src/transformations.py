@@ -41,10 +41,10 @@ def mask_with_added_gaussian(
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.dim())
     ]
-    mask = (torch.rand(mask_shape) < mask_prob).to(data.device)
+    mask = (torch.rand(mask_shape) < mask_prob)
 
     # Apply the noise only where the mask is True
-    return torch.where(mask, data + noise, data)
+    return torch.where(mask, data + noise, data).to(data.device)
 
 
 def mask_with_multiplied_lognormal(
