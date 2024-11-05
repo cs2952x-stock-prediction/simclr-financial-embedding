@@ -1,42 +1,62 @@
-import numpy as np
+import torch
 from torch.utils.data import Dataset
 
 
 class TimeSeriesDataset(Dataset):
-    def __init__(self, series, segment_length, step=1):
+    def __init__(self, sequences, segment_length, step=1, device=torch.device("cpu")):
         """
         Initializes the TimeSeriesDataset object.
-        Should take a list of 2D ndarrays, where each ndarray is a time series.
-        Because series is a list of arrays, each time series can have a different length.
+        Should take a list of 2D data (NumPy arrays, torch tensors, or lists) for each time series.
+        Each time series can have a different length.
 
         Parameters:
-        - series (list of ndarrays): List where each entry is an ndarray with shape (seq_len, n_features).
+        - sequences (list of arrays/tensors/lists): List where each entry is a tensor with shape (seq_len, n_features).
         - segment_length (int): The length of each segment to sample.
         - step (int): The step size to use between consecutive segment samples.
+        - device (torch.device): The device to use for the data.
         """
-        self.series = series
+        self.sequences = [
+            (
+                torch.tensor(seq, dtype=torch.float32).to(device)
+                if not isinstance(seq, torch.Tensor)
+                else seq.to(device)
+            )
+            for seq in sequences
+        ]
         self.segment_length = segment_length
         self.step = segment_length if step is None else step
-        self.cum_lengths = np.cumsum(
-            [(len(seq) - self.segment_length) // self.step + 1 for seq in series]
-        )  # Cumulative lengths of the series --- makes it easier to sample from the dataset
+        segment_counts = [
+            (len(seq) - self.segment_length) // self.step + 1 for seq in self.sequences
+        ]
+        self.cum_lengths = torch.cumsum(
+            torch.tensor(
+                segment_counts,
+            ),
+            0,
+        )
 
     def __len__(self):
         """
         Returns the total number of segments that can be sampled from the dataset.
-        This is not the same as the number of sequences in the dataset or the number of datum over the entire dataset.
         """
-        return self.cum_lengths[-1]
+        return int(self.cum_lengths[-1].item())
 
     def __getitem__(self, idx):
         """
         Returns the segment at the given index.
         """
-        seq_idx = np.searchsorted(self.cum_lengths, idx, side="right")
+        seq_idx = torch.searchsorted(
+            self.cum_lengths, torch.tensor(idx), right=True
+        ).item()
+        seq_idx = int(seq_idx)
+
         if seq_idx > 0:
-            idx -= self.cum_lengths[seq_idx - 1]
-        seq = self.series[seq_idx]
+            idx -= self.cum_lengths[seq_idx - 1].item()
+
+        seq = self.sequences[seq_idx]
         start_idx = idx * self.step
         end_idx = start_idx + self.segment_length
         segment = seq[start_idx:end_idx]
-        return segment
+
+        # Splitting features and target
+        return segment[:, :-1], segment[:, -1]
