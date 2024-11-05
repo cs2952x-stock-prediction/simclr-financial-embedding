@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 import torch
 from dotenv import load_dotenv
+from pandas.io.parquet import json
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -33,8 +34,8 @@ def initialize_environment():
         "probe_size": 1,
         # training config
         "simclr_lr": 1e-6,  # learning rate for encoder and projector during SimCLR training
-        "probe_lr": 1e-3,  # learning rate for linear probe appended to encoder trained with SimCLR
-        "baseline_lr": 1e-3,  # learning rate for baseline supervised model
+        "probe_lr": 1e-1,  # learning rate for linear probe appended to encoder trained with SimCLR
+        "baseline_lr": 1e-1,  # learning rate for baseline supervised model
         "batch_size": 128,
         "n_epochs": 200,
         "temperature": 0.5,
@@ -42,7 +43,7 @@ def initialize_environment():
         "data_dir": "data/interim/kaggle_sp500",
         "training_cutoff": "2023-01-01",
         "segment_length": 30,
-        "segment_step": 1,
+        "segment_step": 50,
         "checkpoints_dir": "checkpoints",
     }
 
@@ -329,7 +330,9 @@ if __name__ == "__main__":
     if not os.path.exists(checkpoint_path):
         os.makedirs(checkpoint_path)
 
-    torch.save(config, os.path.join(checkpoint_path, "config.pth"))
+    # save config as json
+    with open(os.path.join(checkpoint_path, "config.json"), "w") as f:
+        json.dump(config, f)
 
     # Training loop
     print("Starting training loop...")
@@ -401,21 +404,25 @@ if __name__ == "__main__":
         )
 
         print("Saving model checkpoints...")
+        epoch_checkpoint_path = os.path.join(checkpoint_path, f"epoch_{epoch+1:03}")
+        if not os.path.exists(epoch_checkpoint_path):
+            os.makedirs(epoch_checkpoint_path)
+
         torch.save(
             encoder.state_dict(),
-            os.path.join(checkpoint_path, f"encoder_epoch_{epoch}.pth"),
+            os.path.join(epoch_checkpoint_path, f"encoder.pth"),
         )
         torch.save(
             projector.state_dict(),
-            os.path.join(checkpoint_path, f"projector_epoch_{epoch}.pth"),
+            os.path.join(epoch_checkpoint_path, f"projector.pth"),
         )
         torch.save(
             probe.state_dict(),
-            os.path.join(checkpoint_path, f"probe_epoch_{epoch}.pth"),
+            os.path.join(epoch_checkpoint_path, f"probe.pth"),
         )
         torch.save(
             baseline_model.state_dict(),
-            os.path.join(checkpoint_path, f"baseline_epoch_{epoch}.pth"),
+            os.path.join(epoch_checkpoint_path, f"baseline.pth"),
         )
 
     wandb.finish()
