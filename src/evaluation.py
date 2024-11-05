@@ -2,7 +2,7 @@ import torch
 from torch.nn import functional as F
 
 
-def nt_xent_loss(z, temperature):
+def nt_xent_loss(z_i, z_j, temperature):
     """
     z: Tensor of shape (2, batch_size, latent_dim) containing the projections from the encoder
     temperature: A float scalar for the temperature parameter (larger values lead to a softer probability distribution)
@@ -15,15 +15,18 @@ def nt_xent_loss(z, temperature):
     loss: A float scalar representing the NT-Xent loss
     """
     assert (
-        len(z.shape) == 3 and z.shape[0] == 2
-    ), f"Input tensor must be of shape (2, batch_size, latent_dim) found {z.shape}"
+        len(z_i.shape) == 2
+    ), f"Tensors must have 2 axis (batch_sz, latent_dim), found shape {z_i.shape}"
 
-    n_views, batch_sz, latent_dim = z.shape
+    assert (
+        z_i.shape == z_j.shape
+    ), f"Tensors must have the same shape, found shapes ${z_i.shape} and {z_j.shape}"
 
-    assert n_views == 2, "Input tensor must have two views for contrastive learning"
+    batch_sz, latent_dim = z_i.shape
 
     # The cosine similarity matrix with shape (2N, 2N)
     # Each entry (i, j) represents the cosine similarity between z_i and z_j
+    z = torch.cat([z_i, z_j], dim=0)
     z = z.reshape(2 * batch_sz, latent_dim)
     pair_similarities = F.cosine_similarity(z[None, :, :], z[:, None, :], dim=-1)
 
