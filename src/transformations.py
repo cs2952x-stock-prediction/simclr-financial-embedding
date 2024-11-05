@@ -1,4 +1,4 @@
-import numpy as np
+import torch
 
 
 def mask_with_added_gaussian(
@@ -14,15 +14,15 @@ def mask_with_added_gaussian(
     Adds Gaussian noise to masked features in the data.
 
     Parameters:
-    - data (ndarray): Input array with shape (batch_sz, seq_len, n_features) or similar.
+    - data (tensor): Input array with shape (batch_sz, seq_len, n_features) or similar.
     - mask_prob (float): Probability of masking each element or example in the sequence. Default is 0.1.
     - stat_axis (int or tuple): Dimension(s) over which to calculate mean and std.
         By default, this is (1,) which corresponds to the sequence axis in data with shape (batch_sz, seq_len, n_features).
     - mask_axis (int or tuple): Dimension(s) along which to apply the mask.
         By default, this is (0, 1) which corresponds to the batch and sequence dimensions.
     - std_multiplier (float): Scaling factor for the standard deviation if calculated dynamically. Default is 0.01.
-    - means (float or ndarray, optional): The mean/bias of the added noise. Set to zero if None (equally likely to add/subtract from data).
-    - stds (float or ndarray, optional): Standard deviation of the added noise. Uses the standard deviation of the data if None.
+    - means (float or tensor, optional): The mean/bias of the added noise. Set to zero if None (equally likely to add/subtract from data).
+    - stds (float or tensor, optional): Standard deviation of the added noise. Uses the standard deviation of the data if None.
 
     Returns:
     - ndarray: The input data with Gaussian noise added to selected elements or examples.
@@ -32,19 +32,19 @@ def mask_with_added_gaussian(
         means = 0
 
     if stds is None:
-        stds = np.std(data, axis=stat_axis, keepdims=True) * std_multiplier
+        stds = torch.std(data, dim=stat_axis, keepdim=True) * std_multiplier
 
     # Generate Gaussian noise based on the calculated or provided means and stds
-    noise = np.random.randn(*data.shape) * stds + means
+    noise = torch.randn_like(data) * stds + means
 
     # Generate mask based on mask_shape to apply masking by example, feature, or otherwise
     mask_shape = [
-        data.shape[dim] if dim in mask_axis else 1 for dim in range(data.ndim)
+        data.shape[dim] if dim in mask_axis else 1 for dim in range(data.dim())
     ]
-    mask = np.random.rand(*mask_shape) < mask_prob
+    mask = (torch.rand(mask_shape) < mask_prob).to(data.device)
 
     # Apply the noise only where the mask is True
-    return np.where(mask, data + noise, data)
+    return torch.where(mask, data + noise, data)
 
 
 def mask_with_multiplied_lognormal(
