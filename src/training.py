@@ -1,5 +1,6 @@
 import os
 from copy import deepcopy
+from datetime import datetime
 
 import pandas as pd
 import torch
@@ -42,6 +43,7 @@ def initialize_environment():
         "training_cutoff": "2023-01-01",
         "segment_length": 30,
         "segment_step": 1,
+        "checkpoints_dir": "checkpoints",
     }
 
     load_dotenv()
@@ -157,15 +159,19 @@ def simclr_training_epoch(encoder, projector, dataloader, optimizer, temp, start
                 }
             )
 
-            wandb.log({
-                "SimCLR Batch Loss": loss.item(),
-                "SimCLR Batch Index": start_batch + i
-            })
+            wandb.log(
+                {
+                    "SimCLR Batch Loss": loss.item(),
+                    "SimCLR Batch Index": start_batch + i,
+                }
+            )
 
     return total_loss / len(dataloader)
 
 
-def finetuning_training_epoch(encoder, probe, dataloader, criterion, optimizer, start_batch):
+def finetuning_training_epoch(
+    encoder, probe, dataloader, criterion, optimizer, start_batch
+):
     encoder.eval()
     probe.train()
 
@@ -190,10 +196,12 @@ def finetuning_training_epoch(encoder, probe, dataloader, criterion, optimizer, 
             }
         )
 
-        wandb.log({
-            "Finetuning Batch Loss": loss.item(), 
-            "Finetuning Batch Index": start_batch + i
-        })
+        wandb.log(
+            {
+                "Finetuning Batch Loss": loss.item(),
+                "Finetuning Batch Index": start_batch + i,
+            }
+        )
 
     unfreeze(encoder)
 
@@ -215,13 +223,20 @@ def baseline_training_epoch(model, dataloader, criterion, optimizer, start_batch
         loss.backward()
         optimizer.step()
 
-        # 
-        pbar.set_postfix({
-            "Batch Loss": f"{loss.item():.4e}",
-            "Epoch Loss": f"{total_loss / (i+1):.4e}",
-        })
+        #
+        pbar.set_postfix(
+            {
+                "Batch Loss": f"{loss.item():.4e}",
+                "Epoch Loss": f"{total_loss / (i+1):.4e}",
+            }
+        )
 
-        wandb.log({"Baseline Batch Loss": loss.item(), "Baseline Batch Index": start_batch + i})
+        wandb.log(
+            {
+                "Baseline Batch Loss": loss.item(),
+                "Baseline Batch Index": start_batch + i,
+            }
+        )
 
     return total_loss / len(dataloader)
 
@@ -308,6 +323,14 @@ if __name__ == "__main__":
     baseline_model = nn.Sequential(deepcopy(encoder), deepcopy(probe)).to(device)
     baseline_optimizer = Adam(baseline_model.parameters(), lr=config["baseline_lr"])
 
+    checkpoints_dir = config["checkpoints_dir"]
+    timenow = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    checkpoint_path = os.path.join(checkpoints_dir, str(timenow))
+    if not os.path.exists(checkpoint_path):
+        os.makedirs(checkpoint_path)
+
+    torch.save(config, os.path.join(checkpoint_path, "config.pth"))
+
     # Training loop
     print("Starting training loop...")
     n_epochs = config["n_epochs"]
@@ -315,17 +338,31 @@ if __name__ == "__main__":
         print(f"Epoch {epoch + 1}/{n_epochs}")
         print("Training Encoder via SimCLR...")
         simclr_training_loss = simclr_training_epoch(
-            encoder, projector, train_loader, simclr_optimizer, config["temperature"], epoch * train_sz 
+            encoder,
+            projector,
+            train_loader,
+            simclr_optimizer,
+            config["temperature"],
+            epoch * train_sz,
         )
 
         print("Finetuning with Linear Probe...")
         finetuning_training_loss = finetuning_training_epoch(
-            encoder, probe, train_loader, nn.MSELoss(), probe_optimizer, epoch * train_sz 
+            encoder,
+            probe,
+            train_loader,
+            nn.MSELoss(),
+            probe_optimizer,
+            epoch * train_sz,
         )
 
         print("Training Supervised Baseline Model...")
         baseline_training_loss = baseline_training_epoch(
-            baseline_model, train_loader, nn.MSELoss(), baseline_optimizer, epoch * train_sz 
+            baseline_model,
+            train_loader,
+            nn.MSELoss(),
+            baseline_optimizer,
+            epoch * train_sz,
         )
 
         print("Evaluting finetuned model...")
@@ -335,10 +372,7 @@ if __name__ == "__main__":
         pbar = tqdm(test_loader)
         for x, y in pbar:
             y_pred = probe(encoder(x))
-            print(y_pred.shape, y.shape)
             y_true = y[:, -1]
-            print(y_true.shape)
-            input()
             finetuning_val_loss += nn.MSELoss()(y_pred, y_true).item()
         finetuning_val_loss /= len(test_loader)
 
@@ -364,6 +398,24 @@ if __name__ == "__main__":
                 "Finetuning Validation Loss": finetuning_val_loss,
                 "Baseline Validation Loss": baseline_val_loss,
             }
+        )
+
+        print("Saving model checkpoints...")
+        torch.save(
+            encoder.state_dict(),
+            os.path.join(checkpoint_path, f"encoder_epoch_{epoch}.pth"),
+        )
+        torch.save(
+            projector.state_dict(),
+            os.path.join(checkpoint_path, f"projector_epoch_{epoch}.pth"),
+        )
+        torch.save(
+            probe.state_dict(),
+            os.path.join(checkpoint_path, f"probe_epoch_{epoch}.pth"),
+        )
+        torch.save(
+            baseline_model.state_dict(),
+            os.path.join(checkpoint_path, f"baseline_epoch_{epoch}.pth"),
         )
 
     wandb.finish()
