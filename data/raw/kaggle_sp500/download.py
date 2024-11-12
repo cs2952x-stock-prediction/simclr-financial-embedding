@@ -1,72 +1,205 @@
+import argparse
+import logging
 import os
+from datetime import datetime
 
 import kagglehub
 import pandas as pd
 
-if __name__ == "__main__":
-    # Download latest version
-    download_dir = kagglehub.dataset_download("andrewmvd/sp-500-stocks")
-    print("Dataset files downloaded to: ", download_dir)
+############################# GLOBAL VARIABLES #####################################################
 
-    # Move the dataset to this directory
-    curr_dir = os.path.dirname(os.path.realpath(__file__))
-    print("Moving files to current directory: ", curr_dir)
+THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
+THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
+DEFAULT_DIR = THIS_DIR + "/out"  # the folder containing the output files
 
-    # move everything in the returned path to this directory
-    new_files = []
-    for file in os.listdir(download_dir):
-        old_file = download_dir + "/" + file
-        new_file = curr_dir + "/" + file
-        new_files.append(new_file)
-        os.rename(old_file, new_file)
+STOCKS_FILENAME = "sp500_stocks.csv"
+COMPANIES_FILENAME = "sp500_companies.csv"
+INDEX_FILENAME = "sp500_index.csv"
 
-    # remove the empty directory
-    print("Removing empty directory: ", download_dir)
-    os.rmdir(download_dir)
+STOCK_COLUMNS = {
+    "date": "timestamp",
+    "adj close": "adj_close",
+}
 
-    # clean the data
+COMPANIES_COLUMNS = {
+    "shortname": "short_name",
+    "longname": "long_name",
+    "currentprice": "current_price",
+    "marketcap": "market_cap",
+    "revenuegrowth": "revenue_growth",
+    "fulltimeemployees": "full_time_employees",
+    "longbusinesssummary": "long_business_summary",
+}
 
-    # clean the stock data file
-    stock_file = curr_dir + "/sp500_stocks.csv"
-    print("Cleaning stock data file: ", stock_file)
+INDEX_COLUMNS = {
+    "date": "timestamp",
+}
 
+############################## FUNCTIONS ###########################################################
+
+
+def get_args():
+    """
+    Get the command line arguments
+
+    Returns:
+    - argparse.Namespace: The command line arguments
+    """
+    parser = argparse.ArgumentParser(
+        description="Download the daily SP500 dataset from Kaggle"
+    )
+    parser.add_argument(
+        "--destination_dir",
+        type=str,
+        help="The directory to download the dataset to",
+        default=DEFAULT_DIR,
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force download and overwrite existing files",
+    )
+    parser.add_argument(
+        "--files",
+        nargs="+",
+        default=["sp500_stocks.csv", "sp500_companies.csv", "sp500_index.csv"],
+        help="The files to download",
+    )
+    parser.add_argument(
+        "--log_level",
+        type=str,
+        default="INFO",
+        help="The log level to use",
+    )
+    return parser.parse_args()
+
+
+def process_stock_data(stock_file):
+    """
+    Process the stock data file in-place.
+
+    Args:
+    - stock_file (str): The path to the stock data file
+    """
+    print("Processing stock data file: ", stock_file)
     data = pd.read_csv(stock_file)
     data.columns = list(map(str.lower, data.columns))
-    rename_map = {
-        "date": "datetime",
-        "adj close": "adj_close",
-    }
-    data.rename(columns=rename_map, inplace=True)
+    data.rename(columns=STOCK_COLUMNS, inplace=True)
+    data = data[["timestamp"] + [col for col in data.columns if col != "timestamp"]]
+    data["timestamp"] = pd.to_datetime(data["timestamp"])
     data.to_csv(stock_file, index=False)
+    logger.info(f"Processed stock data file: {stock_file}")
 
-    # clean the companies data file
-    companies_file = curr_dir + "/sp500_companies.csv"
-    print("Cleaning companies data file: ", companies_file)
 
+def process_companies_data(companies_file):
+    """
+    Process the companies data file in-place.
+
+    Args:
+    - companies_file (str): The path to the companies data file
+    """
+    print("Processing companies data file: ", companies_file)
     data = pd.read_csv(companies_file)
     data.columns = list(map(str.lower, data.columns))
-    rename_map = {
-        "shortname": "short_name",
-        "longname": "long_name",
-        "currentprice": "current_price",
-        "marketcap": "market_cap",
-        "revenuegrowth": "revenue_growth",
-        "fulltimeemployees": "full_time_employees",
-        "longbusinesssummary": "long_business_summary",
-    }
-    data.rename(columns=rename_map, inplace=True)
+    data.rename(columns=COMPANIES_COLUMNS, inplace=True)
     data.to_csv(companies_file, index=False)
+    logger.info(f"Processed companies data file: {companies_file}")
 
-    # clean the index data file
-    index_file = curr_dir + "/sp500_index.csv"
-    print("Cleaning index data file: ", index_file)
 
+def process_index_data(index_file):
+    """
+    Process the index data file in-place.
+
+    Args:
+    - index_file (str): The path to the index data file
+    """
+    print("Processing index data file: ", index_file)
     data = pd.read_csv(index_file)
     data.columns = list(map(str.lower, data.columns))
-    rename_map = {
-        "date": "datetime",
-    }
-    data.rename(columns=rename_map, inplace=True)
+    data.rename(columns=INDEX_COLUMNS, inplace=True)
+    data = data[["timestamp"] + [col for col in data.columns if col != "timestamp"]]
+    data["timestamp"] = pd.to_datetime(data["timestamp"])
     data.to_csv(index_file, index=False)
+    logger.info(f"Processed index data file: {index_file}")
 
-    print("Files cleaned and moved to current directory: ", curr_dir)
+
+if __name__ == "__main__":
+    # Get the command line arguments
+    args = get_args()
+
+    # start the logger and make sure the log folder exists
+    logger = logging.getLogger(__name__)
+    logger.setLevel(args.log_level)
+
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    logging_dir = f"{THIS_DIR}/logs"
+    if not os.path.exists(logging_dir):
+        os.makedirs(logging_dir)
+
+    logging.basicConfig(
+        filename=f"{logging_dir}/{timestamp}.log",
+        filemode="w",
+        encoding="utf-8",
+    )
+
+    logger.info(
+        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
+    )
+
+    # Validating the provided files
+    for file in args.files:
+
+        # Check if the file is valid
+        if file not in [STOCKS_FILENAME, COMPANIES_FILENAME, INDEX_FILENAME]:
+            logger.error(f"Invalid file: {file}")
+            raise ValueError(f"Invalid file: {file}")
+
+        # Check if we are about to overwrite a file (aborts if force is not set)
+        new_file = f"{args.destination_dir}/{file}"
+        if os.path.exists(new_file) and not args.force:
+            logger.error(f"File {new_file} already exists. Use --force to overwrite")
+            raise FileExistsError(
+                f"File {new_file} already exists. Use --force to overwrite"
+            )
+
+    # make sure that the destination directory exists
+    if not os.path.exists(args.destination_dir):
+        os.makedirs(args.destination_dir)
+        logger.info(f"Created destination directory: {args.destination_dir}")
+
+    # Download latest version
+    # Unfortunately, we can't control the initial destination directory of the files
+    print("Downloading dataset from Kaggle...")
+    download_dir = kagglehub.dataset_download(
+        "andrewmvd/sp-500-stocks", force_download=True
+    )
+    downloaded_files = os.listdir(download_dir)
+    logger.info(f"Dataset files downloaded to: {download_dir}")
+    logger.info(f"Files:\n\t{'\n\t'.join(downloaded_files)}")
+
+    # Move the dataset to this directory
+    # move everything in the returned path to this directory
+    print(f"Moving files to destination: {args.destination_dir}")
+
+    for file in args.files:
+        old_file = f"{download_dir}/{file}"
+        new_file = f"{args.destination_dir}/{file}"
+
+        # Check if the file exists
+        if file not in downloaded_files:
+            logger.warning(f"File {file} not found in downloaded files")
+            continue
+
+        # Move the file
+        os.rename(old_file, new_file)
+        logger.info(f"Moved {old_file} to {new_file}")
+
+        # Process the files
+        if file == STOCKS_FILENAME:
+            process_stock_data(new_file)
+
+        if file == COMPANIES_FILENAME:
+            process_companies_data(new_file)
+
+        if file == INDEX_FILENAME:
+            process_index_data(new_file)
