@@ -1,0 +1,26 @@
+# config.yaml
+encoding_model:
+  hidden_size: 128
+  representation_size: 128
+  num_layers: 1
+projection_head:
+  proj_layers:
+    - [64, "relu"]
+    - [32, "relu"]
+  proj_size: 16
+probe:
+  probe_layers:
+    - [64, "relu"]
+    - [32, "relu"]
+  probe_size: 1
+training:
+  simclr_lr: 1e-6
+  finetuning_lr: 1e-3
+  baseline_lr: 1e-3
+  batch_size: 128
+  n_epochs: 200
+  temperature: 0.5
+  label_column: "close"
+  checkpoints_dir: "checkpoints/simple-lstm"
+experiment:
+  name: "simple-lstm"

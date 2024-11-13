@@ -1,0 +1,9 @@
+# config.yaml
+data:
+  train_dir: "data/processed/kaggle_sp500/out/train"
+  test_dir: "data/processed/kaggle_sp500/out/test"
+  segment_length: 30
+  segment_step: 5
+training:
+  n_epochs: 200
+  label_column: "close"
