@@ -2,12 +2,10 @@ import os
 from copy import deepcopy
 from datetime import datetime
 
-import numpy as np
 import pandas as pd
 import torch
 from dotenv import load_dotenv
 from pandas.io.parquet import json
-from sklearn import preprocessing
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -42,7 +40,8 @@ def initialize_environment():
         "n_epochs": 200,
         "temperature": 0.5,
         # data source+structure config
-        "data_dir": "data/interim/kaggle_sp500",
+        "train_dir": "data/processed/kaggle_sp500/out/train",
+        "test_dir": "data/processed/kaggle_sp500/out/test",
         "training_cutoff": "2023-01-01",
         "segment_length": 30,
         "segment_step": 5,
@@ -64,58 +63,33 @@ def initialize_environment():
 
 
 def load_data(
-    data_dir, training_cutoff, segment_length, segment_step, batch_size, device
+    train_dir, test_dir, batch_size, segment_length, segment_step, device, y_col="close"
 ):
     train_sequences, train_labels = [], []
-    test_sequences, test_labels = [], []
-    for filename in tqdm(os.listdir(data_dir)):
+    for filename in tqdm(os.listdir(train_dir)):
         if filename.endswith(".csv"):
-            df = pd.read_csv(os.path.join(data_dir, filename))
-
-            # get datetimes and convert to seconds
-            datetime = pd.to_datetime(df["datetime"])
-            df.drop(columns=["datetime"], inplace=True)
-            df["time"] = (datetime - datetime.min()).dt.total_seconds()
-
-            # Drop unnecessary columns
-            # TODO: drop time column for now (monotonically increasing can cause issues)
-            df.drop(columns=["time", "adj_close"], inplace=True)
-
-            # Apply log transformation to price and volume columns
-            eps = 1e-6
-            log_cols = ["low", "high", "open", "close", "volume"]
-            for col in log_cols:
-                df[col] = df[col].apply(lambda x: np.log(x + eps))
-
-            # Split data into train and test
-            train_df = df[datetime < training_cutoff]
-            test_df = df[datetime >= training_cutoff]
-
-            # If there is no data for either train or test, skip
-            if train_df.empty or test_df.empty:
-                continue
-
-            if not isinstance(train_df, pd.DataFrame) or not isinstance(
-                test_df, pd.DataFrame
-            ):
-                raise ValueError("train_df and test_df must be pandas DataFrames")
+            df = pd.read_csv(os.path.join(train_dir, filename))
 
             # Define x and y columns
-            x_cols = [col for col in df.columns if col != "close"]
-            y_cols = ["close"]
-
-            # Standardize data
-            scaler = preprocessing.StandardScaler()
-            scaled_training_data = scaler.fit_transform(train_df)
-            train_df = pd.DataFrame(scaled_training_data, columns=df.columns)
-            scaled_testing_data = scaler.transform(test_df)
-            test_df = pd.DataFrame(scaled_testing_data, columns=df.columns)
+            x_cols = [col for col in df.columns if col != y_col]
+            y_cols = [y_col]
 
             # Append to lists
-            train_sequences.append(train_df[x_cols].values)
-            train_labels.append(train_df[y_cols].values)
-            test_sequences.append(test_df[x_cols].values)
-            test_labels.append(test_df[y_cols].values)
+            train_sequences.append(df[x_cols].values)
+            train_labels.append(df[y_cols].values)
+
+    test_sequences, test_labels = [], []
+    for filename in tqdm(os.listdir(test_dir)):
+        if filename.endswith(".csv"):
+            df = pd.read_csv(os.path.join(test_dir, filename))
+
+            # Define x and y columns
+            x_cols = [col for col in df.columns if col != y_col]
+            y_cols = [y_col]
+
+            # Append to lists
+            test_sequences.append(df[x_cols].values)
+            test_labels.append(df[y_cols].values)
 
     # Create a training dataset and dataloader
     train_set = TimeSeriesDataset(
@@ -266,8 +240,12 @@ if __name__ == "__main__":
     config, device = initialize_environment()
 
     # Load data
-    data_dir, training_cutoff = config["data_dir"], config["training_cutoff"]
-    print(f"Loading data from {data_dir}")
+    train_dir = config["train_dir"]
+    test_dir = config["test_dir"]
+    training_cutoff = config["training_cutoff"]
+
+    print(f"Loading training data from {train_dir}")
+    print(f"Loading testing data from {test_dir}")
     print(f"All data prior to {training_cutoff} will be used for training.")
 
     batch_size, segment_length, segment_step = (
@@ -276,7 +254,12 @@ if __name__ == "__main__":
         config["segment_step"],
     )
     train_loader, test_loader = load_data(
-        data_dir, training_cutoff, segment_length, segment_step, batch_size, device
+        config["train_dir"],
+        config["test_dir"],
+        batch_size,
+        segment_length,
+        segment_step,
+        device,
     )
 
     train_sz, test_sz = len(train_loader), len(test_loader)
