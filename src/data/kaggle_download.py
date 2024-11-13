@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import pprint
 from datetime import datetime
 
 import kagglehub
@@ -8,14 +9,17 @@ import pandas as pd
 
 ############################# GLOBAL VARIABLES #####################################################
 
-THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
-THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
-DEFAULT_DST = f"{THIS_DIR}/out"  # the folder containing the output files
+DEFAULT_DST = f"data/raw/kaggle"  # the folder containing the output files
 
 STOCKS_FILENAME = "sp500_stocks.csv"  # the file containing the stock data (name set by Kaggle, do not change)
 COMPANIES_FILENAME = "sp500_companies.csv"  # the file containing the company data (name set by Kaggle, do not change)
 INDEX_FILENAME = "sp500_index.csv"  # the file containing the index data (name set by Kaggle, do not change)
-LOGS_DIR = f"{THIS_DIR}/logs"  # the folder to store the logs
+
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DEFAULT_LOG_FILE = f"logs/kaggle-download_{timestamp}.log"
+
+# Logger
+logger = logging.getLogger(__name__)
 
 # The columns to rename in the stock data
 STOCK_COLUMNS = {
@@ -75,31 +79,35 @@ def get_args():
         default="INFO",
         help="The log level to use",
     )
+    parser.add_argument(
+        "--log_file",
+        type=str,
+        default=DEFAULT_LOG_FILE,
+        help="The log file to write to",
+    )
     return parser.parse_args()
 
 
-def build_logger(log_level):
+def configure_logger(log_level, log_file):
     """
-    Setup the logget and ensure the log folder exists.
+    Setup the logger and ensure the log folder exists.
 
     Args:
     - log_level (str): The log level to use
-
-    Returns:
-    - logging.Logger: The logger
+    - log_file (str): The path to the log file
     """
-    # start the logger --- make sure the log folder exists
-    logger = logging.getLogger(__name__)
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    if not os.path.exists(LOGS_DIR):
-        os.makedirs(LOGS_DIR)
+    # make sure the log folder exists
+    log_dir = os.path.dirname(log_file)
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # configure the logger
     logging.basicConfig(
-        filename=f"{LOGS_DIR}/{timestamp}.log",
+        filename=log_file,
         filemode="w",
         encoding="utf-8",
     )
     logger.setLevel(log_level)
-    return logger
 
 
 def process_stock_data(stock_file):
@@ -158,11 +166,8 @@ if __name__ == "__main__":
     args = get_args()
 
     # build logger
-    logger = build_logger(args.log_level)
-
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
-    )
+    configure_logger(args.log_level, args.log_file)
+    logger.info(f"Arguments:\n{pprint.pformat(vars(args))}")
 
     # Validating the provided files
     for file in args.files:

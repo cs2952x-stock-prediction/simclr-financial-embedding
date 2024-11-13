@@ -11,11 +11,12 @@ from tqdm import tqdm
 
 ############################# GLOBAL VARIABLES #####################################################
 
-THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
-THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
-DEFAULT_DST = f"{THIS_DIR}/out"  # the folder containing the output files
-DEFAULT_SRC = f"{THIS_DIR}/../../interim/kaggle_sp500/out"  # the folder containing the source files
-LOGS_DIR = f"{THIS_DIR}/logs"  # the folder containing the logs
+DEFAULT_DST = f"data/processed/kaggle"  # the folder containing the output files
+DEFAULT_SRC = f"data/interim/kaggle"  # the folder containing the source files
+
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DEFAULT_LOG_FILE = f"logs/kaggle-processing_{timestamp}.log"
+logger = logging.getLogger(__name__)
 
 # integer-valued columns that can be log-transformed
 INT_LOG_COLUMNS = [
@@ -73,6 +74,12 @@ def get_args():
         help="The log level to use",
     )
     parser.add_argument(
+        "--log_file",
+        type=str,
+        default=DEFAULT_LOG_FILE,
+        help="The log file to use",
+    )
+    parser.add_argument(
         "--keep_columns",
         type=str,
         nargs="+",
@@ -107,28 +114,26 @@ def get_args():
     return parser.parse_args()
 
 
-def build_logger(log_level):
+def configure_logger(log_level, log_file):
     """
-    Setup the logget and ensure the log folder exists.
+    Setup the logger and ensure the log folder exists.
 
     Args:
     - log_level (str): The log level to use
-
-    Returns:
-    - logging.Logger: The logger
+    - log_file (str): The path to the log file
     """
-    # start the logger --- make sure the log folder exists
-    logger = logging.getLogger(__name__)
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    if not os.path.exists(LOGS_DIR):
-        os.makedirs(LOGS_DIR)
+    # make sure the log folder exists
+    log_dir = os.path.dirname(log_file)
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # configure the logger
     logging.basicConfig(
-        filename=f"{LOGS_DIR}/{timestamp}.log",
+        filename=log_file,
         filemode="w",
         encoding="utf-8",
     )
     logger.setLevel(log_level)
-    return logger
 
 
 ############################## EXECUTION ##########################################################
@@ -138,7 +143,7 @@ if __name__ == "__main__":
     args = get_args()
 
     # Start logging
-    logger = build_logger(args.log_level)
+    configure_logger(args.log_level, args.log_file)
 
     logger.info(
         f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
