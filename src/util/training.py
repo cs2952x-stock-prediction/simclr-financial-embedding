@@ -7,19 +7,12 @@ from dotenv import load_dotenv
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-import wandb
-
 from .datasets import TimeSeriesDataset
 from .evaluation import nt_xent_loss
 from .transformations import mask_with_added_gaussian
 
 ############################# GLOBAL VARIABLES #####################################################
 load_dotenv()
-
-# WandB API key
-WANDB_KEY = os.getenv("WANDB_API_KEY")
-assert WANDB_KEY is not None, "WANDB_API_KEY environment variable not found."
-os.environ["WANDB_API_KEY"] = WANDB_KEY
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -131,10 +124,8 @@ def simclr_epoch(encoder, projector, dataloader, optimizer, temp, **kwargs):
                 }
             )
 
-            metrics = {"SimCLR Batch Loss": loss.item()}
-            if "start_batch" in kwargs:
-                metrics["Batch"] = kwargs["start_batch"] + i
-            wandb.log(metrics)
+            if "batch_callback" in kwargs:
+                kwargs["batch_callback"](i, loss.item())
 
     return total_loss / len(dataloader)
 
@@ -180,10 +171,8 @@ def finetuning_epoch(encoder, probe, dataloader, criterion, optimizer, **kwargs)
             }
         )
 
-        metrics = {"Finetuning Batch Loss": loss.item()}
-        if "start_batch" in kwargs:
-            metrics["Batch"] = kwargs["start_batch"] + i
-        wandb.log(metrics)
+        if "batch_callback" in kwargs:
+            kwargs["batch_callback"](i, loss.item())
 
     unfreeze(encoder)
 
@@ -225,9 +214,7 @@ def training_epoch(model, dataloader, loss_fn, optimizer, **kwargs):
             }
         )
 
-        metrics = {"Training Batch Loss": loss.item()}
-        if "start_batch" in kwargs:
-            metrics["Batch"] = kwargs["start_batch"] + i
-        wandb.log(metrics)
+        if "batch_callback" in kwargs:
+            kwargs["batch_callback"](i, loss.item())
 
     return total_loss / len(dataloader)

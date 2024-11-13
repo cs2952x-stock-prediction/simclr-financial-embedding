@@ -429,36 +429,45 @@ def train_models(models, optimizers, train_loader, config, epoch):
     simclr_optimizer, probe_optimizer, base_optimizer = optimizers
 
     print("Training Encoder via SimCLR...")
+    batch_callback = lambda i, loss: wandb.log(
+        {"SimCLR Batch Loss": loss, "Batch": epoch * len(train_loader) + i}
+    )
     simclr_training_loss = simclr_epoch(
         encoder,
         projector,
         train_loader,
         simclr_optimizer,
         config["temperature"],
-        start_batch=epoch * len(train_loader),
+        batch_callback=batch_callback,
     )
     logger.info(f"Epoch {epoch} --- SimCLR Training Loss: {simclr_training_loss:.4e}")
 
     print("Finetuning with Linear Probe...")
+    batch_callback = lambda i, loss: wandb.log(
+        {"Finetuning Batch Loss": loss, "Batch": epoch * len(train_loader) + i}
+    )
     finetuning_training_loss = finetuning_epoch(
         encoder,
         probe,
         train_loader,
         nn.MSELoss(),
         probe_optimizer,
-        start_batch=epoch * len(train_loader),
+        batch_callback=batch_callback,
     )
     logger.info(
         f"Epoch {epoch} --- Finetuning Training Loss: {finetuning_training_loss:.4e}"
     )
 
     print("Training Supervised Baseline Model...")
+    batch_callback = lambda i, loss: wandb.log(
+        {"Baseline Batch Loss": loss, "Batch": epoch * len(train_loader) + i}
+    )
     baseline_training_loss = training_epoch(
         base_model,
         train_loader,
         nn.MSELoss(),
         base_optimizer,
-        start_batch=epoch * len(train_loader),
+        batch_callback=batch_callback,
     )
     logger.info(
         f"Epoch {epoch} --- Baseline Training Loss: {baseline_training_loss:.4e}"
@@ -494,7 +503,9 @@ def test_models(models, test_loader, epoch):
         y_true = y[:, -1]
         finetuned_test_loss += nn.MSELoss()(y_pred, y_true).item()
     finetuned_test_loss /= len(test_loader)
-    logger.info(f"Epoch {epoch} --- Finetuned Model Test Loss: {finetuned_test_loss:.4e}")
+    logger.info(
+        f"Epoch {epoch} --- Finetuned Model Test Loss: {finetuned_test_loss:.4e}"
+    )
     print(f"Finetuned Model Test Loss: {finetuned_test_loss:.4e}")
 
     print("Testing Baseline Model...")
