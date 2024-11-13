@@ -11,9 +11,8 @@ from tqdm import tqdm
 THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
 THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
 DEFAULT_DST = f"{THIS_DIR}/out"  # the folder containing the output files
-DEFAULT_SRC = f"{THIS_DIR}/../../data/raw/kaggle_sp500/out"  # the folder containing the source files
+DEFAULT_SRC = f"{THIS_DIR}/../../raw/kaggle_sp500/out/sp500_stocks.csv"  # the folder containing the source files
 LOGS_DIR = f"{THIS_DIR}/logs"  # the folder containing the logs
-STOCKS_FILENAME = "sp500_stocks.csv"  # the file containing the stock data (name set by Kaggle, do not change)
 
 COL_TO_INTERPOLATE = [
     "adj_close",
@@ -108,6 +107,23 @@ if __name__ == "__main__":
         f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
     )
 
+    # If the source file does not exist, raise an error
+    if not os.path.exists(args.source):
+        logger.error(f"Source file not found: {args.source}")
+        raise FileNotFoundError(f"Source file not found: {args.source}")
+
+    # Ensure the destination folder exists
+    if not os.path.exists(args.destination):
+        os.makedirs(args.destination)
+        logger.info(f"Created destination folder: {args.destination}")
+
+    # If the destination folder is not empty, raise an error
+    if os.listdir(args.destination) and not args.force:
+        logger.error(f"Destination folder is not empty: {args.destination}")
+        raise FileExistsError(
+            f"Destination folder is not empty: {args.destination}. Use --force to overwrite."
+        )
+
     # Load data
     print(f"Loading data from {args.source}...")
     df = pd.read_csv(args.source)
@@ -117,7 +133,9 @@ if __name__ == "__main__":
     logger.info(f"Data head:\n{df.head()}")
 
     # Separate series by symbol
-    print("Separating series by symbol, filling missing values, removing nan values...")
+    print(
+        "Separating series by symbol, filling missing values, removing nan values, ensuring sorted..."
+    )
     symbols = df["symbol"].unique()
     for symbol in tqdm(symbols):
         symbol_df = df[df["symbol"] == symbol]  # filter out only the current symbol
