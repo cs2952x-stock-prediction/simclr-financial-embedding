@@ -44,37 +44,30 @@ The data directory is set up with the following structure:
 ```txt
 data
 ├── interim
-│   ├── bls_inflation
-│   │   └── from_raw.py
-│   ├── kaggle_sp500
-│   │   └── from_raw.py
+│   ├── bls
+│   ├── kaggle
 │   └── polygon
-│       └── from_raw.py
 ├── processed
-│   ├── bls_inflation
-│   │   └── from_interim.py
-│   ├── kaggle_sp500
-│   │   └── from_interim.py
+│   ├── bls
+│   ├── kaggle
 │   └── polygon
-│       └── from_interim.py
 └── raw
-    ├── bls_inflation
-    │   └── download.py
-    ├── kaggle_sp500
-    │   └── download.py
+    ├── bls
+    ├── kaggle
     └── polygon
-        └── download.py
 ```
 
 The idea here is to have a pipeline `raw -> interim -> processed`
 
-1. Download the raw data from the API with `python data/raw/<dataset>/download.py`.
+1. Download the raw data from the API with `python src/data/<dataset>_download.py`.
+   This create data in the `data/raw/<dataset>` directory.
    Download scripts do some light processing of the data, but not much:
 
    - standardize column names
    - convert timestamps to date-time format
 
-2. Convert the raw data to 'interim/intermediate' data with `python data/interim/<dataset>/from_raw.py`.
+2. Convert the raw data to 'interim/intermediate' data with `python src/data/<dataset>_clean.py`.
+   This should take data from the `data/raw/<dataset>` directory and use it to produce data in the `data/interim/<dataset>` directory.
    This includes cleaning the data more thoroughly, making opinionated decisions to 'fix' the data, and large changes in structure.
 
    - drop or fill-in NaN values
@@ -82,7 +75,8 @@ The idea here is to have a pipeline `raw -> interim -> processed`
    - split single large raw data files into smaller ones (e.g. make a file for each symbol)
    - combine data from raw data (e.g. use raw inflation data to correct raw price data)
 
-3. Convert the intermediate data to the final processed data that is ready for training with `python data/processed/<dataset>/from_interim.py`.
+3. Convert the intermediate data to the final processed data that is ready for training with `python src/data/<dataset>_process.py`.
+   This should take data from the `data/interim/<dataset>` directory and use it to produce data in the `data/processed/<dataset>` directory.
    This more-actively changes the values of the data and makes active changes just for training.
 
    - creating cyclic temporal features
@@ -90,17 +84,16 @@ The idea here is to have a pipeline `raw -> interim -> processed`
    - converting to log-space
    - embedding class labels
 
-All scripts populate/create the data in their own directories.
+### Training and Config Files
 
-**Note:** Instead of dumping the data into the same directory as the scripts, I will probably update the scripts to put their data into a distinct output directory.
-For example, rather than `data/raw/polygon/download.py` downloading its data into `data/raw/polygon/`, it would download data to `data/raw/polygon/out/`
+Training files are at the top-level of the `src` folder.
+Since these scripts have a large number of parameters, we don't manually pass all the args with `argparse` like we might for other scripts.
+Instead, we have config files in the `configs` directory that correspond to each of the scripts.
+Each training script should load its corresponding config file and use those parameters during the experiment.
 
-### Training
+Arguments _can_ be provided --- they will overwrite the corresponding config values from the config file.
 
-There are several files in `src/`, but `src/training.py` is the only one meant to be run as a script.
-Currently, the configuration for this file is set at the very top of the script (it does not expect command-line arguments) but this will be corrected later.
-
-To run, just use run `python src/training.py` in the root directory.
+To run, just use run `python src/train_file.py` in the root directory.
 
 ### End-to-End Example
 
@@ -111,10 +104,10 @@ Replace the dummy API keys in the first two lines with your own.
 $ echo WANDB_API_KEY=\"b12a3f67aff566adf19f8578113d2c79b3c39bbb\" >> .env
 $ echo POLYGON_API_KEY=\"xHbp2Tu633_dkSBpLQe7gWGascRwQjcI\" >> .env
 $ source activate.sh
-(venv) $ python data/raw/kaggle_sp500/download.py
-(venv) $ python data/interim/kaggle_sp500/from_raw.py
-(venv) $ python data/processed/kaggle_sp500/from_interim.py
-(venv) $ python src/training.py
+(venv) $ python src/data/kaggle_download.py
+(venv) $ python src/data/kaggle_clean.py
+(venv) $ python src/data/kaggle_process.py
+(venv) $ python src/train_simple_lstm.py
 ```
 
 The script above includes setting up the environment and downloading the data.
@@ -122,10 +115,10 @@ However, after the initial setup, you can just run the following:
 
 ```
 $ source activate.sh
-(venv) $ python src/training.py
+(venv) $ python src/train_simple_lstm.py
 ```
 
-## Notes:
+## My Own Misc. Notes:
 
 - Consider working in log-space for the following reasons:
 
