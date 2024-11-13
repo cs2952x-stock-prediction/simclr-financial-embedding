@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import time
+import traceback
 from datetime import datetime
 from urllib.parse import parse_qs, parse_qsl, urlparse
 
@@ -493,3 +494,4 @@ if __name__ == "__main__":
         except Exception as e:
             logger.error(f"Error: An error occurred while processing {symbol}")
             logger.error(e)
+            logger.error(traceback.format_exc())
