@@ -173,7 +173,7 @@ if __name__ == "__main__":
             raise ValueError(f"Invalid file: {file}")
 
         # Check if we are about to overwrite a file (aborts if force is not set)
-        new_file = f"{args.destination_dir}/{file}"
+        new_file = f"{args.destination}/{file}"
         if os.path.exists(new_file) and not args.force:
             logger.error(f"File {new_file} already exists. Use --force to overwrite")
             raise FileExistsError(
@@ -181,9 +181,9 @@ if __name__ == "__main__":
             )
 
     # make sure that the destination directory exists
-    if not os.path.exists(args.destination_dir):
-        os.makedirs(args.destination_dir)
-        logger.info(f"Created destination directory: {args.destination_dir}")
+    if not os.path.exists(args.destination):
+        os.makedirs(args.destination)
+        logger.info(f"Created destination directory: {args.destination}")
 
     # Download latest kaggle data
     # Unfortunately, we can't control the initial destination directory of the files
@@ -197,11 +197,11 @@ if __name__ == "__main__":
 
     # Move the dataset to this directory
     # move everything in the returned path to this directory
-    print(f"Moving files to destination: {args.destination_dir}")
+    print(f"Moving files to destination: {args.destination}")
 
     for file in args.files:
         old_file = f"{download_dir}/{file}"
-        new_file = f"{args.destination_dir}/{file}"
+        new_file = f"{args.destination}/{file}"
 
         # Check if the file exists
         if file not in downloaded_files:

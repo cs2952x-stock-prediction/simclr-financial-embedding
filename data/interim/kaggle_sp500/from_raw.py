@@ -11,7 +11,9 @@ from tqdm import tqdm
 THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
 THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
 DEFAULT_DST = f"{THIS_DIR}/out"  # the folder containing the output files
-DEFAULT_SRC = f"{THIS_DIR}/../../raw/kaggle_sp500/out/sp500_stocks.csv"  # the folder containing the source files
+DEFAULT_SRC = os.path.abspath(
+    "{THIS_DIR}/../../raw/kaggle_sp500/out/sp500_stocks.csv"  # the folder containing the source files
+)
 LOGS_DIR = f"{THIS_DIR}/logs"  # the folder containing the logs
 
 COL_TO_INTERPOLATE = [
