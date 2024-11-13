@@ -60,8 +60,23 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def load_data(
-    train_dir, test_dir, batch_size, segment_length, segment_step, device, y_col="close"
+    train_dir, test_dir, batch_size, segment_length, segment_step, y_col="close"
 ):
+    """
+    Loads data from a directory of CSV files and creates a DataLoader for training and testing.
+
+    Args:
+    - train_dir: the directory containing training data
+    - test_dir: the directory containing testing data
+    - batch_size: the batch size for the DataLoader
+    - segment_length: the length of each segment of data
+    - segment_step: the step size for each segment
+    - y_col: the column to use as the target variable
+
+    Returns:
+    - a DataLoader for training
+    - a DataLoader for testing
+    """
     train_sequences, train_labels = [], []
     for filename in tqdm(os.listdir(train_dir)):
         if filename.endswith(".csv"):
@@ -90,13 +105,13 @@ def load_data(
 
     # Create a training dataset and dataloader
     train_set = TimeSeriesDataset(
-        train_sequences, train_labels, segment_length, segment_step, device
+        train_sequences, train_labels, segment_length, segment_step, DEVICE
     )
     train_loader = DataLoader(train_set, batch_size, shuffle=True)
 
     # Create a testing dataset and dataloader
     test_set = TimeSeriesDataset(
-        test_sequences, test_labels, segment_length, segment_step, device
+        test_sequences, test_labels, segment_length, segment_step, DEVICE
     )
     test_loader = DataLoader(test_set, batch_size, shuffle=True)
 
@@ -292,7 +307,6 @@ def baseline_training_epoch(model, dataloader, criterion, optimizer, start_batch
 
 if __name__ == "__main__":
     config = DEFAULT_CONFIG
-    device = DEVICE
 
     wandb.init(
         project="simcl-stock-embedding",
@@ -320,7 +334,6 @@ if __name__ == "__main__":
         batch_size,
         segment_length,
         segment_step,
-        device,
     )
 
     train_sz, test_sz = len(train_loader), len(test_loader)
@@ -339,7 +352,7 @@ if __name__ == "__main__":
     encoder = LstmEncoder(
         input_size=input_size,
         hidden_size=config["hidden_size"],
-    ).to(device)
+    ).to(DEVICE)
 
     print("Summary:")
     summary(
@@ -356,7 +369,7 @@ if __name__ == "__main__":
         input_size=config["hidden_size"],
         output_size=config["proj_size"],
         intermediates=config["proj_layers"],
-    ).to(device)
+    ).to(DEVICE)
 
     model_params = list(encoder.parameters()) + list(projector.parameters())
     simclr_optimizer = Adam(model_params, lr=config["simclr_lr"])
@@ -373,7 +386,7 @@ if __name__ == "__main__":
         input_size=config["representation_size"],
         output_size=config["probe_size"],
         intermediates=config["probe_layers"],
-    ).to(device)
+    ).to(DEVICE)
 
     probe_optimizer = Adam(probe.parameters(), lr=config["probe_lr"])
 
@@ -385,7 +398,7 @@ if __name__ == "__main__":
     print()
 
     print("Initializing Baseline Model...")
-    baseline_model = nn.Sequential(deepcopy(encoder), deepcopy(probe)).to(device)
+    baseline_model = nn.Sequential(deepcopy(encoder), deepcopy(probe)).to(DEVICE)
     baseline_optimizer = Adam(baseline_model.parameters(), lr=config["baseline_lr"])
 
     checkpoints_dir = config["checkpoints_dir"]
