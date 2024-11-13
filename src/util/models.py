@@ -18,10 +18,10 @@ class LstmEncoder(nn.Module):
 
 
 class DenseLayers(nn.Module):
-    def __init__(self, input_size, output_size, intermediates=None):
+    def __init__(self, input_size, output_size, hidden_layers=None):
         super(DenseLayers, self).__init__()
 
-        intermediates = [] if intermediates is None else intermediates
+        hidden_layers = [] if hidden_layers is None else hidden_layers
         layers = []
 
         activation_funcs = {
@@ -34,7 +34,7 @@ class DenseLayers(nn.Module):
 
         # Build layers with specified activations
         prev_size = input_size
-        for size, activation in intermediates:
+        for size, activation in hidden_layers:
             layers.append(nn.Linear(prev_size, size))
             activation = activation_funcs.get(activation, None)
             prev_size = size
