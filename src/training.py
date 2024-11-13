@@ -1,3 +1,4 @@
+import argparse
 import os
 from copy import deepcopy
 from datetime import datetime
@@ -18,48 +19,44 @@ from evaluation import nt_xent_loss
 from models import DenseLayers, LstmEncoder
 from transformations import mask_with_added_gaussian
 
+############################# GLOBAL VARIABLES #####################################################
 
-def initialize_environment():
-    # Run configuration
-    config = {
-        # encoding model config
-        "hidden_size": 128,  # LSTM c_n (hidden cell size)
-        "representation_size": 128,  # LSTM h_n (output size of encoder) NOTE: setting c_n = h_n enables torch Dnn optimization
-        "num_layers": 1,
-        # projection head config
-        "proj_layers": [(64, "relu"), (32, "relu")],
-        "proj_size": 16,  # output size of projection head
-        # linear probe config
-        "probe_layers": [(64, "relu"), (32, "relu")],
-        "probe_size": 1,
-        # training config
-        "simclr_lr": 1e-6,  # learning rate for encoder and projector during SimCLR training
-        "probe_lr": 1e-3,  # learning rate for linear probe appended to encoder trained with SimCLR
-        "baseline_lr": 1e-3,  # learning rate for baseline supervised model
-        "batch_size": 128,
-        "n_epochs": 200,
-        "temperature": 0.5,
-        # data source+structure config
-        "train_dir": "data/processed/kaggle_sp500/out/train",
-        "test_dir": "data/processed/kaggle_sp500/out/test",
-        "training_cutoff": "2023-01-01",
-        "segment_length": 30,
-        "segment_step": 5,
-        "checkpoints_dir": "checkpoints",
-    }
+DEFAULT_CONFIG = {
+    # encoding model config
+    "hidden_size": 128,  # LSTM c_n (hidden cell size)
+    "representation_size": 128,  # LSTM h_n (output size of encoder) NOTE: setting c_n = h_n enables torch Dnn optimization
+    "num_layers": 1,
+    # projection head config
+    "proj_layers": [(64, "relu"), (32, "relu")],
+    "proj_size": 16,  # output size of projection head
+    # linear probe config
+    "probe_layers": [(64, "relu"), (32, "relu")],
+    "probe_size": 1,
+    # training config
+    "simclr_lr": 1e-6,  # learning rate for encoder and projector during SimCLR training
+    "probe_lr": 1e-3,  # learning rate for linear probe appended to encoder trained with SimCLR
+    "baseline_lr": 1e-3,  # learning rate for baseline supervised model
+    "batch_size": 128,
+    "n_epochs": 200,
+    "temperature": 0.5,
+    # data source+structure config
+    "train_dir": "data/processed/kaggle_sp500/out/train",
+    "test_dir": "data/processed/kaggle_sp500/out/test",
+    "training_cutoff": "2023-01-01",
+    "segment_length": 30,
+    "segment_step": 5,
+    "checkpoints_dir": "checkpoints",
+}
 
-    load_dotenv()
-    wandb_key = os.getenv("WANDB_API_KEY")
-    if wandb_key is None:
-        raise ValueError("WANDB_API_KEY environment variable no found")
-    os.environ["WANDB_API_KEY"] = wandb_key
-    wandb.init(
-        project="simcl-stock-embedding", name="simple-lstm-encoder", config=config
-    )
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+load_dotenv()
+WANDB_KEY = os.getenv("WANDB_API_KEY")
+assert WANDB_KEY is not None, "WANDB_API_KEY environment variable not found"
+os.environ["WANDB_API_KEY"] = WANDB_KEY
 
-    return config, device
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+############################# FUNCTIONS ############################################################
 
 
 def load_data(
@@ -236,8 +233,17 @@ def baseline_training_epoch(model, dataloader, criterion, optimizer, start_batch
     return total_loss / len(dataloader)
 
 
+############################# EXECUTION ############################################################
+
 if __name__ == "__main__":
-    config, device = initialize_environment()
+    config = DEFAULT_CONFIG
+    device = DEVICE
+
+    wandb.init(
+        project="simcl-stock-embedding",
+        name="simple-lstm-encoder",
+        config=DEFAULT_CONFIG,
+    )
 
     # Load data
     train_dir = config["train_dir"]
