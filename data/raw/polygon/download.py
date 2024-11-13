@@ -407,14 +407,14 @@ if __name__ == "__main__":
     # start logger
     logger = build_logger(args.log_level)
 
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
-    )
-
     # Fetch all NYSE symbols if no symbols are provided
     if not args.symbols:
         logger.warning("Symbols not provided. Fetching all NYSE symbols...")
         args.symbols = fetch_nyse_symbols()
+
+    logger.info(
+        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
+    )
 
     # pd.Timedelta can't handle 'week' timespan, so convert to 'day'
     if args.timespan == "week":
