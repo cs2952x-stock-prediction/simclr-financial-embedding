@@ -2,10 +2,12 @@ import os
 from copy import deepcopy
 from datetime import datetime
 
+import numpy as np
 import pandas as pd
 import torch
 from dotenv import load_dotenv
 from pandas.io.parquet import json
+from sklearn import preprocessing
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -34,8 +36,8 @@ def initialize_environment():
         "probe_size": 1,
         # training config
         "simclr_lr": 1e-6,  # learning rate for encoder and projector during SimCLR training
-        "probe_lr": 1e-1,  # learning rate for linear probe appended to encoder trained with SimCLR
-        "baseline_lr": 1e-1,  # learning rate for baseline supervised model
+        "probe_lr": 1e-3,  # learning rate for linear probe appended to encoder trained with SimCLR
+        "baseline_lr": 1e-3,  # learning rate for baseline supervised model
         "batch_size": 128,
         "n_epochs": 200,
         "temperature": 0.5,
@@ -43,7 +45,7 @@ def initialize_environment():
         "data_dir": "data/interim/kaggle_sp500",
         "training_cutoff": "2023-01-01",
         "segment_length": 30,
-        "segment_step": 50,
+        "segment_step": 5,
         "checkpoints_dir": "checkpoints",
     }
 
@@ -70,17 +72,28 @@ def load_data(
         if filename.endswith(".csv"):
             df = pd.read_csv(os.path.join(data_dir, filename))
 
-            # Drop unnecessary columns
-            df.drop(columns=["adj_close"], inplace=True)
-
             # get datetimes and convert to seconds
             datetime = pd.to_datetime(df["datetime"])
             df.drop(columns=["datetime"], inplace=True)
             df["time"] = (datetime - datetime.min()).dt.total_seconds()
 
+            # Drop unnecessary columns
+            # TODO: drop time column for now (monotonically increasing can cause issues)
+            df.drop(columns=["time", "adj_close"], inplace=True)
+
+            # Apply log transformation to price and volume columns
+            eps = 1e-6
+            log_cols = ["low", "high", "open", "close", "volume"]
+            for col in log_cols:
+                df[col] = df[col].apply(lambda x: np.log(x + eps))
+
             # Split data into train and test
             train_df = df[datetime < training_cutoff]
             test_df = df[datetime >= training_cutoff]
+
+            # If there is no data for either train or test, skip
+            if train_df.empty or test_df.empty:
+                continue
 
             if not isinstance(train_df, pd.DataFrame) or not isinstance(
                 test_df, pd.DataFrame
@@ -91,7 +104,14 @@ def load_data(
             x_cols = [col for col in df.columns if col != "close"]
             y_cols = ["close"]
 
-            # Append to list
+            # Standardize data
+            scaler = preprocessing.StandardScaler()
+            scaled_training_data = scaler.fit_transform(train_df)
+            train_df = pd.DataFrame(scaled_training_data, columns=df.columns)
+            scaled_testing_data = scaler.transform(test_df)
+            test_df = pd.DataFrame(scaled_testing_data, columns=df.columns)
+
+            # Append to lists
             train_sequences.append(train_df[x_cols].values)
             train_labels.append(train_df[y_cols].values)
             test_sequences.append(test_df[x_cols].values)
