@@ -104,16 +104,40 @@ def load_data(
 
 
 def freeze(model):
+    """
+    Freezes all parameters of a model.
+    """
     for param in model.parameters():
         param.requires_grad = False
 
 
 def unfreeze(model):
+    """
+    Unfreezes all parameters of a model.
+    """
     for param in model.parameters():
         param.requires_grad = True
 
 
-def simclr_training_epoch(encoder, projector, dataloader, optimizer, temp, start_batch):
+def simclr_training_epoch(
+    encoder, projector, dataloader, optimizer, temp, start_batch=0
+):
+    """
+    Performs a single epoch of training on the SimCLR model.
+    This model is trained with a contrastive loss function that encourages similar representations for augmented views of the same data.
+    Both the enocder and projector are trained in this step (loss backpropogates through both).
+
+    Args:
+    - encoder: the encoder model to train
+    - projector: the projector model to train
+    - dataloader: the dataloader to use for training
+    - optimizer: the optimizer to use
+    - temp: the temperature parameter for the contrastive loss
+    - start_batch: the index of the first batch in the epoch (relative to all previous training runs --- used for logging)
+
+    Returns:
+    - the average loss across the epoch
+    """
     encoder.train()
     projector.train()
 
@@ -162,8 +186,25 @@ def simclr_training_epoch(encoder, projector, dataloader, optimizer, temp, start
 
 
 def finetuning_training_epoch(
-    encoder, probe, dataloader, criterion, optimizer, start_batch
+    encoder, probe, dataloader, criterion, optimizer, start_batch=0
 ):
+    """
+    Performs a single epoch of training on the finetuning model.
+    This model is trained with a supervised loss function that encourages the model to predict the next value in the sequence.
+    Only the probe is trained in this step (encoder is frozed and loss backpropogates through the probe only).
+
+    Args:
+    - encoder: the encoder model to use
+    - probe: the probe model to train
+    - dataloader: the dataloader to use for training
+    - criterion: the loss function to use
+    - optimizer: the optimizer to use for the probe
+    - start_batch: the index of the first batch in the epoch (relative to all previous training runs --- used for logging)
+
+    Returns:
+    - the average loss across the epoch
+    """
+
     encoder.eval()
     probe.train()
 
@@ -200,7 +241,21 @@ def finetuning_training_epoch(
     return total_loss / len(dataloader)
 
 
-def baseline_training_epoch(model, dataloader, criterion, optimizer, start_batch):
+def baseline_training_epoch(model, dataloader, criterion, optimizer, start_batch=0):
+    """
+    Performs a single epoch of training on the baseline model.
+    This model is trained directly on the downstream task and the loss is allowed to backpropogate fully through the model.
+
+    Args:
+    - model: the model to train
+    - dataloader: the dataloader to use for training
+    - criterion: the loss function to use
+    - optimizer: the optimizer to use
+    - start_batch: the index of the first batch in the epoch (relative to all previous training runs --- used for logging)
+
+    Returns:
+    - the average loss across the epoch
+    """
     model.train()
 
     pbar = tqdm(dataloader)
