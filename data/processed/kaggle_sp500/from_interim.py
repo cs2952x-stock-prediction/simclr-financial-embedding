@@ -261,9 +261,11 @@ if __name__ == "__main__":
 
         if train_data.empty:
             logger.warning(f"Empty training data: {filename}")
+            continue
 
         if test_data.empty:
             logger.warning(f"Empty testing data: {filename}")
+            continue
 
         # Save the training and testing data
         train_data.to_csv(f"{train_dir}/{filename}", index=False)
