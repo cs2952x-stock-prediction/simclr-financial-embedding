@@ -10,17 +10,20 @@ import pandas as pd
 
 THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
 THIS_DIR = os.path.dirname(THIS_FILE)  # the folder containing the current file
-DEFAULT_DIR = THIS_DIR + "/out"  # the folder containing the output files
+DEFAULT_DST = f"{THIS_DIR}/out"  # the folder containing the output files
 
-STOCKS_FILENAME = "sp500_stocks.csv"
-COMPANIES_FILENAME = "sp500_companies.csv"
-INDEX_FILENAME = "sp500_index.csv"
+STOCKS_FILENAME = "sp500_stocks.csv"  # the file containing the stock data (name set by Kaggle, do not change)
+COMPANIES_FILENAME = "sp500_companies.csv"  # the file containing the company data (name set by Kaggle, do not change)
+INDEX_FILENAME = "sp500_index.csv"  # the file containing the index data (name set by Kaggle, do not change)
+LOGS_DIR = f"{THIS_DIR}/logs"  # the folder to store the logs
 
+# The columns to rename in the stock data
 STOCK_COLUMNS = {
     "date": "timestamp",
     "adj close": "adj_close",
 }
 
+# The columns to rename in the companies data
 COMPANIES_COLUMNS = {
     "shortname": "short_name",
     "longname": "long_name",
@@ -31,6 +34,7 @@ COMPANIES_COLUMNS = {
     "longbusinesssummary": "long_business_summary",
 }
 
+# The columns to rename in the index data
 INDEX_COLUMNS = {
     "date": "timestamp",
 }
@@ -40,7 +44,7 @@ INDEX_COLUMNS = {
 
 def get_args():
     """
-    Get the command line arguments
+    Get the command line arguments.
 
     Returns:
     - argparse.Namespace: The command line arguments
@@ -49,10 +53,10 @@ def get_args():
         description="Download the daily SP500 dataset from Kaggle"
     )
     parser.add_argument(
-        "--destination_dir",
+        "--destination",
         type=str,
         help="The directory to download the dataset to",
-        default=DEFAULT_DIR,
+        default=DEFAULT_DST,
     )
     parser.add_argument(
         "--force",
@@ -74,6 +78,30 @@ def get_args():
     return parser.parse_args()
 
 
+def build_logger(log_level):
+    """
+    Setup the logget and ensure the log folder exists.
+
+    Args:
+    - log_level (str): The log level to use
+
+    Returns:
+    - logging.Logger: The logger
+    """
+    # start the logger --- make sure the log folder exists
+    logger = logging.getLogger(__name__)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    if not os.path.exists(LOGS_DIR):
+        os.makedirs(LOGS_DIR)
+    logging.basicConfig(
+        filename=f"{LOGS_DIR}/{timestamp}.log",
+        filemode="w",
+        encoding="utf-8",
+    )
+    logger.setLevel(log_level)
+    return logger
+
+
 def process_stock_data(stock_file):
     """
     Process the stock data file in-place.
@@ -91,7 +119,7 @@ def process_stock_data(stock_file):
     logger.info(f"Processed stock data file: {stock_file}")
 
 
-def process_companies_data(companies_file):
+def process_company_data(companies_file):
     """
     Process the companies data file in-place.
 
@@ -123,24 +151,14 @@ def process_index_data(index_file):
     logger.info(f"Processed index data file: {index_file}")
 
 
+############################## Execution ###########################################################
+
 if __name__ == "__main__":
     # Get the command line arguments
     args = get_args()
 
-    # start the logger and make sure the log folder exists
-    logger = logging.getLogger(__name__)
-    logger.setLevel(args.log_level)
-
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    logging_dir = f"{THIS_DIR}/logs"
-    if not os.path.exists(logging_dir):
-        os.makedirs(logging_dir)
-
-    logging.basicConfig(
-        filename=f"{logging_dir}/{timestamp}.log",
-        filemode="w",
-        encoding="utf-8",
-    )
+    # build logger
+    logger = build_logger(args.log_level)
 
     logger.info(
         f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
@@ -149,7 +167,7 @@ if __name__ == "__main__":
     # Validating the provided files
     for file in args.files:
 
-        # Check if the file is valid
+        # Check if the file is one of the three possible filenames
         if file not in [STOCKS_FILENAME, COMPANIES_FILENAME, INDEX_FILENAME]:
             logger.error(f"Invalid file: {file}")
             raise ValueError(f"Invalid file: {file}")
@@ -167,7 +185,7 @@ if __name__ == "__main__":
         os.makedirs(args.destination_dir)
         logger.info(f"Created destination directory: {args.destination_dir}")
 
-    # Download latest version
+    # Download latest kaggle data
     # Unfortunately, we can't control the initial destination directory of the files
     print("Downloading dataset from Kaggle...")
     download_dir = kagglehub.dataset_download(
@@ -187,7 +205,7 @@ if __name__ == "__main__":
 
         # Check if the file exists
         if file not in downloaded_files:
-            logger.warning(f"File {file} not found in downloaded files")
+            logger.warning(f"File {file} not found in downloaded files (skipping)")
             continue
 
         # Move the file
@@ -199,7 +217,7 @@ if __name__ == "__main__":
             process_stock_data(new_file)
 
         if file == COMPANIES_FILENAME:
-            process_companies_data(new_file)
+            process_company_data(new_file)
 
         if file == INDEX_FILENAME:
             process_index_data(new_file)
