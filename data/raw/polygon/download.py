@@ -14,11 +14,11 @@ from kagglehub.gcs_upload import tqdm
 from matplotlib import pyplot as plt
 from pandas.io.formats.format import math
 
-######################################### CONSTANTS ################################################
+############################# GLOBAL VARIABLES #####################################################
 
 THIS_FILE = os.path.abspath(__file__)  # the absolute path the current file
 THIS_FOLDER = os.path.dirname(THIS_FILE)  # the folder containing the current file
-
+LOGS_DIR = f"{THIS_FOLDER}/logs"  # the folder to store the logs
 
 # load the environment variables
 # (mainly just the polygon API key)
@@ -43,7 +43,7 @@ COLUMN_MAP = {
     "vw": "volume_weighted_average_price",
 }
 
-######################################### FUNCTIONS ################################################
+############################## FUNCTIONS ###########################################################
 
 
 def fetch_nyse_symbols():
@@ -190,14 +190,7 @@ def get_args():
         default="INFO",
     )
 
-    args = parser.parse_args()
-
-    # Fetch all NYSE symbols if no symbols are provided
-    if not args.symbols:
-        logger.warning("Symbols not provided. Fetching all NYSE symbols...")
-        args.symbols = fetch_nyse_symbols()
-
-    return args
+    return parser.parse_args()
 
 
 def ensure_api_key_in_url(url, api_key):
@@ -380,26 +373,47 @@ def fetch_symbol_bars(symbol, start_date, end_date, timespan, multiplier):
     return pd.DataFrame(all_results)
 
 
-######################################### EXECUTION ################################################
+def build_logger(log_level):
+    """
+    Setup the logget and ensure the log folder exists.
+
+    Args:
+    - log_level (str): The log level to use
+
+    Returns:
+    - logging.Logger: The logger
+    """
+    # start the logger --- make sure the log folder exists
+    logger = logging.getLogger(__name__)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    if not os.path.exists(LOGS_DIR):
+        os.makedirs(LOGS_DIR)
+    logging.basicConfig(
+        filename=f"{LOGS_DIR}/{timestamp}.log",
+        filemode="w",
+        encoding="utf-8",
+    )
+    logger.setLevel(log_level)
+    return logger
+
+
+############################## EXEXCUTION #########################################################
 
 if __name__ == "__main__":
     # Parse command-line arguments
     args = get_args()
 
-    # start the logger --- make sure the log folder exists
-    logger = logging.getLogger(__name__)
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    if not os.path.exists(f"{THIS_FOLDER}/logs"):
-        os.makedirs(f"{THIS_FOLDER}/logs")
-    logging.basicConfig(
-        filename=f"{THIS_FOLDER}/logs/{timestamp}.log",
-        filemode="w",
-        encoding="utf-8",
-    )
-    logger.setLevel(args.log_level)
+    # start logger
+    logger = build_logger(args.log_level)
+
     logger.info(
         f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
     )
+
+    # Fetch all NYSE symbols if no symbols are provided
+    if not args.symbols:
+        logger.warning("Symbols not provided. Fetching all NYSE symbols...")
+        args.symbols = fetch_nyse_symbols()
 
     # pd.Timedelta can't handle 'week' timespan, so convert to 'day'
     if args.timespan == "week":
