@@ -1,0 +1,18 @@
+download:
+  destination: "data/raw/kaggle"
+  force: True
+  files: ["sp500_stocks.csv", "sp500_companies.csv", "sp500_index.csv"]
+clean:
+  source: "data/raw/kaggle/sp500_stocks.csv"
+  destination: "data/interim/kaggle"
+  force: True
+  fill_method: "drop" # how to deal with NaN entries
+process:
+  source: "data/interim/kaggle"
+  destination: "data/processed/kaggle"
+  force: True
+  keep_columns: ["close", "high", "low", "open", "volume"]
+  training_cutoff: "2023-01-01"
+  log_transform: True
+  scale_features: ["close", "high", "low", "open", "volume"]
+  temporal_features: []
