@@ -197,22 +197,22 @@ def load_config(args):
     return config
 
 
-def configure_logger(log_level, log_dir):
+def configure_logger(log_level, log_file):
     """
-    Setup the logget and ensure the log folder exists.
+    Setup the logger and ensure the log folder exists.
 
     Args:
     - log_level (str): The log level to use
-    - log_dir (str): The directory to save the logs
+    - log_file (str): The path to the log file
     """
     # make sure the log folder exists
+    log_dir = os.path.dirname(log_file)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
     # configure the logger
-    logname = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     logging.basicConfig(
-        filename=f"{log_dir}/{logname}.log",
+        filename=log_file,
         filemode="w",
         encoding="utf-8",
     )
