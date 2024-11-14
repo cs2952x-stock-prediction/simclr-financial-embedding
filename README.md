@@ -12,8 +12,9 @@ Small/short-term pipline fixes:
 Longer term:
 
 - create dataset for large data (only loads some files in memory at a time)
-- create polygon
-- set up grid search
+- create polygon data cleaning script
+- run ablation studies
+- run up grid search
 
 ## Getting Started
 
