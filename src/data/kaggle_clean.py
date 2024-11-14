@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import pprint
 from datetime import datetime
 
 import pandas as pd
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEFAULT_LOG_FILE = f"logs/kaggle-clean_{timestamp}.log"
 
-COL_TO_INTERPOLATE = [
+COLUMNS_TO_FILL = [
     "adj_close",
     "close",
     "high",
@@ -60,6 +61,7 @@ def get_args():
         "--log_level",
         type=str,
         default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="The log level to use",
     )
     parser.add_argument(
@@ -100,39 +102,39 @@ def configure_logger(log_level, log_file):
     logger.setLevel(log_level)
 
 
-############################## EXECUTION ##########################################################
+############################## MAIN FUNCTION ######################################################
 
-if __name__ == "__main__":
-    # Get command line arguments
-    args = get_args()
 
-    # Start logging
-    configure_logger(args.log_level, args.log_file)
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
-    )
+def main(config):
+    """
+    Process the raw SP500 dataset from Kaggle into a more usable format.
+
+    Args:
+    - config (dict): The configuration dictionary
+    """
+    logger.info(f"Command config:\n{pprint.pformat(config)}")
 
     # If the source file does not exist, raise an error
-    if not os.path.exists(args.source):
+    if not os.path.exists(config["source"]):
         logger.error(f"Source file not found: {args.source}")
         raise FileNotFoundError(f"Source file not found: {args.source}")
 
     # Ensure the destination folder exists
-    if not os.path.exists(args.destination):
-        os.makedirs(args.destination)
+    if not os.path.exists(config["destination"]):
+        os.makedirs(config["destination"])
         logger.info(f"Created destination folder: {args.destination}")
 
-    # If the destination folder is not empty, raise an error
-    if os.listdir(args.destination) and not args.force:
+    # If the destination folder is not empty and force is not set, raise an error
+    if os.listdir(config["destination"]) and not args.force:
         logger.error(f"Destination folder is not empty: {args.destination}")
         raise FileExistsError(
             f"Destination folder is not empty: {args.destination}. Use --force to overwrite."
         )
 
     # Load data
-    print(f"Loading data from {args.source}...")
-    df = pd.read_csv(args.source)
-    logger.info(f"Loaded data from {args.source}")
+    print(f"Loading data from {config['source']}...")
+    df = pd.read_csv(config["source"])
+    logger.info(f"Loaded data from {config['source']}")
     logger.info(f"Data shape: {df.shape}")
     logger.info(f"Data columns: {df.columns}")
     logger.info(f"Data head:\n{df.head()}")
@@ -148,10 +150,10 @@ if __name__ == "__main__":
         symbol_df = symbol_df.drop(columns=["symbol"])  # drop the symbol column
 
         # Handle missing values
-        if args.fill_method != "drop":
-            symbol_df[COL_TO_INTERPOLATE] = symbol_df[COL_TO_INTERPOLATE].interpolate(
+        if config["fill_method"] != "drop":
+            symbol_df[COLUMNS_TO_FILL] = symbol_df[COLUMNS_TO_FILL].interpolate(
                 limit_direction="both",
-                method=args.fill_method,
+                method=config["fill_method"],
                 axis=0,
             )
 
@@ -163,5 +165,17 @@ if __name__ == "__main__":
             logger.warning(f"Removed {n - len(symbol_df)} NaN values from {symbol}")
 
         symbol_df.sort_values(by=["timestamp"], inplace=True)  # ensure sorted
-        symbol_df.to_csv(f"{args.destination}/{symbol}.csv", index=False)
-        logger.info(f"Saved {symbol}.csv to {args.destination}")
+        symbol_df.to_csv(f"{config['destination']}/{symbol}.csv", index=False)
+        logger.info(f"Saved {symbol}.csv to {config['destination']}")
+
+
+if __name__ == "__main__":
+    # Get command line arguments
+    args = get_args()
+    config = vars(args)
+
+    # Start logging
+    configure_logger(args.log_level, args.log_file)
+
+    # Run the main function
+    main(config)
