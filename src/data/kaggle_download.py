@@ -15,10 +15,10 @@ STOCKS_FILENAME = "sp500_stocks.csv"  # the file containing the stock data (name
 COMPANIES_FILENAME = "sp500_companies.csv"  # the file containing the company data (name set by Kaggle, do not change)
 INDEX_FILENAME = "sp500_index.csv"  # the file containing the index data (name set by Kaggle, do not change)
 
+# Logger
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEFAULT_LOG_FILE = f"logs/kaggle-download_{timestamp}.log"
 
-# Logger
 logger = logging.getLogger(__name__)
 
 # The columns to rename in the stock data
@@ -77,6 +77,7 @@ def get_args():
         "--log_level",
         type=str,
         default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="The log level to use",
     )
     parser.add_argument(
@@ -161,13 +162,15 @@ def process_index_data(index_file):
 
 ############################## Execution ###########################################################
 
-if __name__ == "__main__":
-    # Get the command line arguments
-    args = get_args()
 
-    # build logger
-    configure_logger(args.log_level, args.log_file)
-    logger.info(f"Arguments:\n{pprint.pformat(vars(args))}")
+def main(config):
+    """
+    Download the SP500 dataset from Kaggle and process it into a more usable format.
+
+    Args:
+    - config (dict): The configuration dictionary
+    """
+    logger.info(f"Config:\n{pprint.pformat(config)}")
 
     # Validating the provided files
     for file in args.files:
@@ -226,3 +229,15 @@ if __name__ == "__main__":
 
         if file == INDEX_FILENAME:
             process_index_data(new_file)
+
+
+if __name__ == "__main__":
+    # Get the command line arguments
+    args = get_args()
+    config = vars(args)
+
+    # build logger
+    configure_logger(args.log_level, args.log_file)
+
+    # Start the main function
+    main(config)
