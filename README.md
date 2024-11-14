@@ -1,5 +1,20 @@
 # simclr-financial-embedding
 
+## TODO List
+
+Small/short-term pipline fixes:
+
+- check that files are not overwritten and force is used correctly
+- make sure destination folders are created if they down exist
+- parsimony between config/arg parameter names
+- every argparse should include a description
+
+Longer term:
+
+- create dataset for large data (only loads some files in memory at a time)
+- create polygon
+- set up grid search
+
 ## Getting Started
 
 **Note:** Most of the python scripts described below should have the desired default settings/configurations (so they can be run without arguments).
@@ -84,6 +99,9 @@ The idea here is to have a pipeline `raw -> interim -> processed`
    - converting to log-space
    - embedding class labels
 
+   **NOTE:** Besides the data, `data/processed/dataset/` might hold _models_ used in the processing pipeline.
+   For example, we scale with sklearn's StandardScaler and then save the scaler for transforming/undoing data later.
+
 ### Training and Config Files
 
 Training files are at the top-level of the `src` folder.
@@ -118,41 +136,5 @@ $ source activate.sh
 (venv) $ python src/train_simple_lstm.py
 ```
 
-## My Own Misc. Notes:
-
-- Consider working in log-space for the following reasons:
-
-  - Captures multiplicative scaling of values
-  - Avoids lopsided-weighting of large values/spikes
-  - Model only needs to learn additive relations while implicitly capturing multiplicative ones
-  - Can handle negatives implicitly (we don't need to handle that as a special case)
-
-- Remember to only apply transformations to KPI values.
-
-  - Should symbol embeddings be left alone? (invariant to the identity of the stock?)
-  - Should temporal features have their own transformation functions? (masking would be a random _but valid_ cyclical embedding)
-
-- Ablation studies on the contributions of cyclical temporal features (professor's suggestion)
-
-- Possible baseline comparisons
-  - compare to the results of Denoising Financial Data paper
-  - compare to training on the downstream task directly (use probe on encoder and allow the gradients to back-propagate)
-  - compare to classic autoregression methods (linear/polynomial/ARIMA)
-
-## Possible Embedding Models:
-
-### Simple LSTM
-
-#### Pipeline
-
-- Feed through a linear layer to get an embedding of the data.
-- Feed the embedding into the lstm
-- Apply a final linear layer to the lstm output
-
-### CNN-only
-
-#### Pipeline
-
-1.
-
-## To-Do
+**NOTE:** There is now a `kaggle_pipeline.py` file that calls `kaggle_download.py`, `kaggle_clean.py`, and `kaggle_process.py`.
+It uses the `configs/kiggle-pipeline.yaml` config file to configure all the intermediate steps.
