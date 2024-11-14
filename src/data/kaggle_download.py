@@ -173,7 +173,7 @@ def main(config):
     logger.info(f"Config:\n{pprint.pformat(config)}")
 
     # Validating the provided files
-    for file in args.files:
+    for file in config["files"]:
 
         # Check if the file is one of the three possible filenames
         if file not in [STOCKS_FILENAME, COMPANIES_FILENAME, INDEX_FILENAME]:
@@ -181,17 +181,17 @@ def main(config):
             raise ValueError(f"Invalid file: {file}")
 
         # Check if we are about to overwrite a file (aborts if force is not set)
-        new_file = f"{args.destination}/{file}"
-        if os.path.exists(new_file) and not args.force:
+        new_file = f"{config['destination']}/{file}"
+        if os.path.exists(new_file) and not config["force"]:
             logger.error(f"File {new_file} already exists. Use --force to overwrite")
             raise FileExistsError(
                 f"File {new_file} already exists. Use --force to overwrite"
             )
 
     # make sure that the destination directory exists
-    if not os.path.exists(args.destination):
-        os.makedirs(args.destination)
-        logger.info(f"Created destination directory: {args.destination}")
+    if not os.path.exists(config["destination"]):
+        os.makedirs(config["destination"])
+        logger.info(f"Created destination directory: {config['destination']}")
 
     # Download latest kaggle data
     # Unfortunately, we can't control the initial destination directory of the files
@@ -205,11 +205,11 @@ def main(config):
 
     # Move the dataset to this directory
     # move everything in the returned path to this directory
-    print(f"Moving files to destination: {args.destination}")
+    print(f"Moving files to destination: {config['destination']}")
 
-    for file in args.files:
+    for file in config["files"]:
         old_file = f"{download_dir}/{file}"
-        new_file = f"{args.destination}/{file}"
+        new_file = f"{config['destination']}/{file}"
 
         # Check if the file exists
         if file not in downloaded_files:

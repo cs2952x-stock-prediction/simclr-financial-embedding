@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 ############################# GLOBAL VARIABLES #####################################################
 
-DEFAULT_DST = f"data/interim/kaggle"  # the folder containing the output files
+DEFAULT_DST = "data/interim/kaggle"  # the folder containing the output files
 DEFAULT_SRC = "data/raw/kaggle/sp500_stocks.csv"  # the default source file
 
 logger = logging.getLogger(__name__)
@@ -116,19 +116,19 @@ def main(config):
 
     # If the source file does not exist, raise an error
     if not os.path.exists(config["source"]):
-        logger.error(f"Source file not found: {args.source}")
-        raise FileNotFoundError(f"Source file not found: {args.source}")
+        logger.error(f"Source file not found: {config['source']}")
+        raise FileNotFoundError(f"Source file not found: {config['source']}")
 
     # Ensure the destination folder exists
     if not os.path.exists(config["destination"]):
         os.makedirs(config["destination"])
-        logger.info(f"Created destination folder: {args.destination}")
+        logger.info(f"Created destination folder: {config['destination']}")
 
     # If the destination folder is not empty and force is not set, raise an error
-    if os.listdir(config["destination"]) and not args.force:
-        logger.error(f"Destination folder is not empty: {args.destination}")
+    if os.listdir(config["destination"]) and not config["force"]:
+        logger.error(f"Destination folder is not empty: {config['destination']}")
         raise FileExistsError(
-            f"Destination folder is not empty: {args.destination}. Use --force to overwrite."
+            f"Destination folder is not empty: {config['destination']}. Use --force to overwrite."
         )
 
     # Load data
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     config = vars(args)
 
     # Start logging
-    configure_logger(args.log_level, args.log_file)
+    configure_logger(config["log_level"], config["log_file"])
 
     # Run the main function
     main(config)
