@@ -17,7 +17,7 @@ DEFAULT_SRC = f"data/interim/kaggle"  # the folder containing the source files
 
 # Logger
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-DEFAULT_LOG_FILE = f"logs/kaggle-processing_{timestamp}.log"
+DEFAULT_LOG_FILE = f"logs/kaggle-process_{timestamp}.log"
 
 logger = logging.getLogger(__name__)
 
