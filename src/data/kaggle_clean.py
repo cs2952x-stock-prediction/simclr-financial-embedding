@@ -112,7 +112,9 @@ def main(config):
     Args:
     - config (dict): The configuration dictionary
     """
-    logger.info(f"Command config:\n{pprint.pformat(config)}")
+    timestamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    logger.info(f"Starting Kaggle data cleaning process at {timestamp}")
+    logger.info(f"Configuration:\n{pprint.pformat(config)}\n")
 
     # If the source file does not exist, raise an error
     if not os.path.exists(config["source"]):
@@ -166,16 +168,21 @@ def main(config):
 
         symbol_df.sort_values(by=["timestamp"], inplace=True)  # ensure sorted
         symbol_df.to_csv(f"{config['destination']}/{symbol}.csv", index=False)
-        logger.info(f"Saved {symbol}.csv to {config['destination']}")
+        logger.debug(f"Saved {symbol}.csv to {config['destination']}")
 
 
 if __name__ == "__main__":
     # Get command line arguments
     args = get_args()
-    config = vars(args)
 
-    # Start logging
-    configure_logger(config["log_level"], config["log_file"])
+    # Configure the logger
+    configure_logger(args.log_level, args.log_file)
+
+    # Log the arguments
+    logger.info(
+        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}\n"
+    )
 
     # Run the main function
+    config = {k: v for k, v in vars(args).items() if k not in ["log_level", "log_file"]}
     main(config)

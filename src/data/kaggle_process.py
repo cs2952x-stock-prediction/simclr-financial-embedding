@@ -137,7 +137,7 @@ def configure_logger(log_level, log_file):
         filemode="w",
         encoding="utf-8",
     )
-    logger.setLevel(log_level)
+    logging.getLogger().setLevel(log_level)
 
 
 ############################## MAIN FUNCTION ######################################################
@@ -153,7 +153,9 @@ def main(config):
     Args:
     - config (dict): The configuration dictionary
     """
-    logger.info(f"Configuration:\n{pprint.pformat(config)}")
+    timestamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    logger.info(f"Starting Kaggle data processing at {timestamp}")
+    logger.info(f"Configuration:\n{pprint.pformat(config)}\n")
 
     # If the source file does not exist, raise an error
     if not os.path.exists(config["source"]):
@@ -282,12 +284,13 @@ def main(config):
         train_data.to_csv(f"{train_dir}/{filename}", index=False)
         test_data.to_csv(f"{test_dir}/{filename}", index=False)
 
-        logger.info(f"Saved training data to: {train_dir}/{filename}")
-        logger.info(f"Saved testing data to: {test_dir}/{filename}")
+        logger.debug(f"Saved training data to: {train_dir}/{filename}")
+        logger.debug(f"Saved testing data to: {test_dir}/{filename}")
 
     if config["scale_features"]:
+        print("Rescaling data...")
         scale_cols = config["scale_features"]
-        logger.info("Normalizing data")
+        logger.info("Scaling columns: %s", scale_cols)
 
         # Do a pass through the training data to and use partial_fit to train the scaler
         # This allows us to train the scaler without having all files in memory at once
@@ -329,10 +332,15 @@ def main(config):
 if __name__ == "__main__":
     # Get command line arguments
     args = get_args()
-    config = vars(args)
 
     # Start logging
     configure_logger(args.log_level, args.log_file)
 
+    # Log the arguments
+    logger.info(
+        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}\n"
+    )
+
     # Run the main function
+    config = {k: v for k, v in vars(args).items() if k not in ["log_level", "log_file"]}
     main(config)
