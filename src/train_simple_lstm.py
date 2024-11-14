@@ -37,6 +37,8 @@ os.environ["WANDB_API_KEY"] = WANDB_KEY
 
 # Logger
 logger = logging.getLogger(__name__)
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DEFAULT_LOG_FILE = f"logs/simple-lstm_{timestamp}.log"
 
 # Device on which to load data and parameters (GPU if available, else CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -108,10 +110,10 @@ def get_args():
         help="The log level to use",
     )
     arg_parser.add_argument(
-        "--log_dir",
+        "--log_file",
         type=str,
-        default="logs",
-        help="The directory to save the logs",
+        default=DEFAULT_LOG_FILE,
+        help="The log file to write to",
     )
 
     return arg_parser.parse_args()
@@ -579,6 +581,14 @@ def experiment_run(models, optimizers, train_loader, test_loader, config):
 
 
 def main(config):
+    """
+    Run the main training loop.
+
+    Args:
+    - config: the configuration dictionary
+    """
+    logger.info(f"Configuration:\n{pprint.pformat(config)}")
+
     # Start experiment on WandB
     wandb.init(project="simcl-stock-embedding", config=config, **config["experiment"])
 
@@ -609,10 +619,13 @@ if __name__ == "__main__":
     args = get_args()
 
     # Configure the logger
-    configure_logger(args.log_level, args.log_dir)
-    logger.info(f"Arguments:\n{pprint.pformat(vars(args))}")
+    configure_logger(args.log_level, args.log_file)
 
-    # Load configuration
+    # Log the arguments
+    logger.info(
+        f"Arguments:\n{'\t\n'.join([f'{k}: {v}' for k, v in vars(args).items()])}"
+    )
+
+    # Run the main function
     config = load_config(args)
-
     main(config)
