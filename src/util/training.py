@@ -3,7 +3,6 @@ import os
 
 import pandas as pd
 import torch
-from dotenv import load_dotenv
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -12,7 +11,6 @@ from .evaluation import nt_xent_loss
 from .transformations import mask_with_added_gaussian
 
 ############################# GLOBAL VARIABLES #####################################################
-load_dotenv()
 
 # Logger
 logger = logging.getLogger(__name__)
