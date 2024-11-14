@@ -216,7 +216,7 @@ def configure_logger(log_level, log_dir):
         filemode="w",
         encoding="utf-8",
     )
-    logger.setLevel(log_level)
+    logging.getLogger().setLevel(log_level)
 
 
 def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="close"):
