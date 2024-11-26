@@ -1,18 +1,18 @@
 # config.yaml
 models:
   encoder:
-    input_size: null # determine by the data shape
+    # input size is determined by the data shape
     hidden_size: 128
     output_size: 128
     num_layers: 1
   projector:
-    input_size: 128 # encoder output size
+    # input size should be set to the output size of the encoder
     hidden_layers:
       - [64, "relu"]
       - [32, "relu"]
     output_size: 16
   probe:
-    input_size: 128 # encoder output size
+    # input size should be set to the output size of the encoder
     hidden_layers:
       - [64, "relu"]
       - [32, "relu"]

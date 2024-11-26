@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import pprint
@@ -69,6 +70,12 @@ def get_args():
         type=str,
         default=DEFAULT_CONFIG,
         help="Path to config file (contains config values specific to this run)",
+    )
+    arg_parser.add_argument(
+        "--config_override",
+        type=str,
+        default=None,
+        help="JSON string of parameters to override config file",
     )
     arg_parser.add_argument(
         "--train_dir",
@@ -192,6 +199,15 @@ def load_config(args):
     if args.num_epochs is not None:
         config["training"]["n_epochs"] = args.num_epochs
 
+    # Override configuration with JSON string of parameters
+    if args.config_override is not None:
+        override = json.loads(args.config_override)
+        config = recursive_zip(config, override)
+
+    embedding_size = config["models"]["encoder"]["output_size"]
+    config["models"]["projector"]["input_size"] = embedding_size
+    config["models"]["probe"]["input_size"] = embedding_size
+
     logger.info(f"Configuration:\n{pprint.pformat(config)}")
 
     return config
@@ -301,6 +317,7 @@ def initialize_encoder(config):
     return LstmEncoder(
         input_size=config["input_size"],
         hidden_size=config["hidden_size"],
+        proj_size=config["output_size"],
     ).to(device)
 
 
