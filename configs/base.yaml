@@ -1,7 +1,7 @@
 # config.yaml
 data:
-  train_dir: "data/processed/kaggle_sp500/out/train"
-  test_dir: "data/processed/kaggle_sp500/out/test"
+  train_dir: "data/processed/kaggle/train"
+  test_dir: "data/processed/kaggle/test"
   batch_size: 128
   segment_length: 30
   segment_step: 5
