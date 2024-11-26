@@ -241,9 +241,8 @@ if __name__ == "__main__":
     configure_logger(args.log_level, args.log_file)
 
     # Log the arguments
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}\n"
-    )
+    formatted_args = "\n\t".join([f"{k}: {v}" for k, v in vars(args).items()])
+    logger.info(f"Arguments:\n\t{formatted_args}\n")
 
     # Start the main function
     config = {k: v for k, v in vars(args).items() if k not in ["log_level", "log_file"]}

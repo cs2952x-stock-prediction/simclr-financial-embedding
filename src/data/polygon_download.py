@@ -514,9 +514,8 @@ if __name__ == "__main__":
     configure_logger(args.log_level, args.log_file)
 
     # Log the arguments
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}\n"
-    )
+    formatted_args = "\n\t".join([f"{k}: {v}" for k, v in vars(args).items()])
+    logger.info(f"Arguments:\n\t{formatted_args}\n")
 
     config = vars(args)
     main(config)

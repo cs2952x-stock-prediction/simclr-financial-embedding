@@ -119,9 +119,8 @@ if __name__ == "__main__":
 
     # Configure the logger
     configure_logger(args.log_level, args.log_file)
-    logger.info(
-        f"Arguments:\n\t{'\n\t'.join([f'{k}: {v}' for k, v in vars(args).items()])}\n"
-    )
+    formatted_args = "\n\t".join([f"{k}: {v}" for k, v in vars(args).items()])
+    logger.info(f"Arguments:\n\t{formatted_args}\n")
 
     # Load configuration
     config = load_config(args)
