@@ -1,0 +1,398 @@
+[
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    }
+]
