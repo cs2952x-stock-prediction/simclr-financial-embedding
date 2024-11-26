@@ -3,6 +3,8 @@ import torch.nn as nn
 
 class LstmEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers=1, proj_size=0):
+        if hidden_size == proj_size:
+            proj_size = 0
         super(LstmEncoder, self).__init__()
         self.lstm = nn.LSTM(
             input_size=input_size,

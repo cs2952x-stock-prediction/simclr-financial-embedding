@@ -205,6 +205,8 @@ def load_config(args):
         config = recursive_zip(config, override)
 
     embedding_size = config["models"]["encoder"]["output_size"]
+    if embedding_size == 0:
+        embedding_size = config["models"]["encoder"]["hidden_size"]
     config["models"]["projector"]["input_size"] = embedding_size
     config["models"]["probe"]["input_size"] = embedding_size
 

@@ -3,7 +3,7 @@ models:
   encoder:
     # input size is determined by the data shape
     hidden_size: 128
-    output_size: 0 # zero means output is same as hidden
+    output_size: 128 # zero means output is same as hidden
     num_layers: 1
   projector:
     # input size should be set to the output size of the encoder
