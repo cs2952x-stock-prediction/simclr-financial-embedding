@@ -203,7 +203,8 @@ def main(config):
     )
     downloaded_files = os.listdir(download_dir)
     logger.info(f"Dataset files downloaded to: {download_dir}")
-    logger.info(f"Files:\n\t{'\n\t'.join(downloaded_files)}")
+    formatted_files = "\n\t".join(downloaded_files)
+    logger.info(f"Files:\n\t{formatted_files}")
 
     # Move the dataset to this directory
     # move everything in the returned path to this directory
