@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --J kaggle_lstm_grid_search
-#SBATCH --o results/slurm-%A_%a.out
-#SBATCH --e results/slurm-%A_%a.err
+#SBATCH -J kaggle_lstm_grid_search
+#SBATCH -o results/slurm-%A_%a.out
+#SBATCH -e results/slurm-%A_%a.err
 #SBATCH --array=0-35  
-#SBATCH --c 2
+#SBATCH -c 2
 #SBATCH --mem=4G
 #SBATCH --time=48:00:00
 #SBATCH -p gpu
@@ -45,6 +45,6 @@ PARAMS=$(jq ".[$SLURM_ARRAY_TASK_ID]" $PARAM_FILE)
 
 # we pass the grid parameters we extracted using 'config_everride'
 # this shadows/overrides the default config values with the new ones
-python src/train_simpl_lstm.py --config_override '$PARAMS'
+python src/train_simple_lstm.py --config_override "$PARAMS"
 
 deactivate
