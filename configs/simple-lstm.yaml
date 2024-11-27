@@ -1,10 +1,17 @@
 # config.yaml
+data:
+  train_dir: "data/processed/kaggle/train"
+  test_dir: "data/processed/kaggle/test"
+  batch_size: 128
+  segment_length: 30
+  segment_step: 5
+  label_column: "close"
 models:
   encoder:
     # input size is determined by the data shape
-    hidden_size: 128
-    output_size: 0 # zero means output is same as hidden
     num_layers: 1
+    hidden_size: 128
+    output_size: 128
   projector:
     # input size should be set to the output size of the encoder
     hidden_layers:
@@ -22,6 +29,7 @@ optimizers:
   finetuning_lr: 1.0e-3
   baseline_lr: 1.0e-3
 training:
+  num_epochs: 200
   temperature: 0.5
 experiment:
   name: "simple-lstm"

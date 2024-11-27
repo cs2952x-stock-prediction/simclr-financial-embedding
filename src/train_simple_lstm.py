@@ -25,7 +25,6 @@ from util.training import finetuning_epoch, simclr_epoch, training_epoch
 load_dotenv()
 
 # defaults
-DEFAULT_BASE_CONFIG = "configs/base.yaml"
 DEFAULT_CONFIG = "configs/simple-lstm.yaml"
 DEFAULT_CHECKPOINTS_DIR = (
     f"checkpoints/simple-lstm/{datetime.now().strftime('%Y-%m-%d_%H%M%S')}"
@@ -60,16 +59,10 @@ def get_args():
         "The models are both evaluated on a downstream task."
     )
     arg_parser.add_argument(
-        "--base_config",
-        type=str,
-        default=DEFAULT_BASE_CONFIG,
-        help="Path to base config file (contains default config values)",
-    )
-    arg_parser.add_argument(
         "--config",
         type=str,
         default=DEFAULT_CONFIG,
-        help="Path to config file (contains config values specific to this run)",
+        help="Path to experiment config file",
     )
     arg_parser.add_argument(
         "--config_override",
@@ -167,17 +160,10 @@ def load_config(args):
     - config: the configuration dictionary
     """
 
-    # The base configuartion contains default values
-    with open(args.base_config, "r") as f:
-        base_config = yaml.safe_load(f)
-        args.base_config = None
-
     # The 'normal' config file contains the specific configuration for this run
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
         args.config = None
-
-    config = recursive_zip(base_config, config)
 
     # Override configuration with command line arguments
     if args.train_dir is not None:
