@@ -16,9 +16,14 @@ def combinations():
 
 if __name__ == "__main__":
     grid_values = []
-    for param_set in combinations():
-        config = {}
+    for i, param_set in enumerate(combinations()):
+        config = {"experiment": {
+                    "name": f"lstm_grid_{i}",
+                    "tags": ["lstm", "grid-search"]
+                    }
+                }
         for param, value in param_set.items():
+            config["experiment"]["tags"].append(f"{param}={value}")
             param = param.split(".")
             subconfig = config
             for key in param[:-1]:
@@ -27,6 +32,7 @@ if __name__ == "__main__":
                 subconfig = subconfig[key]
             subconfig[param[-1]] = value
         grid_values.append(config)
+
 
     with open("configs/grid_search.json", "w") as f:
         json.dump(grid_values, f, indent=4)
