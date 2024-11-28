@@ -51,3 +51,18 @@ class DenseLayers(nn.Module):
 
     def forward(self, x):
         return self.layers(x)
+
+
+class CnnEncoder(nn.Module):
+    def __init__(self, input_size, out_channels, kernel_size):
+        super(CnnEncoder, self).__init__()
+        self.conv_1d = nn.Conv1d(
+            in_channels = 30,
+            out_channels = out_channels,
+            kernel_size = kernel_size,
+        )
+
+    def forward(self, x):
+        x = self.conv_1d(x)
+        x = x.squeeze(-1)
+        return x
