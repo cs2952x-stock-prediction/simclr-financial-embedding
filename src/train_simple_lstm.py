@@ -251,7 +251,7 @@ def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="
             labels.append(df[y_cols].values)
 
     # Create a testing dataset and dataloader
-    dataset = TimeSeriesDataset(sequences, labels, segment_length, segment_step, device)
+    dataset = TimeSeriesDataset(sequences, labels, segment_length, segment_step)
     return DataLoader(dataset, batch_size, shuffle=True)
 
 

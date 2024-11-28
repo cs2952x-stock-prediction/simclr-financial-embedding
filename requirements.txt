@@ -11,3 +11,4 @@ torch
 torch_summary
 tqdm
 wandb
+statsmodels
