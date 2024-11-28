@@ -25,10 +25,10 @@
 module load python/3.11
 source venv/bin/activate
 
-# TODO: make sure to run 'python kaggle-lstm-grid-search.py'
+# TODO: make sure to run 'python src/generate_lstm_grid.py'
 # beforehand to generate the grid-search parameters
 
-PARAM_FILE="configs/grid_search.json"
+PARAM_FILE="configs/lstm_grid_search.json"
 
 # Explanation of the command below:
 #
