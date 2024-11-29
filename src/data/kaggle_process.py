@@ -164,7 +164,7 @@ def get_args():
         "--avg_features",
         type=str,
         nargs="*",
-        default=["sma_20", "ema_20", "sma_50", "ema_50"],
+        default=["close_sma20", "close_ema20", "close_sma50", "close_ema50"],
         help="The moving average features to include",
     )
     parser.add_argument(
