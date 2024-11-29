@@ -1,18 +1,16 @@
 import argparse
 import logging
 import os
-import pickle
 import pprint
 from datetime import datetime
 
-import numpy as np
 import pandas as pd
-from sklearn import preprocessing
 from tqdm import tqdm
+from transform import *
 
 ############################# GLOBAL VARIABLES #####################################################
 
-DEFAULT_DST = f"data/processed/kaggle"  # the folder containing the output files
+DEFAULT_DST = f"data/processed/kaggle/v2"  # the folder containing the output files
 DEFAULT_SRC = f"data/interim/kaggle"  # the folder containing the source files
 
 # Logger
@@ -21,21 +19,12 @@ DEFAULT_LOG_FILE = f"logs/kaggle-process_{timestamp}.log"
 
 logger = logging.getLogger(__name__)
 
-# integer-valued columns that can be log-transformed
-INT_LOG_COLUMNS = [
-    "volume",
-]
-INT_EPS = 1  # quantity to add to integer columns before log-transforming
-
-# float-valued columns that can be log-transformed
-FLOAT_LOG_COLUMNS = [
-    "close",
-    "high",
-    "low",
-    "open",
-]
-FLOAT_EPS = 0.01  # quadrity to add to float columns before log-transforming
-
+# TODO: Move this to a configuration file
+TRANSFORMER_CONFIG = {
+    "log_features": ["open", "low", "high", "volume", "close", "adj_close"],
+    "diff_features": ["open", "low", "high", "close", "adj_close"],
+    "scale_features": ["open", "low", "high", "volume", "close", "adj_close"],
+}
 
 ############################## FUNCTIONS ###########################################################
 
@@ -84,11 +73,26 @@ def get_args():
         help="The log file to use",
     )
     parser.add_argument(
-        "--keep_columns",
+        "--use_columns",
         type=str,
         nargs="+",
-        default=["close", "high", "low", "open", "volume"],
-        help="The columns to keep",
+        default=[
+            "timestamp",
+            "open",
+            "low",
+            "high",
+            "volume",
+            "close",
+            "adj_close",
+        ],
+        help="The columns to use from the initially-loaded data",
+    )
+    parser.add_argument(
+        "--del_columns",
+        type=str,
+        nargs="+",
+        default=["timestamp"],
+        help="The columns to delete after processing",
     )
     parser.add_argument(
         "--training_cutoff",
@@ -101,18 +105,21 @@ def get_args():
         type=str,
         nargs="*",
         default=[],
-        choices=["day", "week", "month", "quarter", "year"],
+        choices=[
+            "seconds",
+            "cyclic_day",
+            "cyclic_week",
+            "cyclic_month",
+            "cyclic_quarter",
+            "cyclic_year",
+        ],
         help="The temporal features to include",
     )
     parser.add_argument(
-        "--scale_features",
+        "--transform_config",
         type=str,
-        nargs="*",
-        default=["close", "high", "low", "open", "volume"],
-        help="The features to scale",
-    )
-    parser.add_argument(
-        "--log_transform", type=bool, default=True, help="Whether to log-transform"
+        help="The configuration file for the transformer",
+        default="config/transformer_config.yaml",
     )
 
     return parser.parse_args()
@@ -140,23 +147,7 @@ def configure_logger(log_level, log_file):
     logging.getLogger().setLevel(log_level)
 
 
-############################## MAIN FUNCTION ######################################################
-
-
-def main(config):
-    """
-    Process the intermediate SP500 dataset from Kaggle into fully-processed training data.
-    Extract only the necessary features, split the data into training and testing sets.
-    Log-transform and scale the data if desired.
-    If the scaling occurs, we save the scaler model in the output directory for later use.
-
-    Args:
-    - config (dict): The configuration dictionary
-    """
-    timestamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-    logger.info(f"Starting Kaggle data processing at {timestamp}")
-    logger.info(f"Configuration:\n{pprint.pformat(config)}\n")
-
+def validate_paths(config):
     # If the source file does not exist, raise an error
     if not os.path.exists(config["source"]):
         logger.error(f"Source not found: {config['source']}")
@@ -186,9 +177,68 @@ def main(config):
         os.makedirs(test_dir)
         logger.info(f"Created testing folder: {test_dir}")
 
+
+def add_temporal_features(config, df):
+    if "cyclic_day" in config["temporal_features"]:
+        add_cyclic_day_feature(df)
+
+    if "cyclic_week" in config["temporal_features"]:
+        add_cyclic_week_feature(df)
+
+    if "cyclic_month" in config["temporal_features"]:
+        add_cyclic_month_feature(df)
+
+    if "cyclic_quarter" in config["temporal_features"]:
+        add_cyclic_quarter_feature(df)
+
+    if "cyclic_year" in config["temporal_features"]:
+        add_cyclic_year_feature(df)
+
+    if "seconds" in config["temporal_features"]:
+        timestamps = pd.to_datetime(df["timestamp"])
+        df["seconds"] = (timestamps - timestamps.min()).total_seconds()
+
+
+def intersection(lst1, lst2):
+    """
+    Find the intersection of two lists.
+
+    Args:
+        lst1 (list): The first list.
+        lst2 (list): The second list.
+
+    Returns:
+        list: The intersection of the two lists.
+    """
+    return [value for value in lst1 if value in lst2]
+
+
+############################## MAIN FUNCTION ######################################################
+
+
+def main(config):
+    """
+    Process the intermediate SP500 dataset from Kaggle into fully-processed training data.
+    Extract only the necessary features, split the data into training and testing sets.
+    Log-transform and scale the data if desired.
+    If the scaling occurs, we save the scaler model in the output directory for later use.
+
+    Args:
+    - config (dict): The configuration dictionary
+    """
+    timestamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    logger.info(f"Starting Kaggle data processing at {timestamp}")
+    logger.info(f"Configuration:\n{pprint.pformat(config)}\n")
+
+    # Validate the paths
+    validate_paths(config)
+
     # apply basic transformations, add features, and split data
     print("Transforming data, adding features, and splitting data")
     training_cutoff = pd.to_datetime(config["training_cutoff"])
+
+    train_dir = f"{config['destination']}/train"
+    test_dir = f"{config['destination']}/test"
     for filename in tqdm(os.listdir(config["source"])):
         logger.info(f"Processing file: {filename}")
 
@@ -197,78 +247,17 @@ def main(config):
             continue
 
         df = pd.read_csv(f"{config['source']}/{filename}")
+        df = df[config["use_columns"]]
 
-        # get datetimes and convert to milliseconds
-        timestamps = pd.to_datetime(df["timestamp"])
-        df["timestamp"] = (timestamps - timestamps.min()).astype("int64") // 10**6
-
-        # Keep only desired columns
-        df = df[config["keep_columns"]]
-
-        # Apply log transformation to discrete/integer columns
-        int_log_cols = [col for col in df.columns if col in INT_LOG_COLUMNS]
-        if config["log_transform"] and len(int_log_cols) > 0:
-            log_df = df[int_log_cols]
-            assert isinstance(log_df, pd.DataFrame), "log_df is not a DataFrame"
-            df[int_log_cols] = log_df.apply(lambda x: np.log(x + INT_EPS))
-
-        # Apply log transformation to continuous/float columns
-        float_log_cols = [col for col in df.columns if col in FLOAT_LOG_COLUMNS]
-        if config["log_transform"] and len(float_log_cols) > 0:
-            log_df = df[float_log_cols]
-            assert isinstance(log_df, pd.DataFrame), "log_df is not a DataFrame"
-            df[float_log_cols] = log_df.apply(lambda x: np.log(x + FLOAT_EPS))
-
-        # Add cyclic temporal features
-
-        # Add the cyclic day feature
-        fraction_of_day = (
-            timestamps.dt.hour + timestamps.dt.minute / 60 + timestamps.dt.second / 3600
-        ) / 24
-        if "day" in config["temporal_features"]:
-            df["day_sin"] = np.sin(2 * np.pi * fraction_of_day)
-            df["day_cos"] = np.cos(2 * np.pi * fraction_of_day)
-
-        # Add the cyclic week feature
-        if "week" in config["temporal_features"]:
-            fraction_of_week = (timestamps.dt.dayofweek + fraction_of_day) / 7
-            df["week_sin"] = np.sin(2 * np.pi * fraction_of_week)
-            df["week_cos"] = np.cos(2 * np.pi * fraction_of_week)
-
-        # Add the cyclic month feature
-        if "month" in config["temporal_features"]:
-            days_in_month = timestamps.dt.days_in_month
-            fraction_of_month = (timestamps.dt.day + fraction_of_day) / days_in_month
-            df["month_sin"] = np.sin(2 * np.pi * fraction_of_month)
-            df["month_cos"] = np.cos(2 * np.pi * fraction_of_month)
-
-        # Add the cyclic quarter feature
-        if "quarter" in config["temporal_features"]:
-            period = timestamps.dt.to_period("Q")
-            days_in_quarter = period.apply(
-                lambda x: x.end_time.dayofyear - x.start_time.dayofyear
-            )
-            day_of_quarter = timestamps.dt.dayofyear - period.apply(
-                lambda x: x.start_time.dayofyear
-            )
-            fraction_of_quarter = (day_of_quarter + fraction_of_day) / days_in_quarter
-            df["quarter_sin"] = np.sin(2 * np.pi * fraction_of_quarter)
-            df["quarter_cos"] = np.cos(2 * np.pi * fraction_of_quarter)
-
-        # Add the cyclic year feature
-        if "year" in config["temporal_features"]:
-            days_in_year = timestamps.dt.to_period("Y").apply(
-                lambda x: x.end_time.dayofyear
-            )
-            day_of_year = timestamps.dt.dayofyear
-            fraction_of_year = (day_of_year + fraction_of_day) / days_in_year
-            df["year_sin"] = np.sin(2 * np.pi * fraction_of_year)
-            df["year_cos"] = np.cos(2 * np.pi * fraction_of_year)
+        # Add features
+        add_temporal_features(config, df)
 
         # Split data into train and test
+        timestamps = pd.to_datetime(df["timestamp"])
         train_data = df[timestamps < training_cutoff]
         test_data = df[timestamps >= training_cutoff]
 
+        # Post-split validation
         assert isinstance(train_data, pd.DataFrame), "train_data is not a DataFrame"
         assert isinstance(test_data, pd.DataFrame), "test_data is not a DataFrame"
 
@@ -280,53 +269,26 @@ def main(config):
             logger.warning(f"Empty testing data: {filename}")
             continue
 
+        # Transform the data and save
+        transformer = DataTransformer(TRANSFORMER_CONFIG)
+        last_row = train_data.iloc[-1]
+        train_data = transformer.fit_transform(train_data)
+        test_data = transformer.transform(test_data, last_row)
+        logger.info(f"Transformed data using: {config['transform_config']}")
+        file_stub = filename.split(".")[0]
+        transformer.save(f"{config['destination']}/{file_stub}_transformer.pkl")
+
+        # Remove unnecessary columns
+        drop_cols = intersection(config["del_columns"], train_data.columns)
+        train_data = train_data.drop(columns=drop_cols)
+        test_data = test_data.drop(columns=drop_cols)
+
         # Save the training and testing data
         train_data.to_csv(f"{train_dir}/{filename}", index=False)
         test_data.to_csv(f"{test_dir}/{filename}", index=False)
 
         logger.debug(f"Saved training data to: {train_dir}/{filename}")
         logger.debug(f"Saved testing data to: {test_dir}/{filename}")
-
-    if config["scale_features"]:
-        print("Rescaling data...")
-        scale_cols = config["scale_features"]
-        logger.info("Scaling columns: %s", scale_cols)
-
-        # Do a pass through the training data to and use partial_fit to train the scaler
-        # This allows us to train the scaler without having all files in memory at once
-        scaler = preprocessing.StandardScaler()
-        print("Training the scaler on the training data")
-        for filename in tqdm(os.listdir(train_dir)):
-            df = pd.read_csv(f"{train_dir}/{filename}")
-            if df.empty:
-                continue
-            scaler.partial_fit(df[scale_cols])
-
-        # Save the scaler
-        scaler_filename = f"{config['destination']}/scaler.pkl"
-        with open(scaler_filename, "wb") as f:
-            pickle.dump(scaler, f)
-        logger.info(f"Saved scaler to: {scaler_filename}")
-
-        # Scale the training data
-        print("Scaling the training data")
-        for filename in tqdm(os.listdir(train_dir)):
-            df = pd.read_csv(f"{train_dir}/{filename}")
-            if df.empty:
-                continue
-            scaled_data = scaler.transform(df[scale_cols])
-            df[scale_cols] = pd.DataFrame(scaled_data, columns=scale_cols)
-            df.to_csv(f"{train_dir}/{filename}", index=False)
-
-        # Scale the testing data
-        print("Scaling the testing data")
-        for filename in tqdm(os.listdir(test_dir)):
-            df = pd.read_csv(f"{test_dir}/{filename}")
-            if df.empty:
-                continue
-            scaled_data = scaler.transform(df[scale_cols])
-            df[scale_cols] = pd.DataFrame(scaled_data, columns=scale_cols)
-            df.to_csv(f"{test_dir}/{filename}", index=False)
 
 
 if __name__ == "__main__":
