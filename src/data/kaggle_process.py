@@ -6,7 +6,9 @@ from datetime import datetime
 
 import pandas as pd
 from tqdm import tqdm
-from transform import *
+
+from util.features import add_moving_avg_features, add_temporal_features
+from util.transform import DataTransformer
 
 ############################# GLOBAL VARIABLES #####################################################
 
@@ -20,10 +22,46 @@ DEFAULT_LOG_FILE = f"logs/kaggle-process_{timestamp}.log"
 logger = logging.getLogger(__name__)
 
 # TODO: Move this to a configuration file
-TRANSFORMER_CONFIG = {
-    "log_features": ["open", "low", "high", "volume", "close", "adj_close"],
-    "diff_features": ["open", "low", "high", "close", "adj_close"],
-    "scale_features": ["open", "low", "high", "volume", "close", "adj_close"],
+TRANSFORM_CONFIG = {
+    "log_features": [
+        "open",
+        "low",
+        "high",
+        "volume",
+        "close",
+        "adj_close",
+        "close_sma20",
+        "close_ema20",
+        "close_sma50",
+        "close_ema50",
+        "close_next",
+    ],
+    "diff_features": [
+        "open",
+        "low",
+        "high",
+        # "volume", # volue is more stationary than other features and often not differenced
+        "close",
+        "adj_close",
+        # "close_sma20", # moving averages encode long-term trends. Differencing would remove this information.
+        # "close_ema20",
+        # "close_sma50",
+        # "close_ema50",
+        "close_next",
+    ],
+    "scale_features": [
+        "open",
+        "low",
+        "high",
+        "volume",
+        "close",
+        "adj_close",
+        "close_sma20",
+        "close_ema20",
+        "close_sma50",
+        "close_ema50",
+        "close_next",
+    ],
 }
 
 ############################## FUNCTIONS ###########################################################
@@ -90,8 +128,8 @@ def get_args():
     parser.add_argument(
         "--del_columns",
         type=str,
-        nargs="+",
-        default=["timestamp"],
+        nargs="*",
+        default=[],
         help="The columns to delete after processing",
     )
     parser.add_argument(
@@ -104,7 +142,14 @@ def get_args():
         "--temporal_features",
         type=str,
         nargs="*",
-        default=[],
+        default=[
+            "seconds",
+            "cyclic_day",
+            "cyclic_week",
+            "cyclic_month",
+            "cyclic_quarter",
+            "cyclic_year",
+        ],
         choices=[
             "seconds",
             "cyclic_day",
@@ -116,10 +161,24 @@ def get_args():
         help="The temporal features to include",
     )
     parser.add_argument(
+        "--avg_features",
+        type=str,
+        nargs="*",
+        default=["sma_20", "ema_20", "sma_50", "ema_50"],
+        help="The moving average features to include",
+    )
+    parser.add_argument(
+        "--shift_features",
+        type=str,
+        nargs="*",
+        default=["close"],
+        help="The features to shift for prediction",
+    )
+    parser.add_argument(
         "--transform_config",
         type=str,
+        default=None,
         help="The configuration file for the transformer",
-        default="config/transformer_config.yaml",
     )
 
     return parser.parse_args()
@@ -177,26 +236,11 @@ def validate_paths(config):
         os.makedirs(test_dir)
         logger.info(f"Created testing folder: {test_dir}")
 
-
-def add_temporal_features(config, df):
-    if "cyclic_day" in config["temporal_features"]:
-        add_cyclic_day_feature(df)
-
-    if "cyclic_week" in config["temporal_features"]:
-        add_cyclic_week_feature(df)
-
-    if "cyclic_month" in config["temporal_features"]:
-        add_cyclic_month_feature(df)
-
-    if "cyclic_quarter" in config["temporal_features"]:
-        add_cyclic_quarter_feature(df)
-
-    if "cyclic_year" in config["temporal_features"]:
-        add_cyclic_year_feature(df)
-
-    if "seconds" in config["temporal_features"]:
-        timestamps = pd.to_datetime(df["timestamp"])
-        df["seconds"] = (timestamps - timestamps.min()).total_seconds()
+    # Ensure the intermediate data folder exists
+    inter_dir = f"{config['destination']}/intermediate"
+    if not os.path.exists(inter_dir):
+        os.makedirs(inter_dir)
+        logger.info(f"Created intermediate folder: {inter_dir}")
 
 
 def intersection(lst1, lst2):
@@ -211,6 +255,111 @@ def intersection(lst1, lst2):
         list: The intersection of the two lists.
     """
     return [value for value in lst1 if value in lst2]
+
+
+def create_intermediate_files(config):
+    inter_dir = f"{config['destination']}/intermediate"
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.info(f"Adding features to file: {filename}")
+
+        df = pd.read_csv(f"{config['source']}/{filename}")
+        df = df[config["use_columns"]]
+
+        # Add features
+        add_temporal_features(df, config["temporal_features"])
+        add_moving_avg_features(df, config["avg_features"])
+
+        # Add shifted features
+        assert isinstance(df, pd.DataFrame), "df is not a DataFrame"
+        for feature in intersection(config["shift_features"], df.columns):
+            df[f"{feature}_next"] = df[feature].shift(-1)
+
+        # Save intermediate data
+        df = df.dropna()
+        df.to_csv(f"{inter_dir}/{filename}", index=False)
+
+
+def train_transformer(config):
+    inter_dir = f"{config['destination']}/intermediate"
+    training_cutoff = pd.to_datetime(config["training_cutoff"])
+    transformer = DataTransformer(config["transform_config"])
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.info(f"Training transformer on file: {filename}")
+
+        # Save intermediate data
+        df = pd.read_csv(f"{inter_dir}/{filename}")
+
+        # Split data into train and test
+        timestamps = pd.to_datetime(df["timestamp"])
+        train_data = df[timestamps < training_cutoff]
+
+        # Post-split validation
+        assert isinstance(train_data, pd.DataFrame), "train_data is not a DataFrame"
+
+        if train_data.empty:
+            logger.warning(f"Empty training data: {filename}")
+            continue
+
+        transformer.partial_fit(train_data)
+
+    return transformer
+
+
+def create_train_test_files(config, transformer):
+    inter_dir = f"{config['destination']}/intermediate"
+    train_dir = f"{config['destination']}/train"
+    test_dir = f"{config['destination']}/test"
+    training_cutoff = pd.to_datetime(config["training_cutoff"])
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.info(f"Creating train/test data for: {filename}")
+
+        df = pd.read_csv(f"{inter_dir}/{filename}")
+
+        # Split data into train and test
+        timestamps = pd.to_datetime(df["timestamp"])
+        train_data = df[timestamps < training_cutoff]
+        test_data = df[timestamps >= training_cutoff]
+
+        # Post-split validation
+        assert isinstance(train_data, pd.DataFrame), "train_data is not a DataFrame"
+        assert isinstance(test_data, pd.DataFrame), "test_data is not a DataFrame"
+
+        if train_data.empty:
+            logger.warning(f"Empty training data: {filename}")
+            continue
+
+        if test_data.empty:
+            logger.warning(f"Empty testing data: {filename}")
+            continue
+
+        # Transform the data and save
+        last_row = train_data.iloc[-1].copy()
+        train_data = transformer.transform(train_data)
+        test_data = transformer.transform(test_data, last_row)
+
+        # Remove unnecessary columns
+        drop_cols = intersection(config["del_columns"], train_data.columns)
+        train_data = train_data.drop(columns=drop_cols)
+        test_data = test_data.drop(columns=drop_cols)
+
+        # Save the training and testing data
+        train_data.to_csv(f"{train_dir}/{filename}", index=False)
+        test_data.to_csv(f"{test_dir}/{filename}", index=False)
+
+        logger.debug(f"Saved training data to: {train_dir}/{filename}")
+        logger.debug(f"Saved testing data to: {test_dir}/{filename}")
 
 
 ############################## MAIN FUNCTION ######################################################
@@ -233,62 +382,15 @@ def main(config):
     # Validate the paths
     validate_paths(config)
 
-    # apply basic transformations, add features, and split data
-    print("Transforming data, adding features, and splitting data")
-    training_cutoff = pd.to_datetime(config["training_cutoff"])
+    print("Adding features and generating intermediate files...")
+    create_intermediate_files(config)
 
-    train_dir = f"{config['destination']}/train"
-    test_dir = f"{config['destination']}/test"
-    for filename in tqdm(os.listdir(config["source"])):
-        logger.info(f"Processing file: {filename}")
+    print("Training the transformer...")
+    transformer = train_transformer(config)
 
-        if not filename.endswith(".csv"):
-            logger.warning(f"Skipping non-CSV file: {filename}")
-            continue
-
-        df = pd.read_csv(f"{config['source']}/{filename}")
-        df = df[config["use_columns"]]
-
-        # Add features
-        add_temporal_features(config, df)
-
-        # Split data into train and test
-        timestamps = pd.to_datetime(df["timestamp"])
-        train_data = df[timestamps < training_cutoff]
-        test_data = df[timestamps >= training_cutoff]
-
-        # Post-split validation
-        assert isinstance(train_data, pd.DataFrame), "train_data is not a DataFrame"
-        assert isinstance(test_data, pd.DataFrame), "test_data is not a DataFrame"
-
-        if train_data.empty:
-            logger.warning(f"Empty training data: {filename}")
-            continue
-
-        if test_data.empty:
-            logger.warning(f"Empty testing data: {filename}")
-            continue
-
-        # Transform the data and save
-        transformer = DataTransformer(TRANSFORMER_CONFIG)
-        last_row = train_data.iloc[-1]
-        train_data = transformer.fit_transform(train_data)
-        test_data = transformer.transform(test_data, last_row)
-        logger.info(f"Transformed data using: {config['transform_config']}")
-        file_stub = filename.split(".")[0]
-        transformer.save(f"{config['destination']}/{file_stub}_transformer.pkl")
-
-        # Remove unnecessary columns
-        drop_cols = intersection(config["del_columns"], train_data.columns)
-        train_data = train_data.drop(columns=drop_cols)
-        test_data = test_data.drop(columns=drop_cols)
-
-        # Save the training and testing data
-        train_data.to_csv(f"{train_dir}/{filename}", index=False)
-        test_data.to_csv(f"{test_dir}/{filename}", index=False)
-
-        logger.debug(f"Saved training data to: {train_dir}/{filename}")
-        logger.debug(f"Saved testing data to: {test_dir}/{filename}")
+    print("Transforming the data and creating training and testing files...")
+    create_train_test_files(config, transformer)
+    transformer.save(f"{config['destination']}/transformer.pkl")
 
 
 if __name__ == "__main__":
@@ -304,4 +406,6 @@ if __name__ == "__main__":
 
     # Run the main function
     config = {k: v for k, v in vars(args).items() if k not in ["log_level", "log_file"]}
+    if "transform_config" not in args or args.transform_config is None:
+        config["transform_config"] = TRANSFORM_CONFIG
     main(config)
