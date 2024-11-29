@@ -42,3 +42,25 @@ def nt_xent_loss(z_i, z_j, temperature):
     target[batch_sz:] -= batch_sz
 
     return F.cross_entropy(pair_similarities / temperature, target, reduction="mean")
+
+
+def average_percentage_error(true_log_diff, pred_log_diff):
+    """
+    Compute the Average Percentage Error (APE) in PyTorch.
+
+    Args:
+        true_log_diff (torch.Tensor): True log differences (log(p_next) - log(p_current)).
+        pred_log_diff (torch.Tensor): Predicted log differences (log(p_pred) - log(p_current)).
+
+    Returns:
+        torch.Tensor: The Average Percentage Error (APE) as a scalar.
+    """
+    # Convert log differences to price ratios
+    true_ratios = torch.exp(true_log_diff)
+    pred_ratios = torch.exp(pred_log_diff)
+
+    # Compute percentage error
+    percentage_errors = torch.abs((true_ratios - pred_ratios) / true_ratios) * 100
+
+    # Compute average percentage error
+    return percentage_errors.mean()

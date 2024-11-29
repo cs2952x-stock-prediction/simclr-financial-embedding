@@ -17,7 +17,9 @@ from torchsummary import summary
 from tqdm import tqdm
 
 import wandb
+from src.data.util.transform import DataTransformer
 from util.datasets import TimeSeriesDataset
+from util.evaluation import average_percentage_error
 from util.models import DenseLayers, LstmEncoder
 from util.training import finetuning_epoch, simclr_epoch, training_epoch
 
@@ -81,6 +83,11 @@ def get_args():
         help="Path to testing data",
     )
     arg_parser.add_argument(
+        "--transformer_file",
+        type=str,
+        help="Path to transformer model file",
+    )
+    arg_parser.add_argument(
         "--checkpoints_dir",
         type=str,
         default=DEFAULT_CHECKPOINTS_DIR,
@@ -114,6 +121,20 @@ def get_args():
         type=str,
         default=DEFAULT_LOG_FILE,
         help="The log file to write to",
+    )
+    arg_parser.add_argument(
+        "-x",
+        "--features",
+        type=str,
+        default=["open", "close", "high", "low", "volume"],
+        help="The features to use for training",
+    )
+    arg_parser.add_argument(
+        "-y",
+        "--target",
+        type=str,
+        default="close",
+        help="The target variable to predict",
     )
 
     return arg_parser.parse_args()
@@ -172,6 +193,9 @@ def load_config(args):
     if args.test_dir is not None:
         config["data"]["test_dir"] = args.test_dir
 
+    if args.transformer_file is not None:
+        config["data"]["transformer_file"] = args.transformer_file
+
     if args.checkpoints_dir is not None:
         config["training"]["checkpoints_dir"] = args.checkpoints_dir
 
@@ -184,6 +208,12 @@ def load_config(args):
 
     if args.num_epochs is not None:
         config["training"]["n_epochs"] = args.num_epochs
+
+    if args.features is not None:
+        config["data"]["features"] = args.features
+
+    if args.target is not None:
+        config["data"]["target"] = args.target
 
     # Override configuration with JSON string of parameters
     if args.config_override is not None:
@@ -483,7 +513,7 @@ def train_models(models, optimizers, train_loader, config, epoch):
     return simclr_training_loss, finetuning_training_loss, baseline_training_loss
 
 
-def test_models(models, test_loader, epoch):
+def test_models(models, test_loader, epoch, transformer: DataTransformer):
     """
     Test the finetuned model and the baseline model on the test data.
 
@@ -491,6 +521,7 @@ def test_models(models, test_loader, epoch):
     - models: a tuple of the encoder, projector, probe, and base model
     - test_loader: the testing DataLoader
     - epoch: the current epoch number (for logging)
+    - transformer: the data transformer to use for inverse scaling
 
     Returns:
     - finetuning_test_loss: the validation loss for the finetuned model
@@ -501,6 +532,13 @@ def test_models(models, test_loader, epoch):
 
     print("Testing Finetuned model...")
     finetuned_test_loss = 0
+
+    # TODO: this is a quick patch that should be made more general later
+    target_idx = transformer.scale_cols.index("next_close")
+    scale = transformer.scaler.scale_[target_idx]  # type: ignore
+    mean = transformer.scaler.mean_[target_idx]  # type: ignore
+
+    finetuned_perc_error = 0
     encoder.eval()
     probe.eval()
     pbar = tqdm(test_loader)
@@ -509,13 +547,18 @@ def test_models(models, test_loader, epoch):
         y_pred = probe(z)
         y_true = y[:, -1]
         finetuned_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        finetuned_perc_error += average_percentage_error(
+            (y_true - mean) / scale, (y_pred - mean) / scale
+        ).item()
     finetuned_test_loss /= len(test_loader)
+    finetuned_perc_error /= len(test_loader)
     logger.info(
         f"Epoch {epoch} --- Finetuned Model Test Loss: {finetuned_test_loss:.4e}"
     )
     print(f"Finetuned Model Test Loss: {finetuned_test_loss:.4e}")
 
     print("Testing Baseline Model...")
+    baseline_perc_error = 0
     baseline_test_loss = 0
     base_model.eval()
     pbar = tqdm(test_loader)
@@ -523,11 +566,20 @@ def test_models(models, test_loader, epoch):
         y_pred = base_model(x)
         y_true = y[:, -1]
         baseline_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        baseline_perc_error += average_percentage_error(
+            (y_true - mean) / scale, (y_pred - mean) / scale
+        ).item()
     baseline_test_loss /= len(test_loader)
+    baseline_perc_error /= len(test_loader)
     logger.info(f"Epoch {epoch} --- Baseline Model Test Loss: {baseline_test_loss:.4e}")
     print(f"Baseline Model Test Loss: {baseline_test_loss:.4e}")
 
-    return finetuned_test_loss, baseline_test_loss
+    return (
+        finetuned_test_loss,
+        finetuned_perc_error,
+        baseline_test_loss,
+        baseline_perc_error,
+    )
 
 
 def save_model_checkpoints(models, config, epoch):
@@ -557,23 +609,31 @@ def save_model_checkpoints(models, config, epoch):
 
 def experiment_run(models, optimizers, train_loader, test_loader, config):
     print("Starting Experiment Run...")
+    transformer = DataTransformer.load(config["data"]["transformer_file"])
     num_epochs = config["num_epochs"]
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train_losses = train_models(models, optimizers, train_loader, config, epoch)
-        simclr_train_loss, finetuning_train_loss, base_train_loss = train_losses
+        simclr_train_loss, finetuning_train_loss, baseline_train_loss = train_losses
 
-        test_losses = test_models(models, test_loader, epoch)
-        finetuning_test_loss, base_test_loss = test_losses
+        test_losses = test_models(models, test_loader, epoch, transformer)
+        (
+            finetuning_test_loss,
+            finetined_perc_error,
+            baseline_test_loss,
+            baseline_perc_error,
+        ) = test_losses
 
         wandb.log(
             {
                 "Epoch": epoch,
                 "SimCLR Training Loss": simclr_train_loss,
                 "Finetuned Training Loss": finetuning_train_loss,
-                "Baseline Training Loss": base_train_loss,
+                "Baseline Training Loss": baseline_train_loss,
                 "Finetuned Test Loss": finetuning_test_loss,
-                "Baseline Test Loss": base_test_loss,
+                "Baseline Test Loss": baseline_test_loss,
+                "Finetuned Test APE": finetined_perc_error,
+                "Baseline Test APE": baseline_perc_error,
             }
         )
 

@@ -30,6 +30,7 @@ class DataTransformer:
     def __init__(self, config: dict):
         self.config = config  # Store the transformation configuration
         self.scaler = StandardScaler()
+        self.scale_cols = []
 
     def log_transform(self, df: pd.DataFrame):
         """
@@ -187,8 +188,10 @@ class DataTransformer:
         df = self.log_transform(df)
         df = self.diff_transform(df, prev_row)
 
-        scale_cols = intersection(self.config.get("scale_features", []), df.columns)
-        self.scaler.fit(df[scale_cols])
+        self.scale_cols = intersection(
+            self.config.get("scale_features", []), df.columns
+        )
+        self.scaler.fit(df[self.scale_cols])
 
     def partial_fit(self, df: pd.DataFrame, prev_row: Optional[pd.Series] = None):
         """
