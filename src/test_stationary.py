@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
+from tqdm import tqdm
 
 
 def adf_test(series, column_name):
@@ -22,11 +23,10 @@ def process_csv_files(directory, output_file):
     results = []
 
     # Iterate through all files in the directory
-    for filename in os.listdir(directory):
+    for filename in tqdm(os.listdir(directory)):
         if filename.endswith(".csv"):
             file_path = os.path.join(directory, filename)
             try:
-                print(f"Processing file: {filename}")
                 # Load CSV
                 data = pd.read_csv(file_path)
 
@@ -47,8 +47,8 @@ def process_csv_files(directory, output_file):
 
 if __name__ == "__main__":
     # Specify the directory containing the CSV files and the output file
-    input_directory = "data/processed/kaggle/train/"
-    output_summary_file = "adf_test_summary.csv"
+    input_directory = "data/processed/kaggle/v2/train/"
+    output_summary_file = "adf_test_summary_v2.csv"
 
     # Run the process
     process_csv_files(input_directory, output_summary_file)
