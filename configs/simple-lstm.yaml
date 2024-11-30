@@ -1,7 +1,8 @@
 # config.yaml
 data:
-  train_dir: "data/processed/kaggle/train"
-  test_dir: "data/processed/kaggle/test"
+  train_dir: "data/processed/kaggle/v2/train"
+  test_dir: "data/processed/kaggle/v2/test"
+  scaler_file: "data/processed/kaggle/v2/scaler.pkl"
   batch_size: 128
   segment_length: 30
   segment_step: 5
@@ -31,7 +32,7 @@ optimizers:
   baseline_lr: 1.0e-3
 training:
   num_epochs: 500
-  temperature: 0.5
+  temperature: 0.3
 experiment:
   name: "simple-lstm"
   tags: ["lstm", "simclr"]

@@ -10,6 +10,8 @@ import pandas as pd
 import torch
 import yaml
 from dotenv import load_dotenv
+from pandas.core.generic import pickle
+from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -193,8 +195,8 @@ def load_config(args):
     if args.test_dir is not None:
         config["data"]["test_dir"] = args.test_dir
 
-    if args.transformer_file is not None:
-        config["data"]["transformer_file"] = args.transformer_file
+    if args.scaler_file is not None:
+        config["data"]["scaler_file"] = args.scaler_file
 
     if args.checkpoints_dir is not None:
         config["training"]["checkpoints_dir"] = args.checkpoints_dir
@@ -513,7 +515,7 @@ def train_models(models, optimizers, train_loader, config, epoch):
     return simclr_training_loss, finetuning_training_loss, baseline_training_loss
 
 
-def test_models(models, test_loader, epoch, transformer: DataTransformer):
+def test_models(models, test_loader, epoch, scaler: StandardScaler):
     """
     Test the finetuned model and the baseline model on the test data.
 
@@ -521,7 +523,7 @@ def test_models(models, test_loader, epoch, transformer: DataTransformer):
     - models: a tuple of the encoder, projector, probe, and base model
     - test_loader: the testing DataLoader
     - epoch: the current epoch number (for logging)
-    - transformer: the data transformer to use for inverse scaling
+    - scaler: a StandardScaler object for the target variable
 
     Returns:
     - finetuning_test_loss: the validation loss for the finetuned model
@@ -534,9 +536,10 @@ def test_models(models, test_loader, epoch, transformer: DataTransformer):
     finetuned_test_loss = 0
 
     # TODO: this is a quick patch that should be made more general later
-    target_idx = transformer.scale_cols.index("next_close")
-    scale = transformer.scaler.scale_[target_idx]  # type: ignore
-    mean = transformer.scaler.mean_[target_idx]  # type: ignore
+    # We should not assume that the target variable is the last column
+    # Extracting the scale and mean of the target variable is also bad form
+    scale = scaler.scale_[-1]  # type: ignore
+    mean = scaler.mean_[-1]  # type: ignore
 
     finetuned_perc_error = 0
     encoder.eval()
@@ -609,14 +612,14 @@ def save_model_checkpoints(models, config, epoch):
 
 def experiment_run(models, optimizers, train_loader, test_loader, config):
     print("Starting Experiment Run...")
-    transformer = DataTransformer.load(config["data"]["transformer_file"])
+    scaler = pickle.load(open(config["scaler_file"], "rb"))
     num_epochs = config["num_epochs"]
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train_losses = train_models(models, optimizers, train_loader, config, epoch)
         simclr_train_loss, finetuning_train_loss, baseline_train_loss = train_losses
 
-        test_losses = test_models(models, test_loader, epoch, transformer)
+        test_losses = test_models(models, test_loader, epoch, scaler)
         (
             finetuning_test_loss,
             finetined_perc_error,
