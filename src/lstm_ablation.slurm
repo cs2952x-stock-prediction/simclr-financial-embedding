@@ -42,7 +42,7 @@ FEATURES=(
 CURRENT_FEATURES=(${FEATURES[$SLURM_ARRAY_TASK_ID]})
 
 # Run the Python script with the selected ablation
-python src/train_simple_lstm.py -x "open" "min" "max" "close" "volume" ${CURRENT_FEATURES} --name "ablation_$SLURM_ARRAY_TASK_ID"
+python src/train_simple_lstm.py -x "open" "low" "high" "close" "volume" ${CURRENT_FEATURES} --name "ablation_$SLURM_ARRAY_TASK_ID"
 
 # Deactivate virtual environment
 deactivate
