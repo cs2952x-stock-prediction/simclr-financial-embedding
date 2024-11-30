@@ -148,12 +148,11 @@ def main(config):
     symbols = df["symbol"].unique()
     for symbol in tqdm(symbols):
         symbol_df = df[df["symbol"] == symbol]  # filter out only the current symbol
-        assert isinstance(symbol_df, pd.DataFrame), "symbol_df is not a DataFrame"
         symbol_df = symbol_df.drop(columns=["symbol"])  # drop the symbol column
 
         # Handle missing values
         if config["fill_method"] != "drop":
-            symbol_df[COLUMNS_TO_FILL] = symbol_df[COLUMNS_TO_FILL].interpolate(
+            symbol_df[COLUMNS_TO_FILL] = symbol_df[COLUMNS_TO_FILL].interpolate(  # type: ignore
                 limit_direction="both",
                 method=config["fill_method"],
                 axis=0,
@@ -166,7 +165,12 @@ def main(config):
         if n_drop > 0:
             logger.warning(f"Removed {n - len(symbol_df)} NaN values from {symbol}")
 
-        symbol_df.sort_values(by=["timestamp"], inplace=True)  # ensure sorted
+        # Fail if the data is empty
+        if len(symbol_df) == 0:
+            logger.error(f"Empty data for {symbol}")
+            raise ValueError(f"Empty data for {symbol}")
+
+        symbol_df.sort_values(by=["timestamp"], inplace=True)  # type: ignore
         symbol_df.to_csv(f"{config['destination']}/{symbol}.csv", index=False)
         logger.debug(f"Saved {symbol}.csv to {config['destination']}")
 

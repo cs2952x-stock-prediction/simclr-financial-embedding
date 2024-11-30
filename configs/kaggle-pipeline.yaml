@@ -1,6 +1,7 @@
 download:
   destination: "data/raw/kaggle"
   force: True
+  version: 960
   files: ["sp500_stocks.csv", "sp500_companies.csv", "sp500_index.csv"]
 clean:
   source: "data/raw/kaggle/sp500_stocks.csv"
@@ -9,10 +10,58 @@ clean:
   fill_method: "drop" # how to deal with NaN entries
 process:
   source: "data/interim/kaggle"
-  destination: "data/processed/kaggle"
+  destination: "data/processed/kaggle/v2"
   force: True
   keep_columns: ["close", "high", "low", "open", "volume"]
   training_cutoff: "2023-01-01"
-  log_transform: True
-  scale_features: ["close", "high", "low", "open", "volume"]
-  temporal_features: []
+  temporal_features:
+    - "seconds"
+    # no cyclic day since kaggle data is daily
+    - "cyclic_week"
+    - "cyclic_month"
+    - "cyclic_quarter"
+    - "cyclic_year"
+  avg_features:
+    - "close_sma20"
+    - "close_sma50"
+    - "close_ema20"
+    - "close_ema50"
+  shift_features:
+    - "close"
+  log_transform:
+    - "open"
+    - "low"
+    - "high"
+    - "volume"
+    - "close"
+    - "adj_close"
+    - "close_sma20"
+    - "close_ema20"
+    - "close_sma50"
+    - "close_ema50"
+    - "close_next"
+  diff_transform:
+    - "open"
+    - "low"
+    - "high"
+    # - "volume"
+    - "close"
+    - "adj_close"
+    # - "close_sma20"
+    # - "close_ema20"
+    # - "close_sma50"
+    # - "close_ema50"
+    - "close_next"
+  scale_transform:
+    - "open"
+    - "low"
+    - "high"
+    - "volume"
+    - "close"
+    - "adj_close"
+    - "close_sma20"
+    - "close_ema20"
+    - "close_sma50"
+    - "close_ema50"
+    - "close_next"
+  del_features: []
