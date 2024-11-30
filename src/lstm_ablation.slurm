@@ -26,7 +26,7 @@ module load python/3.11
 source venv/bin/activate
 
 # Define the ablations array
-ABLATIONS=(
+FEATURES=(
     ""
     "week_sin week_cos"
     "month_sin month_cos"
@@ -39,10 +39,10 @@ ABLATIONS=(
 )
 
 # Access the current ablation based on SLURM_ARRAY_TASK_ID
-CURRENT_ABLATION="${ABLATIONS[$SLURM_ARRAY_TASK_ID]}"
+CURRENT_FEATURES=(${FEATURES[$SLURM_ARRAY_TASK_ID]})
 
 # Run the Python script with the selected ablation
-python src/train_simple_lstm.py -x "open min max close volume ${CURRENT_ABLATION}" --name "ablation_$SLURM_ARRAY_TASK_ID"
+python src/train_simple_lstm.py -x "open" "min" "max" "close" "volume" ${CURRENT_FEATURES} --name "ablation_$SLURM_ARRAY_TASK_ID"
 
 # Deactivate virtual environment
 deactivate
