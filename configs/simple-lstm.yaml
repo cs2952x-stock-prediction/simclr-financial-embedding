@@ -6,12 +6,12 @@ data:
   batch_size: 128
   segment_length: 30
   segment_step: 5
-  target: "next_close"
+  targets: ["next_close"]
   features: ["open", "min", "max", "close", "volume"]
 models:
   encoder:
     # input size is determined by the data shape
-    num_layers: 3
+    num_layers: 1
     hidden_size: 128
     output_size: 128
   projector:
@@ -32,7 +32,7 @@ optimizers:
   baseline_lr: 1.0e-3
 training:
   num_epochs: 500
-  temperature: 0.3
+  temperature: 0.5
 experiment:
   name: "simple-lstm"
   tags: ["lstm", "simclr"]

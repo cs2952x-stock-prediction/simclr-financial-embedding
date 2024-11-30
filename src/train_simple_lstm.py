@@ -19,7 +19,6 @@ from torchsummary import summary
 from tqdm import tqdm
 
 import wandb
-from src.data.util.transform import DataTransformer
 from util.datasets import TimeSeriesDataset
 from util.evaluation import average_percentage_error
 from util.models import DenseLayers, LstmEncoder
@@ -85,9 +84,9 @@ def get_args():
         help="Path to testing data",
     )
     arg_parser.add_argument(
-        "--transformer_file",
+        "--scaler_file",
         type=str,
-        help="Path to transformer model file",
+        help="Path to data scaler pickle file",
     )
     arg_parser.add_argument(
         "--checkpoints_dir",
@@ -128,15 +127,17 @@ def get_args():
         "-x",
         "--features",
         type=str,
+        nargs="+",
         default=["open", "close", "high", "low", "volume"],
         help="The features to use for training",
     )
     arg_parser.add_argument(
         "-y",
-        "--target",
+        "--targets",
         type=str,
-        default="close",
-        help="The target variable to predict",
+        nargs="+",
+        default=["close"],
+        help="The target variables to predict",
     )
 
     return arg_parser.parse_args()
@@ -214,8 +215,8 @@ def load_config(args):
     if args.features is not None:
         config["data"]["features"] = args.features
 
-    if args.target is not None:
-        config["data"]["target"] = args.target
+    if args.targets is not None:
+        config["data"]["targets"] = args.targets
 
     # Override configuration with JSON string of parameters
     if args.config_override is not None:
@@ -255,7 +256,7 @@ def configure_logger(log_level, log_file):
     logging.getLogger().setLevel(log_level)
 
 
-def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="close"):
+def build_dataloader(config, data_dir, batch_size, segment_length, segment_step):
     """
     Loads data from a directory of CSV files and creates a DataLoader for training and testing.
 
@@ -264,7 +265,6 @@ def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="
     - batch_size: the batch size for the DataLoader
     - segment_length: the length of each segment of data
     - segment_step: the step size for each segment
-    - y_col: the column to use as the target variable
 
     Returns:
     - a DataLoader of the data
@@ -274,13 +274,9 @@ def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="
         if filename.endswith(".csv"):
             df = pd.read_csv(os.path.join(data_dir, filename))
 
-            # Define x and y columns
-            x_cols = [col for col in df.columns if col != y_col]
-            y_cols = [y_col]
-
             # Append to lists
-            sequences.append(df[x_cols].values)
-            labels.append(df[y_cols].values)
+            sequences.append(df[config["features"]].values)
+            labels.append(df[config["targets"]].values)
 
     # Create a testing dataset and dataloader
     dataset = TimeSeriesDataset(sequences, labels, segment_length, segment_step)
@@ -306,11 +302,15 @@ def create_dataloaders(config):
     segment_step = config["segment_step"]
 
     print(f"Loading training data from {train_dir}...")
-    train_loader = build_dataloader(train_dir, batch_size, segment_length, segment_step)
+    train_loader = build_dataloader(
+        config, train_dir, batch_size, segment_length, segment_step
+    )
     logger.info(f"Loaded training data from {train_dir}")
 
     print(f"Loading testing data from {test_dir}...")
-    test_loader = build_dataloader(test_dir, batch_size, segment_length, segment_step)
+    test_loader = build_dataloader(
+        config, test_dir, batch_size, segment_length, segment_step
+    )
     logger.info(f"Loaded testing data from {test_dir}")
 
     train_sz, test_sz = len(train_loader), len(test_loader)
@@ -337,6 +337,7 @@ def initialize_encoder(config):
     return LstmEncoder(
         input_size=config["input_size"],
         hidden_size=config["hidden_size"],
+        num_layers=config["num_layers"],
         proj_size=config["output_size"],
     ).to(device)
 
@@ -551,7 +552,7 @@ def test_models(models, test_loader, epoch, scaler: StandardScaler):
         y_true = y[:, -1]
         finetuned_test_loss += nn.MSELoss()(y_pred, y_true).item()
         finetuned_perc_error += average_percentage_error(
-            (y_true - mean) / scale, (y_pred - mean) / scale
+            y_true * scale + mean, y_pred * scale + mean
         ).item()
     finetuned_test_loss /= len(test_loader)
     finetuned_perc_error /= len(test_loader)
@@ -570,7 +571,7 @@ def test_models(models, test_loader, epoch, scaler: StandardScaler):
         y_true = y[:, -1]
         baseline_test_loss += nn.MSELoss()(y_pred, y_true).item()
         baseline_perc_error += average_percentage_error(
-            (y_true - mean) / scale, (y_pred - mean) / scale
+            y_true * scale + mean, y_pred * scale + mean
         ).item()
     baseline_test_loss /= len(test_loader)
     baseline_perc_error /= len(test_loader)
@@ -610,9 +611,8 @@ def save_model_checkpoints(models, config, epoch):
     logger.info(f"Model checkpoints saved to {epoch_checkpoint}")
 
 
-def experiment_run(models, optimizers, train_loader, test_loader, config):
+def experiment_run(models, optimizers, train_loader, test_loader, config, scaler):
     print("Starting Experiment Run...")
-    scaler = pickle.load(open(config["scaler_file"], "rb"))
     num_epochs = config["num_epochs"]
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
@@ -679,7 +679,10 @@ def main(config):
     optimizers = initialize_optimizers(models, config["optimizers"])
 
     # Start the experiment
-    experiment_run(models, optimizers, train_loader, test_loader, config["training"])
+    scaler = pickle.load(open(config["data"]["scaler_file"], "rb"))
+    experiment_run(
+        models, optimizers, train_loader, test_loader, config["training"], scaler
+    )
 
 
 if __name__ == "__main__":

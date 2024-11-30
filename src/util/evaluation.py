@@ -49,17 +49,17 @@ def average_percentage_error(true_log_diff, pred_log_diff):
     Compute the Average Percentage Error (APE) in PyTorch.
 
     Args:
-        true_log_diff (torch.Tensor): True log differences (log(p_next) - log(p_current)).
-        pred_log_diff (torch.Tensor): Predicted log differences (log(p_pred) - log(p_current)).
+        true_log_diff (torch.Tensor): True log differences (log(p_next) - log(p_curr)).
+        pred_log_diff (torch.Tensor): Predicted log differences (log(p_pred) - log(p_curr)).
 
     Returns:
         torch.Tensor: The Average Percentage Error (APE) as a scalar.
     """
     # Convert log differences to price ratios
-    true_ratios = torch.exp(true_log_diff)
-    pred_ratios = torch.exp(pred_log_diff)
+    true_ratios = torch.exp(true_log_diff)  # -> p_next/p_curr
+    pred_ratios = torch.exp(pred_log_diff)  # -> p_pred/p_curr
 
-    # Compute percentage error
+    # Compute percentage error = |(p_next - p_true)/p_next|
     percentage_errors = torch.abs((true_ratios - pred_ratios) / true_ratios) * 100
 
     # Compute average percentage error
