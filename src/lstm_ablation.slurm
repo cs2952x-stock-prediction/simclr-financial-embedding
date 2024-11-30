@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH -J kaggle_lstm_grid_search
-#SBATCH -o results/slurm-%A_%a.out
-#SBATCH -e results/slurm-%A_%a.err
-#SBATCH --array=0-35  
+#SBATCH -J kaggle_lstm_ablation
+#SBATCH -o ablation_results/slurm-%A_%a.out
+#SBATCH -e ablation_results/slurm-%A_%a.err
+#SBATCH --array=0-8
 #SBATCH -c 2
 #SBATCH --mem=4G
 #SBATCH --time=48:00:00
