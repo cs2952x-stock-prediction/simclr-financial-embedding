@@ -3,49 +3,23 @@ from copy import deepcopy
 from itertools import product
 
 BASE_CONFIG = {
-    "experiment": {"tags": ["lstm", "grid-search"]},
+    "experiment": {"tags": ["lstm", "simclr", "grid-search"]},
     "models": {"encoder": {}},
 }
 
-# NOTE: The 'true' config is a nested set of dictionaries
-# However, if we nest the keys in the PARAMS dictionary, then the 'product'
-# function will not work as expected. Instead, we have to 'flatten' the keys.
-#
-# For example, instead of:
-# PARAMS = {
-#     "models": {
-#         "encoder": {
-#             "hidden_size": [64, 128, 256, 512],
-#             "num_layers": [1, 2, 3],
-#         }
-#     },
-#     "training": {"temperature": [0.1, 0.3, 0.5]},
-# }
-#
-# We have:
-# PARAMS = {
-#     "models.encoder.hidden_size": [64, 128, 256, 512],
-#     "models.encoder.num_layers": [1, 2, 3],
-#     "training.temperature": [0.1, 0.3, 0.5],
-# }
-#
-# This way, we can use the 'product' function to generate all possible combinations
-# of the parameters. Then, we can 'unflatten' the keys to create the nested dictionary.
-
-PARAMS = {
+GRID_VALUES = {
     "models.encoder.hidden_size": [64, 128, 256, 512],
     "models.encoder.num_layers": [1, 2, 3],
-    "training.temperature": [0.1, 0.3, 0.5],
+    "training.temperature": [0.5],
 }
 
+OUTPUT_FILE = "configs/grid_search.json"
 
 if __name__ == "__main__":
     grid_values = []
-    keys, values = zip(*PARAMS.items())
+    keys, values = zip(*GRID_VALUES.items())
 
-    # Generate all possible combinations of the parameters
-    #
-    # In particular 'product' takes in a list of iterables and returns
+    # 'product' takes in a set of iterables and returns
     # the cartesian product (all combinations) of the iterables.
     for i, values in enumerate(product(*values)):
 
@@ -60,7 +34,11 @@ if __name__ == "__main__":
 
         # Add the experiment name and encoder output size based
         # on the current param_set
-        param_set["experiment.name"] = f"lstm_grid_{i}"
+        hidden_size = param_set["models.encoder.hidden_size"]
+        num_layers = param_set["models.encoder.num_layers"]
+        temperature = param_set["training.temperature"]
+        param_set["experiment.name"] = f"Grid Point {i}: H={hidden_size} L={num_layers}"
+        param_set["experiment.group"] = f"Grid Search 2"
         param_set["models.encoder.output_size"] = param_set[
             "models.encoder.hidden_size"
         ]
@@ -95,5 +73,5 @@ if __name__ == "__main__":
             subconfig[param[-1]] = value
         grid_values.append(config)
 
-    with open("configs/lstm_grid_search.json", "w") as f:
+    with open(OUTPUT_FILE, "w") as f:
         json.dump(grid_values, f, indent=4)

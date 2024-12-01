@@ -2,7 +2,7 @@
 #SBATCH -J kaggle_lstm_grid_search
 #SBATCH -o results/slurm-%A_%a.out
 #SBATCH -e results/slurm-%A_%a.err
-#SBATCH --array=0-35  
+#SBATCH --array=0-9
 #SBATCH -c 2
 #SBATCH --mem=4G
 #SBATCH --time=48:00:00
@@ -25,10 +25,10 @@
 module load python/3.11
 source venv/bin/activate
 
-# TODO: make sure to run 'python src/generate_lstm_grid.py'
+# NOTE: make sure to run 'python src/generate_feature_ablations.py'
 # beforehand to generate the grid-search parameters
 
-PARAM_FILE="configs/lstm_grid_search.json"
+PARAM_FILE="configs/feature_ablations.json"
 
 # Explanation of the command below:
 #

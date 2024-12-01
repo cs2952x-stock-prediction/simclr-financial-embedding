@@ -1,61 +1,79 @@
 [
     {
         "experiment": {
-            "name": "lstm_grid_0",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=64",
                 "models.encoder.num_layers=1",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 0: H=64 L=1",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=64"
+            ],
+            "name": "Grid Point 0: H=64 L=1",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 64,
-                "num_layers": 1
+                "num_layers": 1,
+                "output_size": 64
             }
         },
         "training": {
-            "temperature": 0.1
+            "temperature": 0.5
         }
     },
     {
         "experiment": {
-            "name": "lstm_grid_1",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.3"
-            ]
+                "models.encoder.num_layers=2",
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 1: H=64 L=2",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=64"
+            ],
+            "name": "Grid Point 1: H=64 L=2",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 64,
-                "num_layers": 1
+                "num_layers": 2,
+                "output_size": 64
             }
         },
         "training": {
-            "temperature": 0.3
+            "temperature": 0.5
         }
     },
     {
         "experiment": {
-            "name": "lstm_grid_2",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5"
-            ]
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 2: H=64 L=3",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=64"
+            ],
+            "name": "Grid Point 2: H=64 L=3",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 64,
-                "num_layers": 1
+                "num_layers": 3,
+                "output_size": 64
             }
         },
         "training": {
@@ -64,187 +82,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_3",
             "tags": [
                 "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.1"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_4",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_5",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_6",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.1"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_7",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_8",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=64",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 64,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_9",
-            "tags": [
-                "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=128",
                 "models.encoder.num_layers=1",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 3: H=128 L=1",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=128"
+            ],
+            "name": "Grid Point 3: H=128 L=1",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 128,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_10",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_11",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 1
+                "num_layers": 1,
+                "output_size": 128
             }
         },
         "training": {
@@ -253,61 +109,52 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_12",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=128",
                 "models.encoder.num_layers=2",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 4: H=128 L=2",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=128"
+            ],
+            "name": "Grid Point 4: H=128 L=2",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 128,
-                "num_layers": 2
+                "num_layers": 2,
+                "output_size": 128
             }
         },
         "training": {
-            "temperature": 0.1
+            "temperature": 0.5
         }
     },
     {
         "experiment": {
-            "name": "lstm_grid_13",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.3"
-            ]
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 5: H=128 L=3",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=128"
+            ],
+            "name": "Grid Point 5: H=128 L=3",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 128,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_14",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 2
+                "num_layers": 3,
+                "output_size": 128
             }
         },
         "training": {
@@ -316,124 +163,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_15",
             "tags": [
                 "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.1"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_16",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_17",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=128",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 128,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_18",
-            "tags": [
-                "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=256",
                 "models.encoder.num_layers=1",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 6: H=256 L=1",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=256"
+            ],
+            "name": "Grid Point 6: H=256 L=1",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 256,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_19",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_20",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 1
+                "num_layers": 1,
+                "output_size": 256
             }
         },
         "training": {
@@ -442,61 +190,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_21",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=256",
                 "models.encoder.num_layers=2",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 7: H=256 L=2",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=256"
+            ],
+            "name": "Grid Point 7: H=256 L=2",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 256,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_22",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_23",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 2
+                "num_layers": 2,
+                "output_size": 256
             }
         },
         "training": {
@@ -505,61 +217,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_24",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=256",
                 "models.encoder.num_layers=3",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 8: H=256 L=3",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=256"
+            ],
+            "name": "Grid Point 8: H=256 L=3",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 256,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_25",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_26",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=256",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 256,
-                "num_layers": 3
+                "num_layers": 3,
+                "output_size": 256
             }
         },
         "training": {
@@ -568,61 +244,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_27",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=512",
                 "models.encoder.num_layers=1",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 9: H=512 L=1",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=512"
+            ],
+            "name": "Grid Point 9: H=512 L=1",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 512,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_28",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_29",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 1
+                "num_layers": 1,
+                "output_size": 512
             }
         },
         "training": {
@@ -631,61 +271,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_30",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=512",
                 "models.encoder.num_layers=2",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 10: H=512 L=2",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=512"
+            ],
+            "name": "Grid Point 10: H=512 L=2",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 512,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_31",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_32",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 2
+                "num_layers": 2,
+                "output_size": 512
             }
         },
         "training": {
@@ -694,61 +298,25 @@
     },
     {
         "experiment": {
-            "name": "lstm_grid_33",
             "tags": [
                 "lstm",
+                "simclr",
                 "grid-search",
                 "models.encoder.hidden_size=512",
                 "models.encoder.num_layers=3",
-                "training.temperature=0.1"
-            ]
+                "training.temperature=0.5",
+                "experiment.name=Grid Point 11: H=512 L=3",
+                "experiment.group=Grid Search 2",
+                "models.encoder.output_size=512"
+            ],
+            "name": "Grid Point 11: H=512 L=3",
+            "group": "Grid Search 2"
         },
         "models": {
             "encoder": {
                 "hidden_size": 512,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.1
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_34",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.3"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 3
-            }
-        },
-        "training": {
-            "temperature": 0.3
-        }
-    },
-    {
-        "experiment": {
-            "name": "lstm_grid_35",
-            "tags": [
-                "lstm",
-                "grid-search",
-                "models.encoder.hidden_size=512",
-                "models.encoder.num_layers=3",
-                "training.temperature=0.5"
-            ]
-        },
-        "models": {
-            "encoder": {
-                "hidden_size": 512,
-                "num_layers": 3
+                "num_layers": 3,
+                "output_size": 512
             }
         },
         "training": {

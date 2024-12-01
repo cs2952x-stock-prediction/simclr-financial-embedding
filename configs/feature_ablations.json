@@ -1,0 +1,228 @@
+[
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 0: []",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 1: ['week_sin', 'week_cos']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "week_sin",
+                "week_cos"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 2: ['month_sin', 'month_cos']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "month_sin",
+                "month_cos"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 3: ['quarter_sin', 'quarter_cos']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "quarter_sin",
+                "quarter_cos"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 4: ['year_sin', 'year_cos']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "year_sin",
+                "year_cos"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 5: ['close_ema20']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "close_ema20"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 6: ['close_ema50']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "close_ema50"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 7: ['close_sma20']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "close_sma20"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 8: ['close_sma50']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "close_sma50"
+            ]
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "simclr",
+                "feature-ablation"
+            ],
+            "name": "Ablation 9: ['week_sin', 'week_cos', 'month_sin', 'month_cos', 'quarter_sin', 'quarter_cos', 'year_sin', 'year_cos', 'year_sin', 'year_cos', 'close_ema20', 'close_ema50', 'close_sma20', 'close_sma50']",
+            "group": "Feature Ablations 2"
+        },
+        "data": {
+            "features": [
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "week_sin",
+                "week_cos",
+                "month_sin",
+                "month_cos",
+                "quarter_sin",
+                "quarter_cos",
+                "year_sin",
+                "year_cos",
+                "year_sin",
+                "year_cos",
+                "close_ema20",
+                "close_ema50",
+                "close_sma20",
+                "close_sma50"
+            ]
+        }
+    }
+]
