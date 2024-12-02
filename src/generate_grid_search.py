@@ -38,7 +38,7 @@ if __name__ == "__main__":
         num_layers = param_set["models.encoder.num_layers"]
         temperature = param_set["training.temperature"]
         param_set["experiment.name"] = f"Grid Point {i}: H={hidden_size} L={num_layers}"
-        param_set["experiment.group"] = f"Grid Search 2"
+        param_set["experiment.group"] = f"LSTM Grid Search 3"
         param_set["models.encoder.output_size"] = param_set[
             "models.encoder.hidden_size"
         ]

@@ -9,11 +9,11 @@
                 "models.encoder.num_layers=1",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 0: H=64 L=1",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=64"
             ],
             "name": "Grid Point 0: H=64 L=1",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -36,11 +36,11 @@
                 "models.encoder.num_layers=2",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 1: H=64 L=2",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=64"
             ],
             "name": "Grid Point 1: H=64 L=2",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -63,11 +63,11 @@
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 2: H=64 L=3",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=64"
             ],
             "name": "Grid Point 2: H=64 L=3",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -90,11 +90,11 @@
                 "models.encoder.num_layers=1",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 3: H=128 L=1",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=128"
             ],
             "name": "Grid Point 3: H=128 L=1",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -117,11 +117,11 @@
                 "models.encoder.num_layers=2",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 4: H=128 L=2",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=128"
             ],
             "name": "Grid Point 4: H=128 L=2",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -144,11 +144,11 @@
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 5: H=128 L=3",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=128"
             ],
             "name": "Grid Point 5: H=128 L=3",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -171,11 +171,11 @@
                 "models.encoder.num_layers=1",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 6: H=256 L=1",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=256"
             ],
             "name": "Grid Point 6: H=256 L=1",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -198,11 +198,11 @@
                 "models.encoder.num_layers=2",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 7: H=256 L=2",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=256"
             ],
             "name": "Grid Point 7: H=256 L=2",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -225,11 +225,11 @@
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 8: H=256 L=3",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=256"
             ],
             "name": "Grid Point 8: H=256 L=3",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -252,11 +252,11 @@
                 "models.encoder.num_layers=1",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 9: H=512 L=1",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=512"
             ],
             "name": "Grid Point 9: H=512 L=1",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -279,11 +279,11 @@
                 "models.encoder.num_layers=2",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 10: H=512 L=2",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=512"
             ],
             "name": "Grid Point 10: H=512 L=2",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
@@ -306,11 +306,11 @@
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
                 "experiment.name=Grid Point 11: H=512 L=3",
-                "experiment.group=Grid Search 2",
+                "experiment.group=LSTM Grid Search 3",
                 "models.encoder.output_size=512"
             ],
             "name": "Grid Point 11: H=512 L=3",
-            "group": "Grid Search 2"
+            "group": "LSTM Grid Search 3"
         },
         "models": {
             "encoder": {
