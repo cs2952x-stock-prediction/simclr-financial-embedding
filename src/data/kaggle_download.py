@@ -74,6 +74,12 @@ def get_args():
         help="The files to download",
     )
     parser.add_argument(
+        "--version",
+        type=int,
+        default=960,
+        help="The version of the dataset to download",
+    )
+    parser.add_argument(
         "--log_level",
         type=str,
         default="INFO",
@@ -199,7 +205,7 @@ def main(config):
     # Unfortunately, we can't control the initial destination directory of the files
     print("Downloading dataset from Kaggle...")
     download_dir = kagglehub.dataset_download(
-        "andrewmvd/sp-500-stocks", force_download=True
+        f"andrewmvd/sp-500-stocks/versions/{config['version']}", force_download=True
     )
     downloaded_files = os.listdir(download_dir)
     logger.info(f"Dataset files downloaded to: {download_dir}")

@@ -10,6 +10,8 @@ import pandas as pd
 import torch
 import yaml
 from dotenv import load_dotenv
+from pandas.core.generic import pickle
+from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -18,6 +20,7 @@ from tqdm import tqdm
 
 import wandb
 from util.datasets import TimeSeriesDataset
+from util.evaluation import average_percentage_error
 from util.models import DenseLayers, LstmEncoder
 from util.training import finetuning_epoch, simclr_epoch, training_epoch
 
@@ -81,6 +84,11 @@ def get_args():
         help="Path to testing data",
     )
     arg_parser.add_argument(
+        "--scaler_file",
+        type=str,
+        help="Path to data scaler pickle file",
+    )
+    arg_parser.add_argument(
         "--checkpoints_dir",
         type=str,
         default=DEFAULT_CHECKPOINTS_DIR,
@@ -114,6 +122,22 @@ def get_args():
         type=str,
         default=DEFAULT_LOG_FILE,
         help="The log file to write to",
+    )
+    arg_parser.add_argument(
+        "-x",
+        "--features",
+        type=str,
+        nargs="+",
+        default=["open", "close", "high", "low", "volume"],
+        help="The features to use for training",
+    )
+    arg_parser.add_argument(
+        "-y",
+        "--targets",
+        type=str,
+        nargs="+",
+        default=["close"],
+        help="The target variables to predict",
     )
 
     return arg_parser.parse_args()
@@ -172,6 +196,9 @@ def load_config(args):
     if args.test_dir is not None:
         config["data"]["test_dir"] = args.test_dir
 
+    if args.scaler_file is not None:
+        config["data"]["scaler_file"] = args.scaler_file
+
     if args.checkpoints_dir is not None:
         config["training"]["checkpoints_dir"] = args.checkpoints_dir
 
@@ -184,6 +211,12 @@ def load_config(args):
 
     if args.num_epochs is not None:
         config["training"]["n_epochs"] = args.num_epochs
+
+    if args.features is not None:
+        config["data"]["features"] = args.features
+
+    if args.targets is not None:
+        config["data"]["targets"] = args.targets
 
     # Override configuration with JSON string of parameters
     if args.config_override is not None:
@@ -223,7 +256,7 @@ def configure_logger(log_level, log_file):
     logging.getLogger().setLevel(log_level)
 
 
-def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="close"):
+def build_dataloader(config, data_dir, batch_size, segment_length, segment_step):
     """
     Loads data from a directory of CSV files and creates a DataLoader for training and testing.
 
@@ -232,7 +265,6 @@ def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="
     - batch_size: the batch size for the DataLoader
     - segment_length: the length of each segment of data
     - segment_step: the step size for each segment
-    - y_col: the column to use as the target variable
 
     Returns:
     - a DataLoader of the data
@@ -242,13 +274,9 @@ def build_dataloader(data_dir, batch_size, segment_length, segment_step, y_col="
         if filename.endswith(".csv"):
             df = pd.read_csv(os.path.join(data_dir, filename))
 
-            # Define x and y columns
-            x_cols = [col for col in df.columns if col != y_col]
-            y_cols = [y_col]
-
             # Append to lists
-            sequences.append(df[x_cols].values)
-            labels.append(df[y_cols].values)
+            sequences.append(df[config["features"]].values)
+            labels.append(df[config["targets"]].values)
 
     # Create a testing dataset and dataloader
     dataset = TimeSeriesDataset(sequences, labels, segment_length, segment_step)
@@ -274,11 +302,15 @@ def create_dataloaders(config):
     segment_step = config["segment_step"]
 
     print(f"Loading training data from {train_dir}...")
-    train_loader = build_dataloader(train_dir, batch_size, segment_length, segment_step)
+    train_loader = build_dataloader(
+        config, train_dir, batch_size, segment_length, segment_step
+    )
     logger.info(f"Loaded training data from {train_dir}")
 
     print(f"Loading testing data from {test_dir}...")
-    test_loader = build_dataloader(test_dir, batch_size, segment_length, segment_step)
+    test_loader = build_dataloader(
+        config, test_dir, batch_size, segment_length, segment_step
+    )
     logger.info(f"Loaded testing data from {test_dir}")
 
     train_sz, test_sz = len(train_loader), len(test_loader)
@@ -305,6 +337,7 @@ def initialize_encoder(config):
     return LstmEncoder(
         input_size=config["input_size"],
         hidden_size=config["hidden_size"],
+        num_layers=config["num_layers"],
         proj_size=config["output_size"],
     ).to(device)
 
@@ -483,7 +516,7 @@ def train_models(models, optimizers, train_loader, config, epoch):
     return simclr_training_loss, finetuning_training_loss, baseline_training_loss
 
 
-def test_models(models, test_loader, epoch):
+def test_models(models, test_loader, epoch, scaler: StandardScaler):
     """
     Test the finetuned model and the baseline model on the test data.
 
@@ -491,6 +524,7 @@ def test_models(models, test_loader, epoch):
     - models: a tuple of the encoder, projector, probe, and base model
     - test_loader: the testing DataLoader
     - epoch: the current epoch number (for logging)
+    - scaler: a StandardScaler object for the target variable
 
     Returns:
     - finetuning_test_loss: the validation loss for the finetuned model
@@ -501,6 +535,14 @@ def test_models(models, test_loader, epoch):
 
     print("Testing Finetuned model...")
     finetuned_test_loss = 0
+
+    # TODO: this is a quick patch that should be made more general later
+    # We should not assume that the target variable is the last column
+    # Extracting the scale and mean of the target variable is also bad form
+    scale = scaler.scale_[-1]  # type: ignore
+    mean = scaler.mean_[-1]  # type: ignore
+
+    finetuned_perc_error = 0
     encoder.eval()
     probe.eval()
     pbar = tqdm(test_loader)
@@ -509,13 +551,18 @@ def test_models(models, test_loader, epoch):
         y_pred = probe(z)
         y_true = y[:, -1]
         finetuned_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        finetuned_perc_error += average_percentage_error(
+            y_true * scale + mean, y_pred * scale + mean
+        ).item()
     finetuned_test_loss /= len(test_loader)
+    finetuned_perc_error /= len(test_loader)
     logger.info(
         f"Epoch {epoch} --- Finetuned Model Test Loss: {finetuned_test_loss:.4e}"
     )
     print(f"Finetuned Model Test Loss: {finetuned_test_loss:.4e}")
 
     print("Testing Baseline Model...")
+    baseline_perc_error = 0
     baseline_test_loss = 0
     base_model.eval()
     pbar = tqdm(test_loader)
@@ -523,11 +570,20 @@ def test_models(models, test_loader, epoch):
         y_pred = base_model(x)
         y_true = y[:, -1]
         baseline_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        baseline_perc_error += average_percentage_error(
+            y_true * scale + mean, y_pred * scale + mean
+        ).item()
     baseline_test_loss /= len(test_loader)
+    baseline_perc_error /= len(test_loader)
     logger.info(f"Epoch {epoch} --- Baseline Model Test Loss: {baseline_test_loss:.4e}")
     print(f"Baseline Model Test Loss: {baseline_test_loss:.4e}")
 
-    return finetuned_test_loss, baseline_test_loss
+    return (
+        finetuned_test_loss,
+        finetuned_perc_error,
+        baseline_test_loss,
+        baseline_perc_error,
+    )
 
 
 def save_model_checkpoints(models, config, epoch):
@@ -555,25 +611,32 @@ def save_model_checkpoints(models, config, epoch):
     logger.info(f"Model checkpoints saved to {epoch_checkpoint}")
 
 
-def experiment_run(models, optimizers, train_loader, test_loader, config):
+def experiment_run(models, optimizers, train_loader, test_loader, config, scaler):
     print("Starting Experiment Run...")
     num_epochs = config["num_epochs"]
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train_losses = train_models(models, optimizers, train_loader, config, epoch)
-        simclr_train_loss, finetuning_train_loss, base_train_loss = train_losses
+        simclr_train_loss, finetuning_train_loss, baseline_train_loss = train_losses
 
-        test_losses = test_models(models, test_loader, epoch)
-        finetuning_test_loss, base_test_loss = test_losses
+        test_losses = test_models(models, test_loader, epoch, scaler)
+        (
+            finetuning_test_loss,
+            finetined_perc_error,
+            baseline_test_loss,
+            baseline_perc_error,
+        ) = test_losses
 
         wandb.log(
             {
                 "Epoch": epoch,
                 "SimCLR Training Loss": simclr_train_loss,
                 "Finetuned Training Loss": finetuning_train_loss,
-                "Baseline Training Loss": base_train_loss,
+                "Baseline Training Loss": baseline_train_loss,
                 "Finetuned Test Loss": finetuning_test_loss,
-                "Baseline Test Loss": base_test_loss,
+                "Baseline Test Loss": baseline_test_loss,
+                "Finetuned Test APE": finetined_perc_error,
+                "Baseline Test APE": baseline_perc_error,
             }
         )
 
@@ -616,7 +679,10 @@ def main(config):
     optimizers = initialize_optimizers(models, config["optimizers"])
 
     # Start the experiment
-    experiment_run(models, optimizers, train_loader, test_loader, config["training"])
+    scaler = pickle.load(open(config["data"]["scaler_file"], "rb"))
+    experiment_run(
+        models, optimizers, train_loader, test_loader, config["training"], scaler
+    )
 
 
 if __name__ == "__main__":

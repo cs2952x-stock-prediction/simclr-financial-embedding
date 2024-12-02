@@ -7,12 +7,14 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
+
+from util.features import add_moving_avg_features, add_temporal_features
 
 ############################# GLOBAL VARIABLES #####################################################
 
-DEFAULT_DST = f"data/processed/kaggle"  # the folder containing the output files
+DEFAULT_DST = f"data/processed/kaggle/v2"  # the folder containing the output files
 DEFAULT_SRC = f"data/interim/kaggle"  # the folder containing the source files
 
 # Logger
@@ -21,21 +23,66 @@ DEFAULT_LOG_FILE = f"logs/kaggle-process_{timestamp}.log"
 
 logger = logging.getLogger(__name__)
 
-# integer-valued columns that can be log-transformed
-INT_LOG_COLUMNS = [
-    "volume",
+# Default features to add to data
+DEFAULT_TEMPORAL_FEATURES = [
+    "seconds",
+    "cyclic_week",
+    "cyclic_month",
+    "cyclic_quarter",
+    "cyclic_year",
 ]
-INT_EPS = 1  # quantity to add to integer columns before log-transforming
+TEMPORAL_FEATURE_CHOICES = [
+    "seconds",
+    "cyclic_day",
+    "cyclic_week",
+    "cyclic_month",
+    "cyclic_quarter",
+    "cyclic_year",
+]
+DEFAULT_AVG_FEATURES = ["close_sma20", "close_ema20", "close_sma50", "close_ema50"]
+DEFAULT_SHIFT_FEATURES = ["close"]
 
-# float-valued columns that can be log-transformed
-FLOAT_LOG_COLUMNS = [
-    "close",
-    "high",
-    "low",
+# Default columns to apply transformations
+LOG_EPSILON = 1e-6  # to avoid log(0)
+DEFAULT_LOG_TRANSFORM = [
     "open",
+    "low",
+    "high",
+    "volume",
+    "close",
+    "adj_close",
+    "close_sma20",
+    "close_ema20",
+    "close_sma50",
+    "close_ema50",
+    "close_next",
 ]
-FLOAT_EPS = 0.01  # quadrity to add to float columns before log-transforming
-
+DEFAULT_DIFF_TRANSFORM = [
+    "open",
+    "low",
+    "high",
+    # "volume", # volue is more stationary than other features and often not differenced
+    "close",
+    "adj_close",
+    # "close_sma20", # moving averages encode long-term trends. Differencing would remove this information.
+    # "close_ema20",
+    # "close_sma50",
+    # "close_ema50",
+    "close_next",
+]
+DEFAULT_SCALE_TRANSFORM = [
+    "open",
+    "low",
+    "high",
+    "volume",
+    "close",
+    "adj_close",
+    "close_sma20",
+    "close_ema20",
+    "close_sma50",
+    "close_ema50",
+    "close_next",
+]
 
 ############################## FUNCTIONS ###########################################################
 
@@ -54,16 +101,16 @@ def get_args():
         "If the scaling occurs, we save the scaler model in the output directory for later use."
     )
     parser.add_argument(
-        "--destination",
-        type=str,
-        help="The directory to download the data to",
-        default=DEFAULT_DST,
-    )
-    parser.add_argument(
         "--source",
         type=str,
         help="The directory to load the data from",
         default=DEFAULT_SRC,
+    )
+    parser.add_argument(
+        "--destination",
+        type=str,
+        help="The directory to export the data to",
+        default=DEFAULT_DST,
     )
     parser.add_argument(
         "--force",
@@ -84,11 +131,11 @@ def get_args():
         help="The log file to use",
     )
     parser.add_argument(
-        "--keep_columns",
+        "--del_features",
         type=str,
-        nargs="+",
-        default=["close", "high", "low", "open", "volume"],
-        help="The columns to keep",
+        nargs="*",
+        default=[],
+        help="The columns to delete before saving intermediate files",
     )
     parser.add_argument(
         "--training_cutoff",
@@ -100,19 +147,44 @@ def get_args():
         "--temporal_features",
         type=str,
         nargs="*",
-        default=[],
-        choices=["day", "week", "month", "quarter", "year"],
+        default=DEFAULT_TEMPORAL_FEATURES,
+        choices=TEMPORAL_FEATURE_CHOICES,
         help="The temporal features to include",
     )
     parser.add_argument(
-        "--scale_features",
+        "--avg_features",
         type=str,
         nargs="*",
-        default=["close", "high", "low", "open", "volume"],
-        help="The features to scale",
+        default=DEFAULT_AVG_FEATURES,
+        help="The moving average features to include",
     )
     parser.add_argument(
-        "--log_transform", type=bool, default=True, help="Whether to log-transform"
+        "--shift_features",
+        type=str,
+        nargs="*",
+        default=DEFAULT_SHIFT_FEATURES,
+        help="The features to shift for prediction",
+    )
+    parser.add_argument(
+        "--log_transform",
+        type=str,
+        nargs="*",
+        default=DEFAULT_LOG_TRANSFORM,
+        help="The features to log-transform",
+    )
+    parser.add_argument(
+        "--diff_transform",
+        type=str,
+        nargs="*",
+        default=DEFAULT_DIFF_TRANSFORM,
+        help="The features to difference-transform",
+    )
+    parser.add_argument(
+        "--scale_transform",
+        type=str,
+        nargs="*",
+        default=DEFAULT_SCALE_TRANSFORM,
+        help="The features to scale-transform",
     )
 
     return parser.parse_args()
@@ -140,6 +212,203 @@ def configure_logger(log_level, log_file):
     logging.getLogger().setLevel(log_level)
 
 
+def prepare_directories(config):
+    """
+    Prepare the output directories.
+
+    Args:
+    - config (dict): The configuration dictionary
+    """
+    # Raise an error if the source folder does not exist
+    if not os.path.exists(config["source"]):
+        logger.error(f"Source not found: {config['source']}")
+        raise FileNotFoundError(f"Source not found: {config['source']}")
+
+    # Create the destination folder if it does not exist
+    if not os.path.exists(config["destination"]):
+        os.makedirs(config["destination"])
+        logger.info(f"Created destination folder: {config['destination']}")
+
+    # Raise an error if the destination folder is not empty and force is not set
+    if os.listdir(config["destination"]) and not config["force"]:
+        logger.error(f"Destination folder is not empty: {config['destination']}")
+        raise FileExistsError(
+            f"Destination folder is not empty: {config['destination']}. Use --force to overwrite."
+        )
+
+    # Create the training data folder if it does not exist
+    train_dir = f"{config['destination']}/train"
+    if not os.path.exists(train_dir):
+        os.makedirs(train_dir)
+        logger.info(f"Created training folder: {train_dir}")
+
+    # Create the testing data folder if it does not exist
+    test_dir = f"{config['destination']}/test"
+    if not os.path.exists(test_dir):
+        os.makedirs(test_dir)
+        logger.info(f"Created testing folder: {test_dir}")
+
+    # Create the intermediate data folder if it does not exist
+    inter_dir = f"{config['destination']}/intermediate"
+    if not os.path.exists(inter_dir):
+        os.makedirs(inter_dir)
+        logger.info(f"Created intermediate folder: {inter_dir}")
+
+
+def create_intermediate_files(config):
+    """
+    Add features to the data and save the intermediate files.
+
+    Args:
+    - config (dict): The configuration dictionary.
+    """
+    intermediate_dir = f"{config['destination']}/intermediate"
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.info(f"Adding features to file: {filename}")
+
+        df = pd.read_csv(f"{config['source']}/{filename}")
+
+        # Ensure the data is not empty
+        if len(df) == 0:
+            logger.error(f"Empty data file: {filename}")
+            raise ValueError(f"Empty data file: {filename}")
+
+        for col in config["del_features"]:
+            if col in df.columns:
+                df = df.drop(col, axis=1)
+
+        # Add features
+        add_temporal_features(df, config["temporal_features"])
+        add_moving_avg_features(df, config["avg_features"])
+
+        # Add shifted features
+        for feature in config["shift_features"]:
+            df[f"{feature}_next"] = df[feature].shift(-1)
+
+        # Save intermediate data
+        df = df.dropna()
+        df.to_csv(f"{intermediate_dir}/{filename}", index=False)
+
+
+def apply_logdiff(df, config):
+    """
+    Apply log and difference transformations to the data.
+
+    Args:
+    - df (pd.DataFrame): The data to transform.
+    - config (dict): The configuration dictionary.
+
+    Returns:
+    - pd.DataFrame: The transformed data.
+    """
+    log_cols = config["log_transform"]
+    df.loc[:, log_cols] = np.log((df[log_cols] + LOG_EPSILON).astype(float))
+
+    diff_cols = config["diff_transform"]
+    df.loc[:, diff_cols] = df[diff_cols].diff()
+    df = df.iloc[1:, :]
+    return df
+
+
+def create_scaler(config):
+    """
+    Fit a scaler to the training data and save it to the output directory.
+
+    Args:
+    - config (dict): The configuration dictionary.
+
+    Returns:
+    - StandardScaler: The fitted scaler.
+    """
+    intermediate_dir = f"{config['destination']}/intermediate"
+    training_cutoff = pd.to_datetime(config["training_cutoff"])
+    scaler = StandardScaler()
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.debug(f"Training scaler on file: {filename}")
+
+        # Save intermediate data
+        df = pd.read_csv(f"{intermediate_dir}/{filename}")
+
+        # Split data into train and test
+        timestamps = pd.to_datetime(df["timestamp"])
+        train_data = df[timestamps < training_cutoff]
+
+        if train_data.empty:
+            logger.warning(f"Empty training data: {filename}")
+            continue
+
+        train_data = apply_logdiff(train_data, config)
+        scaler.partial_fit(train_data[config["scale_transform"]])
+
+    # Save the scaler
+    scaler_file = f"{config['destination']}/scaler.pkl"
+    with open(scaler_file, "wb") as f:
+        pickle.dump(scaler, f)
+
+    logger.info(f"Saved scaler to: {scaler_file}")
+
+    return scaler
+
+
+def create_train_test_files(config, scaler):
+    """
+    Transform the data and create training and testing files.
+
+    Args:
+    - config (dict): The configuration dictionary.
+    """
+    intermediate_dir = f"{config['destination']}/intermediate"
+    train_dir = f"{config['destination']}/train"
+    test_dir = f"{config['destination']}/test"
+    training_cutoff = pd.to_datetime(config["training_cutoff"])
+    pd.set_option("display.max_columns", None)
+    for filename in tqdm(os.listdir(config["source"])):
+        if not filename.endswith(".csv"):
+            logger.warning(f"Skipping non-CSV file: {filename}")
+            continue
+
+        logger.debug(f"Creating train/test data for: {filename}")
+
+        df = pd.read_csv(f"{intermediate_dir }/{filename}")
+
+        # Split data into train and test
+        timestamps = pd.to_datetime(df["timestamp"])
+        train_data = df[timestamps < training_cutoff]
+        test_data = df[timestamps >= training_cutoff]
+
+        if train_data.empty:
+            logger.warning(f"Empty training data: {filename}")
+            continue
+
+        if test_data.empty:
+            logger.warning(f"Empty testing data: {filename}")
+            continue
+
+        # Transform the data and save
+        scale_cols = config["scale_transform"]
+        last_row = train_data.iloc[-1].copy()
+        train_data = apply_logdiff(train_data, config)
+        train_data.loc[:, scale_cols] = scaler.transform(train_data[scale_cols])
+        test_data = pd.concat([last_row.to_frame().T, test_data], ignore_index=True)
+        test_data = apply_logdiff(test_data, config)
+        test_data.loc[:, scale_cols] = scaler.transform(test_data[scale_cols])
+
+        # Save the training and testing data
+        train_data.to_csv(f"{train_dir}/{filename}", index=False)
+        test_data.to_csv(f"{test_dir}/{filename}", index=False)
+
+        logger.debug(f"Saved training data to: {train_dir}/{filename}")
+        logger.debug(f"Saved testing data to: {test_dir}/{filename}")
+
+
 ############################## MAIN FUNCTION ######################################################
 
 
@@ -157,176 +426,16 @@ def main(config):
     logger.info(f"Starting Kaggle data processing at {timestamp}")
     logger.info(f"Configuration:\n{pprint.pformat(config)}\n")
 
-    # If the source file does not exist, raise an error
-    if not os.path.exists(config["source"]):
-        logger.error(f"Source not found: {config['source']}")
-        raise FileNotFoundError(f"Source not found: {config['source']}")
+    prepare_directories(config)
 
-    # Ensure the destination folder exists
-    if not os.path.exists(config["destination"]):
-        os.makedirs(config["destination"])
-        logger.info(f"Created destination folder: {config['destination']}")
+    print("Adding features and generating intermediate files...")
+    create_intermediate_files(config)
 
-    # If the destination folder is not empty, raise an error
-    if os.listdir(config["destination"]) and not config["force"]:
-        logger.error(f"Destination folder is not empty: {config['destination']}")
-        raise FileExistsError(
-            f"Destination folder is not empty: {config['destination']}. Use --force to overwrite."
-        )
+    print("Fitting the scaler...")
+    scaler = create_scaler(config)
 
-    # Ensure the training data folder exists
-    train_dir = f"{config['destination']}/train"
-    if not os.path.exists(train_dir):
-        os.makedirs(train_dir)
-        logger.info(f"Created training folder: {train_dir}")
-
-    # Ensure the testing data folder exists
-    test_dir = f"{config['destination']}/test"
-    if not os.path.exists(test_dir):
-        os.makedirs(test_dir)
-        logger.info(f"Created testing folder: {test_dir}")
-
-    # apply basic transformations, add features, and split data
-    print("Transforming data, adding features, and splitting data")
-    training_cutoff = pd.to_datetime(config["training_cutoff"])
-    for filename in tqdm(os.listdir(config["source"])):
-        logger.info(f"Processing file: {filename}")
-
-        if not filename.endswith(".csv"):
-            logger.warning(f"Skipping non-CSV file: {filename}")
-            continue
-
-        df = pd.read_csv(f"{config['source']}/{filename}")
-
-        # get datetimes and convert to milliseconds
-        timestamps = pd.to_datetime(df["timestamp"])
-        df["timestamp"] = (timestamps - timestamps.min()).astype("int64") // 10**6
-
-        # Keep only desired columns
-        df = df[config["keep_columns"]]
-
-        # Apply log transformation to discrete/integer columns
-        int_log_cols = [col for col in df.columns if col in INT_LOG_COLUMNS]
-        if config["log_transform"] and len(int_log_cols) > 0:
-            log_df = df[int_log_cols]
-            assert isinstance(log_df, pd.DataFrame), "log_df is not a DataFrame"
-            df[int_log_cols] = log_df.apply(lambda x: np.log(x + INT_EPS))
-
-        # Apply log transformation to continuous/float columns
-        float_log_cols = [col for col in df.columns if col in FLOAT_LOG_COLUMNS]
-        if config["log_transform"] and len(float_log_cols) > 0:
-            log_df = df[float_log_cols]
-            assert isinstance(log_df, pd.DataFrame), "log_df is not a DataFrame"
-            df[float_log_cols] = log_df.apply(lambda x: np.log(x + FLOAT_EPS))
-
-        # Add cyclic temporal features
-
-        # Add the cyclic day feature
-        fraction_of_day = (
-            timestamps.dt.hour + timestamps.dt.minute / 60 + timestamps.dt.second / 3600
-        ) / 24
-        if "day" in config["temporal_features"]:
-            df["day_sin"] = np.sin(2 * np.pi * fraction_of_day)
-            df["day_cos"] = np.cos(2 * np.pi * fraction_of_day)
-
-        # Add the cyclic week feature
-        if "week" in config["temporal_features"]:
-            fraction_of_week = (timestamps.dt.dayofweek + fraction_of_day) / 7
-            df["week_sin"] = np.sin(2 * np.pi * fraction_of_week)
-            df["week_cos"] = np.cos(2 * np.pi * fraction_of_week)
-
-        # Add the cyclic month feature
-        if "month" in config["temporal_features"]:
-            days_in_month = timestamps.dt.days_in_month
-            fraction_of_month = (timestamps.dt.day + fraction_of_day) / days_in_month
-            df["month_sin"] = np.sin(2 * np.pi * fraction_of_month)
-            df["month_cos"] = np.cos(2 * np.pi * fraction_of_month)
-
-        # Add the cyclic quarter feature
-        if "quarter" in config["temporal_features"]:
-            period = timestamps.dt.to_period("Q")
-            days_in_quarter = period.apply(
-                lambda x: x.end_time.dayofyear - x.start_time.dayofyear
-            )
-            day_of_quarter = timestamps.dt.dayofyear - period.apply(
-                lambda x: x.start_time.dayofyear
-            )
-            fraction_of_quarter = (day_of_quarter + fraction_of_day) / days_in_quarter
-            df["quarter_sin"] = np.sin(2 * np.pi * fraction_of_quarter)
-            df["quarter_cos"] = np.cos(2 * np.pi * fraction_of_quarter)
-
-        # Add the cyclic year feature
-        if "year" in config["temporal_features"]:
-            days_in_year = timestamps.dt.to_period("Y").apply(
-                lambda x: x.end_time.dayofyear
-            )
-            day_of_year = timestamps.dt.dayofyear
-            fraction_of_year = (day_of_year + fraction_of_day) / days_in_year
-            df["year_sin"] = np.sin(2 * np.pi * fraction_of_year)
-            df["year_cos"] = np.cos(2 * np.pi * fraction_of_year)
-
-        # Split data into train and test
-        train_data = df[timestamps < training_cutoff]
-        test_data = df[timestamps >= training_cutoff]
-
-        assert isinstance(train_data, pd.DataFrame), "train_data is not a DataFrame"
-        assert isinstance(test_data, pd.DataFrame), "test_data is not a DataFrame"
-
-        if train_data.empty:
-            logger.warning(f"Empty training data: {filename}")
-            continue
-
-        if test_data.empty:
-            logger.warning(f"Empty testing data: {filename}")
-            continue
-
-        # Save the training and testing data
-        train_data.to_csv(f"{train_dir}/{filename}", index=False)
-        test_data.to_csv(f"{test_dir}/{filename}", index=False)
-
-        logger.debug(f"Saved training data to: {train_dir}/{filename}")
-        logger.debug(f"Saved testing data to: {test_dir}/{filename}")
-
-    if config["scale_features"]:
-        print("Rescaling data...")
-        scale_cols = config["scale_features"]
-        logger.info("Scaling columns: %s", scale_cols)
-
-        # Do a pass through the training data to and use partial_fit to train the scaler
-        # This allows us to train the scaler without having all files in memory at once
-        scaler = preprocessing.StandardScaler()
-        print("Training the scaler on the training data")
-        for filename in tqdm(os.listdir(train_dir)):
-            df = pd.read_csv(f"{train_dir}/{filename}")
-            if df.empty:
-                continue
-            scaler.partial_fit(df[scale_cols])
-
-        # Save the scaler
-        scaler_filename = f"{config['destination']}/scaler.pkl"
-        with open(scaler_filename, "wb") as f:
-            pickle.dump(scaler, f)
-        logger.info(f"Saved scaler to: {scaler_filename}")
-
-        # Scale the training data
-        print("Scaling the training data")
-        for filename in tqdm(os.listdir(train_dir)):
-            df = pd.read_csv(f"{train_dir}/{filename}")
-            if df.empty:
-                continue
-            scaled_data = scaler.transform(df[scale_cols])
-            df[scale_cols] = pd.DataFrame(scaled_data, columns=scale_cols)
-            df.to_csv(f"{train_dir}/{filename}", index=False)
-
-        # Scale the testing data
-        print("Scaling the testing data")
-        for filename in tqdm(os.listdir(test_dir)):
-            df = pd.read_csv(f"{test_dir}/{filename}")
-            if df.empty:
-                continue
-            scaled_data = scaler.transform(df[scale_cols])
-            df[scale_cols] = pd.DataFrame(scaled_data, columns=scale_cols)
-            df.to_csv(f"{test_dir}/{filename}", index=False)
+    print("Transforming the data and creating training and testing files...")
+    create_train_test_files(config, scaler)
 
 
 if __name__ == "__main__":

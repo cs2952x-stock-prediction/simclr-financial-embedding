@@ -2,19 +2,31 @@
 
 ## TODO List
 
+Today
+
+- [x] add differencing to data pipeline
+- [x] data processing should produce an 'undo' function/binary
+- [x] upload polygon data to google drive
+- [ ] create a download script for polygon data
+- [x] create a large-scale dataloader for big CSV
+- [ ] run ablation studies
+- [x] log the real-value error (in percent and/or absolute dollar)
+- [ ] add transformations for simcl training
+
 Small/short-term pipline fixes:
 
-- check that files are not overwritten and force is used correctly
-- make sure destination folders are created if they down exist
-- parsimony between config/arg parameter names
-- every argparse should include a description
+- [ ] check that files are not overwritten and force is used correctly
+- [ ] make sure destination folders are created if they down exist
+- [ ] parsimony between config/arg parameter names
+- [ ] every argparse should include a description
 
 Longer term:
 
-- create dataset for large data (only loads some files in memory at a time)
-- create polygon data cleaning script
-- run ablation studies
-- run up grid search
+- [x] create dataset for large data (only loads some files in memory at a time)
+      TODO: Still needs testing
+- [ ] create polygon data cleaning script
+- [ ] run ablation studies
+- [x] run up grid search
 
 ## Getting Started
 

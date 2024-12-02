@@ -1,6 +1,7 @@
 import torch.nn as nn
 
 
+
 class LstmEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers=1, proj_size=0):
         if hidden_size == proj_size:
@@ -54,15 +55,24 @@ class DenseLayers(nn.Module):
 
 
 class CnnEncoder(nn.Module):
-    def __init__(self, input_size, out_channels, kernel_size):
+    def __init__(self, in_channels, out_channels, kernel_size, num_layers = 1):
         super(CnnEncoder, self).__init__()
-        self.conv_1d = nn.Conv1d(
-            in_channels = 30,
-            out_channels = out_channels,
-            kernel_size = kernel_size,
-        )
+        self.num_layers = num_layers
+        self.conv_1d_layers = nn.ModuleList()
+        for layer_i in range(self.num_layers):
+            self.conv_1d_layers.append(
+                nn.Conv1d(
+                    in_channels = in_channels if layer_i == 0 else out_channels,
+                    out_channels = out_channels,
+                    kernel_size = kernel_size,
+                    
+                )
+            )
+        self.ReLU = nn.ReLU()
 
     def forward(self, x):
-        x = self.conv_1d(x)
-        x = x.squeeze(-1)
+        x = x.permute(0, 2, 1)
+        for layer in self.conv_1d_layers:
+            x = self.ReLU(layer(x))
+        x = x.view(x.size(0), -1)
         return x
