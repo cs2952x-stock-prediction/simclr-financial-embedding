@@ -1,18 +1,19 @@
 # TODO: fill in with CNN -> LSTM-based encoder
 data:
-  train_dir: "data/processed/kaggle/train"
-  test_dir: "data/processed/kaggle/test"
+  train_dir: "data/processed/kaggle/v2/train"
+  test_dir: "data/processed/kaggle/v2/test"
+  scaler_file: "data/processed/kaggle/v2/scaler.pkl"
   batch_size: 128
   segment_length: 30
   segment_step: 5
-  label_column: "close"
+  targets: ["next_close"]
+  features: ["open", "min", "max", "close", "volume"]
 models:
   encoder:
     # input size is determined by the data shape
     num_layers: 1
-    out_channels: 128
-    kernel_size: 4
-    output_size: 128
+    out_channels: 8
+    kernel_size: 2
   projector:
     # input size should be set to the output size of the encoder
     hidden_layers:

@@ -10,6 +10,8 @@ import pandas as pd
 import torch
 import yaml
 from dotenv import load_dotenv
+from pandas.core.generic import pickle
+from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -18,10 +20,16 @@ from tqdm import tqdm
 
 import wandb
 from util.datasets import TimeSeriesDataset
+from util.evaluation import average_percentage_error
 from util.models import DenseLayers, LstmEncoder, CnnEncoder
 from util.training import finetuning_epoch, simclr_epoch, training_epoch
+from train_simple_lstm import (
+    get_args, recursive_zip, load_config, configure_logger, build_dataloader, create_dataloaders, 
+    initialize_probe, initialize_projector, initialize_models, model_summaries, initialize_optimizers,
+    train_models, test_models, save_model_checkpoints, experiment_run,
+)
 
-from train_simple_lstm import get_args, recursive_zip, load_config, configure_logger, build_dataloader, create_dataloaders, initialize_probe
+
 
 
 ############################# GLOBAL VARIABLES #####################################################
@@ -47,6 +55,7 @@ DEFAULT_LOG_FILE = f"logs/simple-cnn_{timestamp}.log"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ############################# FUNCTIONS ############################################################
+
 def get_args():
     """
     Parse command line arguments.
@@ -80,6 +89,11 @@ def get_args():
         "--test_dir",
         type=str,
         help="Path to testing data",
+    )
+    arg_parser.add_argument(
+        "--scaler_file",
+        type=str,
+        help="Path to data scaler pickle file",
     )
     arg_parser.add_argument(
         "--checkpoints_dir",
@@ -116,8 +130,78 @@ def get_args():
         default=DEFAULT_LOG_FILE,
         help="The log file to write to",
     )
+    arg_parser.add_argument(
+        "-x",
+        "--features",
+        type=str,
+        nargs="+",
+        default=["open", "close", "high", "low", "volume"],
+        help="The features to use for training",
+    )
+    arg_parser.add_argument(
+        "-y",
+        "--targets",
+        type=str,
+        nargs="+",
+        default=["close"],
+        help="The target variables to predict",
+    )
 
     return arg_parser.parse_args()
+
+def load_config(args):
+    """
+    Load a configuration file.
+
+    Args:
+    - args: the parsed arguments
+
+    Returns:
+    - config: the configuration dictionary
+    """
+
+    # The 'normal' config file contains the specific configuration for this run
+    with open(args.config, "r") as f:
+        config = yaml.safe_load(f)
+        args.config = None
+
+    # Override configuration with command line arguments
+    if args.train_dir is not None:
+        config["data"]["train_dir"] = args.train_dir
+
+    if args.test_dir is not None:
+        config["data"]["test_dir"] = args.test_dir
+
+    if args.scaler_file is not None:
+        config["data"]["scaler_file"] = args.scaler_file
+
+    if args.checkpoints_dir is not None:
+        config["training"]["checkpoints_dir"] = args.checkpoints_dir
+
+    if args.name is not None:
+        config["experiment"]["name"] = args.name
+
+    # tags are appended rather than replaced
+    if args.tags is not None:
+        config["experiment"]["tags"].extend(args.tags)
+
+    if args.num_epochs is not None:
+        config["training"]["n_epochs"] = args.num_epochs
+
+    if args.features is not None:
+        config["data"]["features"] = args.features
+
+    if args.targets is not None:
+        config["data"]["targets"] = args.targets
+
+    # Override configuration with JSON string of parameters
+    if args.config_override is not None:
+        override = json.loads(args.config_override)
+        config = recursive_zip(config, override)
+
+    logger.info(f"Configuration:\n{pprint.pformat(config)}")
+
+    return config
 
 
 def initialize_encoder(config):
@@ -131,10 +215,12 @@ def initialize_encoder(config):
     - encoder: the encoder model
     """
     return CnnEncoder(
-        input_size=config["input_size"],
+        in_channels=config["in_channels"],
         out_channels=config["out_channels"],
         kernel_size=config["kernel_size"],
+        num_layers = config["num_layers"],
     ).to(device)
+
 
 def initialize_probe(config):
     """
@@ -310,7 +396,7 @@ def train_models(models, optimizers, train_loader, config, epoch):
     return simclr_training_loss, finetuning_training_loss, baseline_training_loss
 
 
-def test_models(models, test_loader, epoch):
+def test_models(models, test_loader, epoch, scaler: StandardScaler):
     """
     Test the finetuned model and the baseline model on the test data.
 
@@ -318,6 +404,7 @@ def test_models(models, test_loader, epoch):
     - models: a tuple of the encoder, projector, probe, and base model
     - test_loader: the testing DataLoader
     - epoch: the current epoch number (for logging)
+    - scaler: a StandardScaler object for the target variable
 
     Returns:
     - finetuning_test_loss: the validation loss for the finetuned model
@@ -328,6 +415,14 @@ def test_models(models, test_loader, epoch):
 
     print("Testing Finetuned model...")
     finetuned_test_loss = 0
+
+    # TODO: this is a quick patch that should be made more general later
+    # We should not assume that the target variable is the last column
+    # Extracting the scale and mean of the target variable is also bad form
+    scale = scaler.scale_[-1]  # type: ignore
+    mean = scaler.mean_[-1]  # type: ignore
+
+    finetuned_perc_error = 0
     encoder.eval()
     probe.eval()
     pbar = tqdm(test_loader)
@@ -336,13 +431,18 @@ def test_models(models, test_loader, epoch):
         y_pred = probe(z)
         y_true = y[:, -1]
         finetuned_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        finetuned_perc_error += average_percentage_error(
+            y_true * scale + mean, y_pred * scale + mean
+        ).item()
     finetuned_test_loss /= len(test_loader)
+    finetuned_perc_error /= len(test_loader)
     logger.info(
         f"Epoch {epoch} --- Finetuned Model Test Loss: {finetuned_test_loss:.4e}"
     )
     print(f"Finetuned Model Test Loss: {finetuned_test_loss:.4e}")
 
     print("Testing Baseline Model...")
+    baseline_perc_error = 0
     baseline_test_loss = 0
     base_model.eval()
     pbar = tqdm(test_loader)
@@ -350,11 +450,20 @@ def test_models(models, test_loader, epoch):
         y_pred = base_model(x)
         y_true = y[:, -1]
         baseline_test_loss += nn.MSELoss()(y_pred, y_true).item()
+        baseline_perc_error += average_percentage_error(
+            y_true * scale + mean, y_pred * scale + mean
+        ).item()
     baseline_test_loss /= len(test_loader)
+    baseline_perc_error /= len(test_loader)
     logger.info(f"Epoch {epoch} --- Baseline Model Test Loss: {baseline_test_loss:.4e}")
     print(f"Baseline Model Test Loss: {baseline_test_loss:.4e}")
 
-    return finetuned_test_loss, baseline_test_loss
+    return (
+        finetuned_test_loss,
+        finetuned_perc_error,
+        baseline_test_loss,
+        baseline_perc_error,
+    )
 
 
 def save_model_checkpoints(models, config, epoch):
@@ -382,31 +491,44 @@ def save_model_checkpoints(models, config, epoch):
     logger.info(f"Model checkpoints saved to {epoch_checkpoint}")
 
 
-def experiment_run(models, optimizers, train_loader, test_loader, config):
+def experiment_run(models, optimizers, train_loader, test_loader, config, scaler):
     print("Starting Experiment Run...")
     num_epochs = config["num_epochs"]
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
         train_losses = train_models(models, optimizers, train_loader, config, epoch)
-        simclr_train_loss, finetuning_train_loss, base_train_loss = train_losses
+        simclr_train_loss, finetuning_train_loss, baseline_train_loss = train_losses
 
-        test_losses = test_models(models, test_loader, epoch)
-        finetuning_test_loss, base_test_loss = test_losses
+        test_losses = test_models(models, test_loader, epoch, scaler)
+        (
+            finetuning_test_loss,
+            finetined_perc_error,
+            baseline_test_loss,
+            baseline_perc_error,
+        ) = test_losses
 
         wandb.log(
             {
                 "Epoch": epoch,
                 "SimCLR Training Loss": simclr_train_loss,
                 "Finetuned Training Loss": finetuning_train_loss,
-                "Baseline Training Loss": base_train_loss,
+                "Baseline Training Loss": baseline_train_loss,
                 "Finetuned Test Loss": finetuning_test_loss,
-                "Baseline Test Loss": base_test_loss,
+                "Baseline Test Loss": baseline_test_loss,
+                "Finetuned Test APE": finetined_perc_error,
+                "Baseline Test APE": baseline_perc_error,
             }
         )
 
         save_model_checkpoints(models, config, epoch)
 
     wandb.finish()
+
+def get_final_conv_output_size(input_length, kernel_size, num_layers, stride = 1):
+    out_len = input_length
+    for _ in range(num_layers):
+        out_len = (out_len - kernel_size) // stride + 1
+    return out_len
 
 ############################# MAIN FUNCTION #######################################################
 
@@ -426,13 +548,25 @@ def main(config):
     # Load data
     train_loader, test_loader = create_dataloaders(config["data"])
 
-    # Set the input size of the encoder based on the data
+    # Set the input channels of the CNN encoder based on the data
     input_size = next(iter(train_loader))[0].shape[-1]
-    config["models"]["encoder"]["input_size"] = input_size
+    config["models"]["encoder"]["in_channels"] = len(config["data"]["features"])
+
+    seq_len = config["data"]["segment_length"]
+    encoder_kernel_size = config["models"]["encoder"]["kernel_size"]
+    encoder_num_layers = config["models"]["encoder"]["num_layers"]
+
+    encoder_output_size = get_final_conv_output_size(seq_len, encoder_kernel_size, encoder_num_layers, stride = 1 )
+    config["models"]["encoder"]["output_size"] = encoder_output_size
+
+    embedding_size = encoder_output_size * config["models"]["encoder"]["out_channels"]
+    config["models"]["projector"]["input_size"] = embedding_size
+    config["models"]["probe"]["input_size"] = embedding_size
+
+    
 
     # Initialize models
     models = initialize_models(config["models"])
-    print(config["models"])
 
     # Model summaries
     segment_length = config["data"]["segment_length"]
@@ -443,7 +577,10 @@ def main(config):
     optimizers = initialize_optimizers(models, config["optimizers"])
 
     # Start the experiment
-    experiment_run(models, optimizers, train_loader, test_loader, config["training"])
+    scaler = pickle.load(open(config["data"]["scaler_file"], "rb"))
+    experiment_run(
+        models, optimizers, train_loader, test_loader, config["training"], scaler
+    )
 
 
 if __name__ == "__main__":
