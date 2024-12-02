@@ -25,7 +25,7 @@
 module load python/3.11
 source venv/bin/activate
 
-# TODO: make sure to run 'python src/generate_grid_search.py'
+# TODO: make sure to run 'python src/generate_grid_search_cnn.py'
 # beforehand to generate the grid-search parameters
 
 PARAM_FILE="configs/grid_search_cnn.json"
