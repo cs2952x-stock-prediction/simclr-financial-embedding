@@ -1,0 +1,866 @@
+[
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_0",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_0"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_1",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_1"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_2",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_2"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 1,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_3",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_3"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_4",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_4"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_5",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_5"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 2,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_6",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_6"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_7",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_7"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=64",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_8",
+                "models.encoder.output_size=64"
+            ],
+            "name": "lstm_grid_8"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 64,
+                "num_layers": 3,
+                "output_size": 64
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_9",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_9"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_10",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_10"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_11",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_11"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 1,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_12",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_12"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_13",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_13"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_14",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_14"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 2,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_15",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_15"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_16",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_16"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=128",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_17",
+                "models.encoder.output_size=128"
+            ],
+            "name": "lstm_grid_17"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 128,
+                "num_layers": 3,
+                "output_size": 128
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_18",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_18"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_19",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_19"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_20",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_20"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 1,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_21",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_21"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_22",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_22"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_23",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_23"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 2,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_24",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_24"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_25",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_25"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=256",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_26",
+                "models.encoder.output_size=256"
+            ],
+            "name": "lstm_grid_26"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 256,
+                "num_layers": 3,
+                "output_size": 256
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_27",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_27"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_28",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_28"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=1",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_29",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_29"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 1,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_30",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_30"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_31",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_31"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=2",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_32",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_32"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 2,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.1",
+                "experiment.name=lstm_grid_33",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_33"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.1
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.3",
+                "experiment.name=lstm_grid_34",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_34"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.3
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "lstm",
+                "grid-search",
+                "models.encoder.hidden_size=512",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "experiment.name=lstm_grid_35",
+                "models.encoder.output_size=512"
+            ],
+            "name": "lstm_grid_35"
+        },
+        "models": {
+            "encoder": {
+                "hidden_size": 512,
+                "num_layers": 3,
+                "output_size": 512
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        }
+    }
+]

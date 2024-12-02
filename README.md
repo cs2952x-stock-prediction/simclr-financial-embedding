@@ -120,8 +120,8 @@ Running the following commands sets up the environment, downloads the Kaggle SP5
 Replace the dummy API keys in the first two lines with your own.
 
 ```
-$ echo WANDB_API_KEY=\"b12a3f67aff566adf19f8578113d2c79b3c39bbb\" >> .env
-$ echo POLYGON_API_KEY=\"xHbp2Tu633_dkSBpLQe7gWGascRwQjcI\" >> .env
+$ echo WANDB_API_KEY=\"fd8f883db22c1368156d3ca916afb085a7bf6620\" >> .env
+$ echo POLYGON_API_KEY=\"B2iNcYA7xw4J4lPrR1JttVg_kJK8otUB\" >> .env
 $ source activate.sh
 (venv) $ python src/data/kaggle_download.py
 (venv) $ python src/data/kaggle_clean.py
