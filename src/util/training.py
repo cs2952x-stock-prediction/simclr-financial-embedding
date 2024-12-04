@@ -9,7 +9,7 @@ from tqdm import tqdm
 from .datasets import TimeSeriesDataset
 from .evaluation import nt_xent_loss
 from .transformations import mask_with_added_gaussian
-
+from .transformations import mask_with_added_smoothing
 ############################# GLOBAL VARIABLES #####################################################
 
 # Logger
@@ -92,7 +92,8 @@ def simclr_epoch(encoder, projector, dataloader, optimizer, temp, **kwargs):
     total_loss = 0
     for i, (x, _) in enumerate(pbar):
         # transform data to create two views
-        x_i = mask_with_added_gaussian(x, mask_prob=1.0, std_multiplier=0.1)
+        #x_i = mask_with_added_gaussian(x, mask_prob=1.0, std_multiplier=0.1)
+        x_i = mask_with_added_smoothing(x, mask_prob=1.0, smoothing_factor=0.1)
         x_j = x
 
         # create representations

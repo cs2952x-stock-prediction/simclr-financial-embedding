@@ -1,5 +1,57 @@
 import torch
 
+def smooth_neighbors(data, mask_prob=0.1, mask_axis=(0, 1), window_size=3):
+    """
+    Applies smoothing (averaging neighbors) to the masked elements in the data.
+
+    Parameters:
+    - data (tensor): Input array with shape (batch_sz, seq_len, n_features) or similar.
+    - mask_prob (float): Probability of masking each element or example in the sequence. Default is 0.1.
+    - mask_axis (int or tuple): Dimension(s) along which to apply the mask. Default is (0, 1).
+    - window_size (int): The window size for averaging neighbors. Default is 3.
+
+    Returns:
+    - tensor: The input data with smoothed values applied to selected elements.
+    """
+    # Generate mask to apply smoothing by example or feature
+    mask_shape = [
+        data.shape[dim] if dim in mask_axis else 1 for dim in range(data.dim())
+    ]
+    mask = (torch.rand(mask_shape) < mask_prob)
+
+    # Apply smoothing to the masked elements
+    smoothed_data = data.clone()
+    for idx in range(data.shape[0]):  # Iterate over batch dimension
+        for jdx in range(data.shape[1]):  # Iterate over sequence dimension
+            if mask[idx, jdx]:  # If the element is masked
+                # Determine the window around the masked element
+                start_idx = max(jdx - window_size // 2, 0)
+                end_idx = min(jdx + window_size // 2 + 1, data.shape[1])
+                
+                # Average the neighboring elements within the window
+                smoothed_data[idx, jdx] = torch.mean(data[idx, start_idx:end_idx], dim=0)
+    
+    return smoothed_data
+
+def mask_with_added_smoothing(
+    data,
+    mask_prob=0.1,
+    mask_axis=(0, 1),
+    window_size=3,
+):
+    """
+    Adds smoothing (averaging neighbors) to masked features in the data.
+
+    Parameters:
+    - data (tensor): Input array with shape (batch_sz, seq_len, n_features) or similar.
+    - mask_prob (float): Probability of masking each element or example in the sequence. Default is 0.1.
+    - mask_axis (int or tuple): Dimension(s) along which to apply the mask. Default is (0, 1).
+    - window_size (int): The window size for averaging neighbors. Default is 3.
+
+    Returns:
+    - tensor: The input data with smoothed values applied to selected elements.
+    """
+    return smooth_neighbors(data, mask_prob=mask_prob, mask_axis=mask_axis, window_size=window_size)
 
 def mask_with_added_gaussian(
     data,
