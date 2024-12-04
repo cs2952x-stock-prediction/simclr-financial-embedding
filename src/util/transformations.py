@@ -265,3 +265,26 @@ def mask_with_lognormal(
 
     # Replace with random values only where the mask is True
     return np.where(mask, rand_vals, data)
+
+def dropout_shift(data, drop_prob=0.1):
+    """
+    Implements dropout by zeroing out an entry and shifting data accordingly.
+
+    Parameters:
+    - data (tensor): The input data tensor.
+    - drop_prob (float): The probability of dropping out (zeroing) an entry. Default is 0.1.
+
+    Returns:
+    - tensor: The input data with dropout applied, with entries zeroed out and shifted.
+    """
+    mask = (torch.rand_like(data) < drop_prob).float()
+    shifted_data = torch.zeros_like(data)
+
+    for idx in range(data.shape[0]):
+        for jdx in range(data.shape[1]):
+            if mask[idx, jdx] == 0:
+                shifted_data[idx, jdx] = data[idx, jdx]
+            elif jdx > 0:
+                shifted_data[idx, jdx - 1] = data[idx, jdx]
+
+    return shifted_data

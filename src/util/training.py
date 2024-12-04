@@ -10,6 +10,7 @@ from .datasets import TimeSeriesDataset
 from .evaluation import nt_xent_loss
 from .transformations import mask_with_added_gaussian
 from .transformations import mask_with_added_smoothing
+from .transformations import dropout_shift
 ############################# GLOBAL VARIABLES #####################################################
 
 # Logger
