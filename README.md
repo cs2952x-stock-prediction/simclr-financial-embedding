@@ -151,3 +151,44 @@ $ source activate.sh
 
 **NOTE:** There is now a `kaggle_pipeline.py` file that calls `kaggle_download.py`, `kaggle_clean.py`, and `kaggle_process.py`.
 It uses the `configs/kiggle-pipeline.yaml` config file to configure all the intermediate steps.
+
+## Dec 2 Checkpoint/Presentation Outline
+
+### Data/Transformations
+
+Our data:
+- So far, we have been operating on the Kaggle dataset since it is faster to train/test on.
+- Another good option would have been to use a small subset of the Polygon daset (not doing that is my bad -Ian)
+- The main issue with running on all polygon data is that it doesn't fit into memory. I have a BigDataset object that should be able to load a single file at a time (and shuffle the contents of the file for training), but since we have been using Kaggle continued to do so for a consistent baseline of comparison.
+
+Properties of time series data:
+- We have to handle time series data very carefully to avoid data leaking (information/answers from future data being exposed to earlier data). For us, that means:
+      - Splitting the data into train/test along dates (we pick Jan 1, 2023)
+      - Scaler is applied to the test data, but the scaling values are only picked based on the training data.
+
+Properties of Financial data:
+- In particular, time series data has not-so-fun properties (1) high noise-signal ratio (2) experiences "distribution shift" (3) is non-negative and not zero-centered (4) follows a log-normal distribution (distribution of e^X where X is a normal RV) (5) experiences changes multiplicatively instead of linearly
+- We attempt to solve (1) with SIMCL (extracting important information into the embedding)
+- We can try solving (2) via differencing, logging
+- We can try solving (3-5) via logging
+- This should transform the data into a gaussian distribution and scaling at the end should make it normal
+
+Here, it would be great to have some visualizations of (1) a non-transformed distribution (log-normal) and (2) a transformed distribution (normal).
+
+Also note the ADF statistical test that shows that the price-based columns do have non-stationary distribution. 
+
+^^^ It would be great to have some results that differencing also affects the empirical results i.e. the test loss of baseline or finetuning.
+
+### Model
+
+We've been focusing on the SimCLR model. Right now the framework only applied gaussian noise as a transformation. A next step would be to incorporate a composition of more transformations.
+
+"Baseline" refers to a model with identical structure to that used in SimCLR, but trained end-to-end on the downstream task.
+"Finetuned" refers to the encoder trained on SimCLR + the probe trained on the downstream task.
+
+### Experiments + Results
+
+- Results of our ablation
+- Results of our grid search
+
+Summary: results aren't great and baseline generally outperforms the simclr fine-tuned model.
