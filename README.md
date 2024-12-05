@@ -16,6 +16,7 @@
 4. **Important** Start training on the polygon data to see if 5-minutely frequency makes a big difference in outcomes.
    "BigSeriesDataset" is meant for training on ALL polygon data, but to start it could be more practical to create a folder with just a handful of stocks from the polgyon dataset and train on that the same way that we have been with kaggle.
    Perform a new grid search and ablations with this data.
+   Drive link to data: https://drive.google.com/file/d/1j8HjTdK48t_BgI9q6HJubSdomPFsaqAL/view?usp=drive_link
    
 6. Create a script that generates a graph of predicted price values against the true price values for a stock.
    General steps are:
