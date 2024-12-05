@@ -21,6 +21,21 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ############################# FUNCTIONS ############################################################
 
+def linear_epoch(model, dataloader, loss_fn, optimizer, **kwargs):
+    model.train()
+    pbar = tqdm(dataloader)
+    total_loss = 0
+    for i, (x, y) in enumerate(pbar):
+        x_flat = x.view(x.size(0), -1).to(device)
+        y_pred = model(x_flat)
+        y_true = y[:, -1].to(device)
+        loss = loss_fn(y_pred, y_true)
+        total_loss += loss.item()
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        # Update progress bar and callbacks as before
+    return total_loss / len(dataloader)
 
 def freeze(model):
     """
