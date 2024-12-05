@@ -1,32 +1,46 @@
 # simclr-financial-embedding
 
-## TODO List
+## Next Tasks
 
-Today
+1. **Important** Do more hyperparameter tuning (this can be done on the kaggle dataset or polygon).
+   The main issue right now is slow convergence of the SimCLR model --- try some increased values of the learning rate.
+   Learning rate of finetuning less likely to need adjustment, but try that anyway.
+   Baseline model might actually need to be lowered --- it already converges very quickly and might benefit from some stability.
 
-- [x] add differencing to data pipeline
-- [x] data processing should produce an 'undo' function/binary
-- [x] upload polygon data to google drive
-- [ ] create a download script for polygon data
-- [x] create a large-scale dataloader for big CSV
-- [ ] run ablation studies
-- [x] log the real-value error (in percent and/or absolute dollar)
-- [ ] add transformations for simcl training
+   In particular, larger models probably need different rates from smaller models.
+   See how different learning rates affects the the convergence of different model sizes.
 
-Small/short-term pipline fixes:
+3. **Important** Add more transformation options to the SimCLR pipeline (would be nice to have them as config parameters).
+   These would be (1) smoothing/averaging (2) swapping adjacent entry values (3) smoothing by setting to zero (only if this makes sense).
 
-- [ ] check that files are not overwritten and force is used correctly
-- [ ] make sure destination folders are created if they down exist
-- [ ] parsimony between config/arg parameter names
-- [ ] every argparse should include a description
+4. **Important** Start training on the polygon data to see if 5-minutely frequency makes a big difference in outcomes.
+   "BigSeriesDataset" is meant for training on ALL polygon data, but to start it could be more practical to create a folder with just a handful of stocks from the polgyon dataset and train on that the same way that we have been with kaggle.
+   Perform a new grid search and ablations with this data.
+   
+6. Create a script that generates a graph of predicted price values against the true price values for a stock.
+   General steps are:
+   a. Set (1) model checkpoint directory (2) stock data file
+   b. Load the model (encoder and probe are saved separately, so you will have to create code to combine)
+   c. Load the data into a dataset (use step size 1 and adjustable sequence length --- no shuffling)
+   d. Make predictions
+   e. If the data is transformed, you will probably have to undo those transformations (unscale > undo diff with cumsum > undo log with exp)
+   f. Plot and save
+   
+7. Check that differencing is not having a negative impact on results.
+   Run smaller grid search without differencing and look for changes in the APE.
+   **NOTE** The current function for calculating APE makes some assumptions about the transformations on the data (log-differencing).
+   Make sure that the APE is corrected for differencing correctly.
 
-Longer term:
-
-- [x] create dataset for large data (only loads some files in memory at a time)
-      TODO: Still needs testing
-- [ ] create polygon data cleaning script
-- [ ] run ablation studies
-- [x] run up grid search
+8. Create script that compares the performance of a model to linear regression.
+   Similar initial control flow to task (1).
+   a. Set (1) model checkpoint directory (2) stock data file
+   b. Load the model (encoder and probe are saved separately, so you will have to create code to combine)
+   c. Load the data into a dataset (use step size 1 and adjustable sequence length --- no shuffling)
+   d. Iterate through the dataset --- at each step, perform linear regression on the sequences.
+      You will probably have to 
+   e. Calculate the percent error of linear regression and model. Add them up and average at the end.
+   **Note:** Linear regression _after differencing_ is actually a second-order (2-degree polynomial) regression on the original data.
+   Not a bad thing --- just keep in mind for analysis and writing the paper.
 
 ## Getting Started
 
@@ -192,3 +206,4 @@ We've been focusing on the SimCLR model. Right now the framework only applied ga
 - Results of our grid search
 
 Summary: results aren't great and baseline generally outperforms the simclr fine-tuned model.
+
