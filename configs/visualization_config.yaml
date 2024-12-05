@@ -1,0 +1,49 @@
+# visualization_config.yaml
+
+data:
+  test_dir: "data/processed/kaggle/v2/test"
+  scaler_file: "data/processed/kaggle/v2/scaler.pkl"
+  segment_length: 30
+  segment_step: 5
+  batch_size: 64
+  features: ["open", "close", "high", "low", "volume"]
+  targets: ["close"]
+
+models:
+  linear:
+    input_size: 150  # segment_length (30) * number of features (5)
+    checkpoint: "checkpoints/simple-linear/best_model.pth"  # Adjust the path as needed
+
+  lstm:
+    input_size: 5  # Number of features
+    hidden_size: 64  # Adjust based on your training configuration
+    num_layers: 2    # Adjust based on your training configuration
+    output_size: 64  # If you used 'proj_size' in your LSTM encoder
+    encoder_checkpoint: "checkpoints/simple-lstm/epoch_xxx/encoder.pth"  # Replace 'epoch_xxx' with actual epoch
+    probe_checkpoint: "checkpoints/simple-lstm/epoch_xxx/probe.pth"
+    probe_hidden_layers:
+      - [64, "relu"]
+      - [32, "relu"]
+
+  cnn:
+    in_channels: 5  # Number of features
+    out_channels: 8
+    kernel_size: 2
+    num_layers: 1
+    encoder_output_size: 29  # Calculated using your function
+    probe_input_size: 232  # encoder_output_size * out_channels (29 * 8)
+    encoder_checkpoint: "checkpoints/simple-cnn/epoch_xxx/encoder.pth"
+    probe_checkpoint: "checkpoints/simple-cnn/epoch_xxx/probe.pth"
+    probe_hidden_layers:
+      - [64, "relu"]
+      - [32, "relu"]
+
+  baseline:
+    input_size: 5  # Number of features
+    hidden_size: 64
+    num_layers: 2
+    output_size: 64
+    checkpoint: "checkpoints/simple-lstm/epoch_xxx/base_model.pth"
+    probe_hidden_layers:
+      - [64, "relu"]
+      - [32, "relu"]

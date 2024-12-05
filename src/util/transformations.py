@@ -1,5 +1,63 @@
 import torch
 
+def random_scaling(data, scale_range=(0.8, 1.2)):
+    scale = torch.empty(1).uniform_(*scale_range).item()
+    return data * scale
+
+def random_neighbor_swap(data, swap_prob=0.1):
+    """
+    Randomly swaps neighboring entries in the data.
+
+    Parameters:
+    - data (tensor): Input data with shape (batch_sz, seq_len, n_features) or similar.
+    - swap_prob (float): Probability of performing a swap. Default is 0.1.
+
+    Returns:
+    - tensor: The input data with randomly swapped neighboring entries.
+    """
+    swapped_data = data.clone()
+    for idx in range(data.shape[0]):  # Iterate over batch
+        for jdx in range(data.shape[1] - 1):  # Iterate over sequence
+            if torch.rand(1).item() < swap_prob:
+                # Swap current element with the next one
+                swapped_data[idx, jdx], swapped_data[idx, jdx + 1] = (
+                    swapped_data[idx, jdx + 1],
+                    swapped_data[idx, jdx],
+                )
+    return swapped_data
+
+def random_swap(data, swap_prob=0.1, swap_axis=(0, 1)):
+    """
+    Randomly swaps two entries in the data along specified axes.
+
+    Parameters:
+    - data (tensor): Input data with shape (batch_sz, seq_len, n_features) or similar.
+    - swap_prob (float): Probability of performing a swap on an element. Default is 0.1.
+    - swap_axis (tuple): Axes along which the swap will be applied. Default is (0, 1).
+
+    Returns:
+    - tensor: The input data with randomly swapped entries.
+    """
+    # Generate a mask to determine where swaps will occur
+    mask_shape = [data.shape[dim] if dim in swap_axis else 1 for dim in range(data.dim())]
+    mask = (torch.rand(mask_shape) < swap_prob).bool()
+
+    # Create a clone to avoid modifying the original data
+    swapped_data = data.clone()
+
+    for idx in range(data.shape[0]):  # Iterate over the batch
+        for jdx in range(data.shape[1]):  # Iterate over the sequence
+            if mask[idx, jdx]:
+                # Randomly select another index to swap with
+                swap_with = torch.randint(0, data.shape[1], (1,)).item()
+
+                # Swap the two elements
+                swapped_data[idx, jdx], swapped_data[idx, swap_with] = (
+                    swapped_data[idx, swap_with],
+                    swapped_data[idx, jdx],
+                )
+    
+    return swapped_data
 
 def mask_with_added_gaussian(
     data,
