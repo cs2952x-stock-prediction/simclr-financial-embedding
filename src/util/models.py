@@ -2,11 +2,31 @@ import torch.nn as nn
 
 
 
+# class LstmEncoder(nn.Module):
+#     def __init__(self, input_size, hidden_size, num_layers=1, proj_size=0):
+#         if hidden_size == proj_size:
+#             proj_size = 0
+#         super(LstmEncoder, self).__init__()
+#         self.lstm = nn.LSTM(
+#             input_size=input_size,
+#             hidden_size=hidden_size,
+#             num_layers=num_layers,
+#             proj_size=proj_size if proj_size else None,
+#             batch_first=True,
+#         )
+
+#     def forward(self, x):
+#         _, (h_n, _) = self.lstm(x)
+#         return h_n[-1]
+
 class LstmEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers=1, proj_size=0):
-        if hidden_size == proj_size:
-            proj_size = 0
+        if proj_size > hidden_size:
+            raise ValueError("proj_size must be smaller than hidden_size")
+        proj_size = proj_size if proj_size > 0 else 0
         super(LstmEncoder, self).__init__()
+        if proj_size == hidden_size:
+            proj_size = 0
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -18,8 +38,7 @@ class LstmEncoder(nn.Module):
     def forward(self, x):
         _, (h_n, _) = self.lstm(x)
         return h_n[-1]
-
-
+    
 class DenseLayers(nn.Module):
     def __init__(self, input_size, output_size, hidden_layers=None):
         super(DenseLayers, self).__init__()

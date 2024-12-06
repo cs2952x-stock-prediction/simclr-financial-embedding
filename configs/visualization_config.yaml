@@ -2,12 +2,16 @@
 
 data:
   test_dir: "data/processed/kaggle/v2/test"
+  # interim_dir: "data/interim/kaggle"
   scaler_file: "data/processed/kaggle/v2/scaler.pkl"
   segment_length: 30
   segment_step: 5
   batch_size: 64
   features: ["open", "close", "high", "low", "volume"]
   targets: ["close"]
+  log_transform: ["open", "close", "high", "low", "volume"]
+  diff_transform: ["open", "close", "high", "low", "volume"]
+  scale_transform: ["open", "close", "high", "low", "volume"]
 
 models:
   linear:
@@ -16,34 +20,34 @@ models:
 
   lstm:
     input_size: 5  # Number of features
-    hidden_size: 64  # Adjust based on your training configuration
-    num_layers: 2    # Adjust based on your training configuration
-    output_size: 64  # If you used 'proj_size' in your LSTM encoder
-    encoder_checkpoint: "checkpoints/simple-lstm/epoch_xxx/encoder.pth"  # Replace 'epoch_xxx' with actual epoch
-    probe_checkpoint: "checkpoints/simple-lstm/epoch_xxx/probe.pth"
+    hidden_size: 128  # Match the checkpoint
+    num_layers: 1     # Ensure it matches the checkpoint
+    output_size: 128  # Match the projected size in the checkpoint
+    encoder_checkpoint: "/Users/marcs/Desktop/SSL_final/simclr-financial-embedding/checkpoints/simple-lstm/2024-11-30_040021/epoch_004/encoder.pth"  # Replace 'epoch_xxx' with actual epoch
+    probe_checkpoint: "/Users/marcs/Desktop/SSL_final/simclr-financial-embedding/checkpoints/simple-lstm/2024-11-30_040021/epoch_004/probe.pth"
     probe_hidden_layers:
       - [64, "relu"]
       - [32, "relu"]
 
-  cnn:
-    in_channels: 5  # Number of features
-    out_channels: 8
-    kernel_size: 2
-    num_layers: 1
-    encoder_output_size: 29  # Calculated using your function
-    probe_input_size: 232  # encoder_output_size * out_channels (29 * 8)
-    encoder_checkpoint: "checkpoints/simple-cnn/epoch_xxx/encoder.pth"
-    probe_checkpoint: "checkpoints/simple-cnn/epoch_xxx/probe.pth"
-    probe_hidden_layers:
-      - [64, "relu"]
-      - [32, "relu"]
+  # cnn:
+  #   in_channels: 5  # Number of features
+  #   out_channels: 8
+  #   kernel_size: 2
+  #   num_layers: 1
+  #   encoder_output_size: 29  # Calculated using your function
+  #   probe_input_size: 232  # encoder_output_size * out_channels (29 * 8)
+  #   encoder_checkpoint: "checkpoints/simple-cnn/epoch_xxx/encoder.pth"
+  #   probe_checkpoint: "checkpoints/simple-cnn/epoch_xxx/probe.pth"
+  #   probe_hidden_layers:
+  #     - [64, "relu"]
+  #     - [32, "relu"]
 
-  baseline:
-    input_size: 5  # Number of features
-    hidden_size: 64
-    num_layers: 2
-    output_size: 64
-    checkpoint: "checkpoints/simple-lstm/epoch_xxx/base_model.pth"
-    probe_hidden_layers:
-      - [64, "relu"]
-      - [32, "relu"]
+  # baseline:
+  #   input_size: 5  # Number of features
+  #   hidden_size: 128
+  #   num_layers: 1
+  #   output_size: 128
+  #   checkpoint: "checkpoints/simple-lstm/epoch_xxx/base_model.pth"
+  #   probe_hidden_layers:
+  #     - [64, "relu"]
+  #     - [32, "relu"]

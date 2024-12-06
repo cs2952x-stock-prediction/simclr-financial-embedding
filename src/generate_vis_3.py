@@ -51,6 +51,7 @@ def load_model_checkpoint(checkpoint_path, model):
 def create_test_dataloader(data_dir, config):
     """
     Create a DataLoader for test data based on the provided directory and configuration.
+    The data is already preprocessed (log transformed, differenced, and scaled).
 
     Args:
         data_dir (str): Path to the directory containing CSV files with test data.
@@ -60,15 +61,30 @@ def create_test_dataloader(data_dir, config):
         torch.utils.data.DataLoader: A DataLoader for the time-series test dataset.
     """
     sequences, labels = [], []
-    for filename in tqdm(os.listdir(data_dir), desc="Loading test data"):
-        if filename.endswith(".csv"):
-            df = pd.read_csv(os.path.join(data_dir, filename))
+    
+    filename = "AAPL.csv"
+    file_path = os.path.join(data_dir, filename)
+    
+    if os.path.exists(file_path):
+        # Load already preprocessed data
+        df = pd.read_csv(file_path)
+        print(f"\nProcessing file: {filename}")
+        print(f"Shape: {df.shape}")
+        
+        # Extract features (X) and target variables (Y)
+        x_cols = config["data"]["features"]
+        y_cols = config["data"]["targets"]
+        
+        # Drop any rows with NaN values
+        df = df.dropna()
+        
+        sequences.append(df[x_cols].values)
+        labels.append(df[y_cols].values)
+        print(f"Added sequence of shape: {df[x_cols].values.shape}")
 
-            # Extract features (X) and target variables (Y)
-            x_cols = config["data"]["features"]
-            y_cols = config["data"]["targets"]
-            sequences.append(df[x_cols].values)
-            labels.append(df[y_cols].values)
+    print(f"\nTotal sequences collected: {len(sequences)}")
+    if len(sequences) == 0:
+        raise ValueError("No valid sequences were generated")
 
     dataset = TimeSeriesDataset(
         sequences,
@@ -76,6 +92,10 @@ def create_test_dataloader(data_dir, config):
         config["data"]["segment_length"],
         config["data"]["segment_step"],
     )
+    
+    if len(dataset) == 0:
+        raise ValueError("Dataset is empty after creating TimeSeriesDataset")
+        
     return DataLoader(dataset, batch_size=config["data"]["batch_size"], shuffle=False)
 
 
@@ -111,24 +131,24 @@ def fit_linear_regression(X, y):
 
     return np.array(predictions)
 
+
+
 def generate_visualization(config, output_dir="visualizations"):
     """
     Generate visualizations comparing model predictions vs ground truth.
-
-    Args:
-        config (dict): Experiment configuration dictionary.
-        output_dir (str): Directory to save the generated visualizations.
     """
-    # Load scaler for rescaling predictions and ground truth
+    # Load scaler for rescaling predictions
     with open(config["data"]["scaler_file"], "rb") as f:
         scaler = pickle.load(f)
-    scale = scaler.scale_[-1]  # Scaling factor for the last target variable
-    mean = scaler.mean_[-1]    # Mean value for the last target variable
+    scale = scaler.scale_[-1]  
+    mean = scaler.mean_[-1]    
 
-
-    # Create a DataLoader for the test data
+    # Load interim (unprocessed) data for ground truth
+    interim_path = "data/interim/kaggle"
+    raw_df = pd.read_csv(os.path.join(interim_path, "AAPL.csv"))
+    
+    # Create a DataLoader for the processed test data
     test_loader = create_test_dataloader(config["data"]["test_dir"], config)
-
 
     # Initialize models based on the configuration
     print("Loading models...")
@@ -151,55 +171,12 @@ def generate_visualization(config, output_dir="visualizations"):
     lstm_model = nn.Sequential(lstm_encoder, lstm_probe)
     lstm_model.eval()
 
-    # Load the CNN model
-    # cnn_config = config["models"]["cnn"]
-    # cnn_encoder = CnnEncoder(
-    #     in_channels=cnn_config["in_channels"],
-    #     out_channels=cnn_config["out_channels"],
-    #     kernel_size=cnn_config["kernel_size"],
-    #     num_layers=cnn_config["num_layers"],
-    # ).to(device)
-    # cnn_probe = DenseLayers(
-    #     input_size=cnn_config["probe_input_size"],
-    #     output_size=1,
-    #     hidden_layers=cnn_config.get("probe_hidden_layers", []),
-    # ).to(device)
-    # cnn_encoder = load_model_checkpoint(cnn_config["encoder_checkpoint"], cnn_encoder)
-    # cnn_probe = load_model_checkpoint(cnn_config["probe_checkpoint"], cnn_probe)
-    # cnn_model = nn.Sequential(cnn_encoder, cnn_probe)
-    # cnn_model.eval()
-
-    # Load the Baseline model
-    # baseline_config = config["models"]["baseline"]
-    # baseline_encoder = LstmEncoder(
-    #     input_size=baseline_config["input_size"],
-    #     hidden_size=baseline_config["hidden_size"],
-    #     num_layers=baseline_config["num_layers"],
-    #     proj_size=baseline_config["output_size"],
-    # ).to(device)
-    # baseline_probe = DenseLayers(
-    #     input_size=baseline_config["output_size"],
-    #     output_size=1,
-    #     hidden_layers=baseline_config.get("probe_hidden_layers", []),
-    # ).to(device)
-    # baseline_checkpoint = baseline_config["checkpoint"]
-    # baseline_encoder = load_model_checkpoint(baseline_checkpoint, baseline_encoder)
-    # baseline_model = nn.Sequential(baseline_encoder, baseline_probe)
-    # baseline_model.eval()
-
-    # Collect predictions and ground truth for visualization
-    all_y_true = []
+    # Collect predictions
     all_y_pred_linear = []
     all_y_pred_lstm = []
-    # Initialize as empty if unused
-    #all_y_pred_cnn = []  # Commented-out CNN code is not generating predictions
-    #all_y_pred_baseline = []
 
     print("Generating predictions...")
     for x, y in tqdm(test_loader, desc="Generating predictions"):
-        # Ground truth
-        y_true = y[:, -1].to(device)
-
         # Linear Regression prediction
         y_pred_linear = fit_linear_regression(x.numpy(), y.numpy())
 
@@ -207,55 +184,58 @@ def generate_visualization(config, output_dir="visualizations"):
         x_seq = x.to(device)
         y_pred_lstm = lstm_model(x_seq)
 
-        # CNN model, input shape should be (batch_size, in_channels, seq_len)
-        # x_cnn = x_seq.permute(0, 2, 1)  # Shape: (batch_size, features, seq_len)
-        # y_pred_cnn = cnn_model(x_cnn)
-
-        # Baseline model
-        # y_pred_baseline = baseline_model(x_seq)
-
-        # Rescale predictions and ground truth to original scale
-        y_true_rescaled = y_true * scale + mean
-        y_pred_linear_rescaled = y_pred_linear * scale + mean
-        y_pred_lstm_rescaled = y_pred_lstm * scale + mean
-        # y_pred_cnn_rescaled = y_pred_cnn * scale + mean
-        # y_pred_baseline_rescaled = y_pred_baseline * scale + mean
-
-        all_y_true.append(y_true_rescaled.cpu().numpy())
-        all_y_pred_linear.append(y_pred_linear_rescaled)
-        all_y_pred_lstm.append(y_pred_lstm_rescaled.cpu().detach().numpy())
-        # all_y_pred_cnn.append(y_pred_cnn_rescaled.cpu().detach().numpy())
-        # all_y_pred_baseline.append(y_pred_baseline_rescaled.cpu().detach().numpy())
+        # Collect predictions
+        all_y_pred_linear.append(y_pred_linear)
+        all_y_pred_lstm.append(y_pred_lstm.cpu().detach().numpy())
 
     # Concatenate all batches
-    all_y_true = np.concatenate(all_y_true).flatten()
     all_y_pred_linear = np.concatenate(all_y_pred_linear).flatten()
     all_y_pred_lstm = np.concatenate(all_y_pred_lstm).flatten()
+    
+    print(f"Prediction lengths - Linear: {len(all_y_pred_linear)}, LSTM: {len(all_y_pred_lstm)}")
 
-    #all_y_pred_cnn = np.concatenate(all_y_pred_cnn).flatten()
-    # all_y_pred_baseline = np.concatenate(all_y_pred_baseline).flatten()
+    def reverse_preprocessing(data, scale, mean, initial_price):
+        # 1. Undo scaling
+        unscaled = data * scale + mean
+        
+        # 2. Reconstruct from differences
+        prices = np.zeros_like(unscaled)
+        prices[0] = np.log(initial_price)
+        for i in range(1, len(prices)):
+            prices[i] = prices[i-1] + unscaled[i-1]
+            
+        # 3. Undo log transform
+        return np.exp(prices)
 
-    # Plot predictions vs ground truth
-    os.makedirs(output_dir, exist_ok=True)
+    # Get predictions in price space
+    raw_prices = raw_df['close'].values[-len(all_y_pred_linear):]  # Match length to predictions
+    initial_price = raw_prices[0]  
+    y_pred_linear_prices = reverse_preprocessing(all_y_pred_linear, scale, mean, initial_price)
+    y_pred_lstm_prices = reverse_preprocessing(all_y_pred_lstm, scale, mean, initial_price)
+
+    print("\nValue Ranges:")
+    print(f"Ground Truth (from interim): [{min(raw_prices):.2f}, {max(raw_prices):.2f}]")
+    print(f"Linear Regression: [{min(y_pred_linear_prices):.2f}, {max(y_pred_linear_prices):.2f}]")
+    print(f"LSTM: [{min(y_pred_lstm_prices):.2f}, {max(y_pred_lstm_prices):.2f}]")
+
+    # Create plot
     plt.figure(figsize=(15, 10))
-    sample_range = range(len(all_y_true))  # Adjust this if you want to plot a subset
-    plt.plot(sample_range, all_y_true, label="Ground Truth", color="blue", alpha=0.7)
-    plt.plot(sample_range, all_y_pred_linear, label="Linear Regression", color="green", alpha=0.7)
-    plt.plot(sample_range, all_y_pred_lstm, label="LSTM Model", color="orange", alpha=0.7)
-    # plt.plot(sample_range, all_y_pred_cnn, label="CNN Model", color="purple",
-    # plt.plot(sample_range, all_y_pred_baseline, label="Baseline Model", color="red", alpha=0.7)
+    sample_range = range(len(raw_prices))
+    
+    plt.plot(sample_range, raw_prices, 'b-', label="Ground Truth", linewidth=2)
+    plt.plot(sample_range, y_pred_linear_prices, 'g--', label="Linear Regression", linewidth=2)
+    plt.plot(sample_range, y_pred_lstm_prices, 'r:', label="LSTM Model", linewidth=2)
+    
+    plt.title("AAPL Stock Price Predictions vs Ground Truth")
     plt.xlabel("Samples")
-    plt.ylabel("Values")
-    plt.title("Predictions vs Ground Truth")
-    plt.legend()
-    plt.grid(True)
+    plt.ylabel("Stock Price ($)")
+    plt.grid(True, alpha=0.3)
+    plt.legend(loc='upper left')
 
-    # Save the visualization to a file
+    # Save the visualization
     output_path = os.path.join(output_dir, "predictions_vs_ground_truth.png")
-    plt.savefig(output_path)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"Visualization saved to {output_path}")
-
 
 if __name__ == "__main__":
     import argparse
