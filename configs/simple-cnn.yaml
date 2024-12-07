@@ -4,7 +4,7 @@ data:
   test_dir: "data/processed/kaggle/v2/test"
   scaler_file: "data/processed/kaggle/v2/scaler.pkl"
   batch_size: 128
-  segment_length: 30
+  segment_length: 90
   segment_step: 5
   targets: ["next_close"]
   features: ["open", "min", "max", "close", "volume"]
