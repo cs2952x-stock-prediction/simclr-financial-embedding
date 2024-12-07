@@ -9,9 +9,10 @@ BASE_CONFIG = {
 
 GRID_VALUES = {
     "models.encoder.out_channels": [8, 16, 32, 64, 128],
-    "models.encoder.kernel_size": [2, 4, 8, 16, 32],
-    "models.encoder.num_layers": [1, 2, 3],
+    "models.encoder.kernel_size": [2, 4, 8, 16],
+    "models.encoder.num_layers": [3],
     "training.temperature": [0.5],
+    "optimizers.baseline_lr": [1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]
 }
 
 OUTPUT_FILE = "configs/grid_search_cnn.json"
@@ -39,8 +40,9 @@ if __name__ == "__main__":
         num_layers = param_set["models.encoder.num_layers"]
         kernel_size = param_set["models.encoder.kernel_size"]
         temperature = param_set["training.temperature"]
-        param_set["experiment.name"] = f"Grid Point {i}: C_out={channels_out} Kern_size={kernel_size} L={num_layers}"
-        param_set["experiment.group"] = f"Grid Search 2"
+        baseline_lr = param_set["optimizers.baseline_lr"]
+        param_set["experiment.name"] = f"Grid Point {i}: C_out={channels_out} Kern_size={kernel_size} baseline_lr={baseline_lr}"
+        param_set["experiment.group"] = f"Grid Search CNN 3"
       
 
         # Turn the flattened keys back into a nested dictionary

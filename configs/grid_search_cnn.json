@@ -7,50 +7,27 @@
                 "grid-search",
                 "models.encoder.out_channels=8",
                 "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 0: C_out=8 Kern_size=2 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 0: C_out=8 Kern_size=2 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 0: C_out=8 Kern_size=2 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 0: C_out=8 Kern_size=2 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
                 "kernel_size": 2,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 1: C_out=8 Kern_size=2 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 1: C_out=8 Kern_size=2 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 8,
-                "kernel_size": 2,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -63,11 +40,12 @@
                 "models.encoder.kernel_size=2",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 2: C_out=8 Kern_size=2 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 1: C_out=8 Kern_size=2 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 2: C_out=8 Kern_size=2 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 1: C_out=8 Kern_size=2 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -78,6 +56,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 2: C_out=8 Kern_size=2 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 2: C_out=8 Kern_size=2 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 3: C_out=8 Kern_size=2 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 3: C_out=8 Kern_size=2 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 4: C_out=8 Kern_size=2 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 4: C_out=8 Kern_size=2 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -88,50 +162,27 @@
                 "grid-search",
                 "models.encoder.out_channels=8",
                 "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 3: C_out=8 Kern_size=4 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 5: C_out=8 Kern_size=4 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 3: C_out=8 Kern_size=4 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 5: C_out=8 Kern_size=4 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
                 "kernel_size": 4,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 4: C_out=8 Kern_size=4 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 4: C_out=8 Kern_size=4 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 8,
-                "kernel_size": 4,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -144,11 +195,12 @@
                 "models.encoder.kernel_size=4",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 5: C_out=8 Kern_size=4 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 6: C_out=8 Kern_size=4 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 5: C_out=8 Kern_size=4 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 6: C_out=8 Kern_size=4 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -159,6 +211,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 7: C_out=8 Kern_size=4 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 7: C_out=8 Kern_size=4 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 8: C_out=8 Kern_size=4 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 8: C_out=8 Kern_size=4 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 9: C_out=8 Kern_size=4 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 9: C_out=8 Kern_size=4 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -169,50 +317,27 @@
                 "grid-search",
                 "models.encoder.out_channels=8",
                 "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 6: C_out=8 Kern_size=8 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 10: C_out=8 Kern_size=8 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 6: C_out=8 Kern_size=8 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 10: C_out=8 Kern_size=8 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
                 "kernel_size": 8,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 7: C_out=8 Kern_size=8 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 7: C_out=8 Kern_size=8 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 8,
-                "kernel_size": 8,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -225,11 +350,12 @@
                 "models.encoder.kernel_size=8",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 8: C_out=8 Kern_size=8 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 11: C_out=8 Kern_size=8 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 8: C_out=8 Kern_size=8 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 11: C_out=8 Kern_size=8 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -240,6 +366,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 12: C_out=8 Kern_size=8 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 12: C_out=8 Kern_size=8 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 13: C_out=8 Kern_size=8 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 13: C_out=8 Kern_size=8 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=8",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 14: C_out=8 Kern_size=8 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 14: C_out=8 Kern_size=8 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 8,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -250,50 +472,27 @@
                 "grid-search",
                 "models.encoder.out_channels=8",
                 "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 9: C_out=8 Kern_size=16 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 15: C_out=8 Kern_size=16 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 9: C_out=8 Kern_size=16 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 15: C_out=8 Kern_size=16 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
                 "kernel_size": 16,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 10: C_out=8 Kern_size=16 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 10: C_out=8 Kern_size=16 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 8,
-                "kernel_size": 16,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -306,11 +505,12 @@
                 "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 11: C_out=8 Kern_size=16 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 16: C_out=8 Kern_size=16 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 11: C_out=8 Kern_size=16 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 16: C_out=8 Kern_size=16 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -321,6 +521,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -330,24 +533,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 12: C_out=8 Kern_size=32 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 17: C_out=8 Kern_size=16 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 12: C_out=8 Kern_size=32 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 17: C_out=8 Kern_size=16 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
-                "kernel_size": 32,
-                "num_layers": 1
+                "kernel_size": 16,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
         }
     },
     {
@@ -357,24 +564,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 13: C_out=8 Kern_size=32 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 18: C_out=8 Kern_size=16 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 13: C_out=8 Kern_size=32 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 18: C_out=8 Kern_size=16 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
-                "kernel_size": 32,
-                "num_layers": 2
+                "kernel_size": 16,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
         }
     },
     {
@@ -384,78 +595,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=8",
-                "models.encoder.kernel_size=32",
+                "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 14: C_out=8 Kern_size=32 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 19: C_out=8 Kern_size=16 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 14: C_out=8 Kern_size=32 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 19: C_out=8 Kern_size=16 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 8,
-                "kernel_size": 32,
+                "kernel_size": 16,
                 "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 15: C_out=16 Kern_size=2 L=1",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 15: C_out=16 Kern_size=2 L=1",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 16,
-                "kernel_size": 2,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 16: C_out=16 Kern_size=2 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 16: C_out=16 Kern_size=2 L=2",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 16,
-                "kernel_size": 2,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -468,11 +629,12 @@
                 "models.encoder.kernel_size=2",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 17: C_out=16 Kern_size=2 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 20: C_out=16 Kern_size=2 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 17: C_out=16 Kern_size=2 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 20: C_out=16 Kern_size=2 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -483,6 +645,133 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 21: C_out=16 Kern_size=2 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 21: C_out=16 Kern_size=2 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 22: C_out=16 Kern_size=2 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 22: C_out=16 Kern_size=2 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 23: C_out=16 Kern_size=2 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 23: C_out=16 Kern_size=2 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 24: C_out=16 Kern_size=2 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 24: C_out=16 Kern_size=2 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -493,50 +782,27 @@
                 "grid-search",
                 "models.encoder.out_channels=16",
                 "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 18: C_out=16 Kern_size=4 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 25: C_out=16 Kern_size=4 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 18: C_out=16 Kern_size=4 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 25: C_out=16 Kern_size=4 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
                 "kernel_size": 4,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 19: C_out=16 Kern_size=4 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 19: C_out=16 Kern_size=4 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 16,
-                "kernel_size": 4,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -549,11 +815,12 @@
                 "models.encoder.kernel_size=4",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 20: C_out=16 Kern_size=4 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 26: C_out=16 Kern_size=4 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 20: C_out=16 Kern_size=4 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 26: C_out=16 Kern_size=4 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -564,6 +831,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -573,24 +843,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 21: C_out=16 Kern_size=8 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 27: C_out=16 Kern_size=4 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 21: C_out=16 Kern_size=8 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 27: C_out=16 Kern_size=4 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
-                "kernel_size": 8,
-                "num_layers": 1
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
         }
     },
     {
@@ -600,24 +874,59 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 22: C_out=16 Kern_size=8 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 28: C_out=16 Kern_size=4 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 22: C_out=16 Kern_size=8 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 28: C_out=16 Kern_size=4 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
-                "kernel_size": 8,
-                "num_layers": 2
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 29: C_out=16 Kern_size=4 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 29: C_out=16 Kern_size=4 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -630,11 +939,12 @@
                 "models.encoder.kernel_size=8",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 23: C_out=16 Kern_size=8 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 30: C_out=16 Kern_size=8 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 23: C_out=16 Kern_size=8 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 30: C_out=16 Kern_size=8 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -645,6 +955,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -654,24 +967,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 24: C_out=16 Kern_size=16 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 31: C_out=16 Kern_size=8 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 24: C_out=16 Kern_size=16 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 31: C_out=16 Kern_size=8 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
-                "kernel_size": 16,
-                "num_layers": 1
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -681,24 +998,90 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 25: C_out=16 Kern_size=16 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 32: C_out=16 Kern_size=8 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 25: C_out=16 Kern_size=16 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 32: C_out=16 Kern_size=8 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
-                "kernel_size": 16,
-                "num_layers": 2
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 33: C_out=16 Kern_size=8 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 33: C_out=16 Kern_size=8 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 34: C_out=16 Kern_size=8 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 34: C_out=16 Kern_size=8 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -711,11 +1094,12 @@
                 "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 26: C_out=16 Kern_size=16 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 35: C_out=16 Kern_size=16 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 26: C_out=16 Kern_size=16 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 35: C_out=16 Kern_size=16 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -726,6 +1110,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -735,78 +1122,121 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 27: C_out=16 Kern_size=32 L=1",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 27: C_out=16 Kern_size=32 L=1",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 16,
-                "kernel_size": 32,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 28: C_out=16 Kern_size=32 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 28: C_out=16 Kern_size=32 L=2",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 16,
-                "kernel_size": 32,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=16",
-                "models.encoder.kernel_size=32",
+                "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 29: C_out=16 Kern_size=32 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 36: C_out=16 Kern_size=16 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 29: C_out=16 Kern_size=32 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 36: C_out=16 Kern_size=16 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 16,
-                "kernel_size": 32,
+                "kernel_size": 16,
                 "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 37: C_out=16 Kern_size=16 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 37: C_out=16 Kern_size=16 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 38: C_out=16 Kern_size=16 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 38: C_out=16 Kern_size=16 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=16",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 39: C_out=16 Kern_size=16 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 39: C_out=16 Kern_size=16 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 16,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -817,50 +1247,27 @@
                 "grid-search",
                 "models.encoder.out_channels=32",
                 "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 30: C_out=32 Kern_size=2 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 40: C_out=32 Kern_size=2 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 30: C_out=32 Kern_size=2 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 40: C_out=32 Kern_size=2 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
                 "kernel_size": 2,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 31: C_out=32 Kern_size=2 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 31: C_out=32 Kern_size=2 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 32,
-                "kernel_size": 2,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -873,11 +1280,12 @@
                 "models.encoder.kernel_size=2",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 32: C_out=32 Kern_size=2 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 41: C_out=32 Kern_size=2 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 32: C_out=32 Kern_size=2 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 41: C_out=32 Kern_size=2 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -888,6 +1296,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 42: C_out=32 Kern_size=2 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 42: C_out=32 Kern_size=2 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 43: C_out=32 Kern_size=2 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 43: C_out=32 Kern_size=2 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 44: C_out=32 Kern_size=2 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 44: C_out=32 Kern_size=2 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -898,50 +1402,27 @@
                 "grid-search",
                 "models.encoder.out_channels=32",
                 "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 33: C_out=32 Kern_size=4 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 45: C_out=32 Kern_size=4 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 33: C_out=32 Kern_size=4 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 45: C_out=32 Kern_size=4 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
                 "kernel_size": 4,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 34: C_out=32 Kern_size=4 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 34: C_out=32 Kern_size=4 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 32,
-                "kernel_size": 4,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -954,11 +1435,12 @@
                 "models.encoder.kernel_size=4",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 35: C_out=32 Kern_size=4 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 46: C_out=32 Kern_size=4 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 35: C_out=32 Kern_size=4 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 46: C_out=32 Kern_size=4 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -969,6 +1451,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -978,24 +1463,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 36: C_out=32 Kern_size=8 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 47: C_out=32 Kern_size=4 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 36: C_out=32 Kern_size=8 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 47: C_out=32 Kern_size=4 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
-                "kernel_size": 8,
-                "num_layers": 1
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
         }
     },
     {
@@ -1005,24 +1494,59 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 37: C_out=32 Kern_size=8 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 48: C_out=32 Kern_size=4 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 37: C_out=32 Kern_size=8 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 48: C_out=32 Kern_size=4 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
-                "kernel_size": 8,
-                "num_layers": 2
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 49: C_out=32 Kern_size=4 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 49: C_out=32 Kern_size=4 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1035,11 +1559,12 @@
                 "models.encoder.kernel_size=8",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 38: C_out=32 Kern_size=8 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 50: C_out=32 Kern_size=8 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 38: C_out=32 Kern_size=8 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 50: C_out=32 Kern_size=8 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1050,6 +1575,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1059,24 +1587,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 39: C_out=32 Kern_size=16 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 51: C_out=32 Kern_size=8 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 39: C_out=32 Kern_size=16 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 51: C_out=32 Kern_size=8 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
-                "kernel_size": 16,
-                "num_layers": 1
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -1086,24 +1618,90 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 40: C_out=32 Kern_size=16 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 52: C_out=32 Kern_size=8 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 40: C_out=32 Kern_size=16 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 52: C_out=32 Kern_size=8 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
-                "kernel_size": 16,
-                "num_layers": 2
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 53: C_out=32 Kern_size=8 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 53: C_out=32 Kern_size=8 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 54: C_out=32 Kern_size=8 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 54: C_out=32 Kern_size=8 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1116,11 +1714,12 @@
                 "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 41: C_out=32 Kern_size=16 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 55: C_out=32 Kern_size=16 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 41: C_out=32 Kern_size=16 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 55: C_out=32 Kern_size=16 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1131,6 +1730,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1140,78 +1742,121 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 42: C_out=32 Kern_size=32 L=1",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 42: C_out=32 Kern_size=32 L=1",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 32,
-                "kernel_size": 32,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 43: C_out=32 Kern_size=32 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 43: C_out=32 Kern_size=32 L=2",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 32,
-                "kernel_size": 32,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=32",
-                "models.encoder.kernel_size=32",
+                "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 44: C_out=32 Kern_size=32 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 56: C_out=32 Kern_size=16 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 44: C_out=32 Kern_size=32 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 56: C_out=32 Kern_size=16 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 32,
-                "kernel_size": 32,
+                "kernel_size": 16,
                 "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 57: C_out=32 Kern_size=16 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 57: C_out=32 Kern_size=16 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 58: C_out=32 Kern_size=16 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 58: C_out=32 Kern_size=16 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=32",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 59: C_out=32 Kern_size=16 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 59: C_out=32 Kern_size=16 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 32,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1222,50 +1867,27 @@
                 "grid-search",
                 "models.encoder.out_channels=64",
                 "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 45: C_out=64 Kern_size=2 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 60: C_out=64 Kern_size=2 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 45: C_out=64 Kern_size=2 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 60: C_out=64 Kern_size=2 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
                 "kernel_size": 2,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 46: C_out=64 Kern_size=2 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 46: C_out=64 Kern_size=2 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 64,
-                "kernel_size": 2,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1278,11 +1900,12 @@
                 "models.encoder.kernel_size=2",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 47: C_out=64 Kern_size=2 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 61: C_out=64 Kern_size=2 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 47: C_out=64 Kern_size=2 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 61: C_out=64 Kern_size=2 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1293,6 +1916,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 62: C_out=64 Kern_size=2 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 62: C_out=64 Kern_size=2 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 63: C_out=64 Kern_size=2 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 63: C_out=64 Kern_size=2 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 64: C_out=64 Kern_size=2 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 64: C_out=64 Kern_size=2 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1303,50 +2022,27 @@
                 "grid-search",
                 "models.encoder.out_channels=64",
                 "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 48: C_out=64 Kern_size=4 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 65: C_out=64 Kern_size=4 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 48: C_out=64 Kern_size=4 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 65: C_out=64 Kern_size=4 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
                 "kernel_size": 4,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 49: C_out=64 Kern_size=4 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 49: C_out=64 Kern_size=4 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 64,
-                "kernel_size": 4,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1359,11 +2055,12 @@
                 "models.encoder.kernel_size=4",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 50: C_out=64 Kern_size=4 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 66: C_out=64 Kern_size=4 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 50: C_out=64 Kern_size=4 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 66: C_out=64 Kern_size=4 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1374,6 +2071,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -1383,24 +2083,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 51: C_out=64 Kern_size=8 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 67: C_out=64 Kern_size=4 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 51: C_out=64 Kern_size=8 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 67: C_out=64 Kern_size=4 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
-                "kernel_size": 8,
-                "num_layers": 1
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
         }
     },
     {
@@ -1410,24 +2114,59 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 52: C_out=64 Kern_size=8 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 68: C_out=64 Kern_size=4 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 52: C_out=64 Kern_size=8 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 68: C_out=64 Kern_size=4 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
-                "kernel_size": 8,
-                "num_layers": 2
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 69: C_out=64 Kern_size=4 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 69: C_out=64 Kern_size=4 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1440,11 +2179,12 @@
                 "models.encoder.kernel_size=8",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 53: C_out=64 Kern_size=8 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 70: C_out=64 Kern_size=8 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 53: C_out=64 Kern_size=8 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 70: C_out=64 Kern_size=8 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1455,6 +2195,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1464,24 +2207,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 54: C_out=64 Kern_size=16 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 71: C_out=64 Kern_size=8 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 54: C_out=64 Kern_size=16 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 71: C_out=64 Kern_size=8 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
-                "kernel_size": 16,
-                "num_layers": 1
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -1491,24 +2238,90 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 55: C_out=64 Kern_size=16 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 72: C_out=64 Kern_size=8 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 55: C_out=64 Kern_size=16 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 72: C_out=64 Kern_size=8 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
-                "kernel_size": 16,
-                "num_layers": 2
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 73: C_out=64 Kern_size=8 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 73: C_out=64 Kern_size=8 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 74: C_out=64 Kern_size=8 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 74: C_out=64 Kern_size=8 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1521,11 +2334,12 @@
                 "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 56: C_out=64 Kern_size=16 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 75: C_out=64 Kern_size=16 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 56: C_out=64 Kern_size=16 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 75: C_out=64 Kern_size=16 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1536,6 +2350,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1545,78 +2362,121 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 57: C_out=64 Kern_size=32 L=1",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 57: C_out=64 Kern_size=32 L=1",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 64,
-                "kernel_size": 32,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 58: C_out=64 Kern_size=32 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 58: C_out=64 Kern_size=32 L=2",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 64,
-                "kernel_size": 32,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=64",
-                "models.encoder.kernel_size=32",
+                "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 59: C_out=64 Kern_size=32 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 76: C_out=64 Kern_size=16 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 59: C_out=64 Kern_size=32 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 76: C_out=64 Kern_size=16 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 64,
-                "kernel_size": 32,
+                "kernel_size": 16,
                 "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 77: C_out=64 Kern_size=16 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 77: C_out=64 Kern_size=16 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 78: C_out=64 Kern_size=16 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 78: C_out=64 Kern_size=16 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=64",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 79: C_out=64 Kern_size=16 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 79: C_out=64 Kern_size=16 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 64,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1627,50 +2487,27 @@
                 "grid-search",
                 "models.encoder.out_channels=128",
                 "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 60: C_out=128 Kern_size=2 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 80: C_out=128 Kern_size=2 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 60: C_out=128 Kern_size=2 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 80: C_out=128 Kern_size=2 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
                 "kernel_size": 2,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=2",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 61: C_out=128 Kern_size=2 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 61: C_out=128 Kern_size=2 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 128,
-                "kernel_size": 2,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1683,11 +2520,12 @@
                 "models.encoder.kernel_size=2",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 62: C_out=128 Kern_size=2 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 81: C_out=128 Kern_size=2 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 62: C_out=128 Kern_size=2 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 81: C_out=128 Kern_size=2 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1698,6 +2536,102 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 82: C_out=128 Kern_size=2 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 82: C_out=128 Kern_size=2 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 83: C_out=128 Kern_size=2 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 83: C_out=128 Kern_size=2 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=2",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 84: C_out=128 Kern_size=2 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 84: C_out=128 Kern_size=2 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 2,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1708,50 +2642,27 @@
                 "grid-search",
                 "models.encoder.out_channels=128",
                 "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=1",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 63: C_out=128 Kern_size=4 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 85: C_out=128 Kern_size=4 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 63: C_out=128 Kern_size=4 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 85: C_out=128 Kern_size=4 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
                 "kernel_size": 4,
-                "num_layers": 1
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=4",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 64: C_out=128 Kern_size=4 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 64: C_out=128 Kern_size=4 L=2",
-            "group": "Grid Search 2"
         },
-        "models": {
-            "encoder": {
-                "out_channels": 128,
-                "kernel_size": 4,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1764,11 +2675,12 @@
                 "models.encoder.kernel_size=4",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 65: C_out=128 Kern_size=4 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 86: C_out=128 Kern_size=4 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 65: C_out=128 Kern_size=4 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 86: C_out=128 Kern_size=4 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1779,6 +2691,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -1788,24 +2703,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 66: C_out=128 Kern_size=8 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 87: C_out=128 Kern_size=4 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 66: C_out=128 Kern_size=8 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 87: C_out=128 Kern_size=4 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
-                "kernel_size": 8,
-                "num_layers": 1
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
         }
     },
     {
@@ -1815,24 +2734,59 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=8",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 67: C_out=128 Kern_size=8 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 88: C_out=128 Kern_size=4 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 67: C_out=128 Kern_size=8 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 88: C_out=128 Kern_size=4 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
-                "kernel_size": 8,
-                "num_layers": 2
+                "kernel_size": 4,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=4",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 89: C_out=128 Kern_size=4 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 89: C_out=128 Kern_size=4 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 4,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1845,11 +2799,12 @@
                 "models.encoder.kernel_size=8",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 68: C_out=128 Kern_size=8 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 90: C_out=128 Kern_size=8 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 68: C_out=128 Kern_size=8 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 90: C_out=128 Kern_size=8 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1860,6 +2815,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1869,24 +2827,28 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=1",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 69: C_out=128 Kern_size=16 L=1",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 91: C_out=128 Kern_size=8 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 69: C_out=128 Kern_size=16 L=1",
-            "group": "Grid Search 2"
+            "name": "Grid Point 91: C_out=128 Kern_size=8 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
-                "kernel_size": 16,
-                "num_layers": 1
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
         }
     },
     {
@@ -1896,24 +2858,90 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=16",
-                "models.encoder.num_layers=2",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 70: C_out=128 Kern_size=16 L=2",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 92: C_out=128 Kern_size=8 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 70: C_out=128 Kern_size=16 L=2",
-            "group": "Grid Search 2"
+            "name": "Grid Point 92: C_out=128 Kern_size=8 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
-                "kernel_size": 16,
-                "num_layers": 2
+                "kernel_size": 8,
+                "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 93: C_out=128 Kern_size=8 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 93: C_out=128 Kern_size=8 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=8",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 94: C_out=128 Kern_size=8 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 94: C_out=128 Kern_size=8 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 8,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     },
     {
@@ -1926,11 +2954,12 @@
                 "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 71: C_out=128 Kern_size=16 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.01",
+                "experiment.name=Grid Point 95: C_out=128 Kern_size=16 baseline_lr=0.01",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 71: C_out=128 Kern_size=16 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 95: C_out=128 Kern_size=16 baseline_lr=0.01",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
@@ -1941,6 +2970,9 @@
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.01
         }
     },
     {
@@ -1950,78 +2982,121 @@
                 "simclr",
                 "grid-search",
                 "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=1",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 72: C_out=128 Kern_size=32 L=1",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 72: C_out=128 Kern_size=32 L=1",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 128,
-                "kernel_size": 32,
-                "num_layers": 1
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=32",
-                "models.encoder.num_layers=2",
-                "training.temperature=0.5",
-                "experiment.name=Grid Point 73: C_out=128 Kern_size=32 L=2",
-                "experiment.group=Grid Search 2"
-            ],
-            "name": "Grid Point 73: C_out=128 Kern_size=32 L=2",
-            "group": "Grid Search 2"
-        },
-        "models": {
-            "encoder": {
-                "out_channels": 128,
-                "kernel_size": 32,
-                "num_layers": 2
-            }
-        },
-        "training": {
-            "temperature": 0.5
-        }
-    },
-    {
-        "experiment": {
-            "tags": [
-                "cnn",
-                "simclr",
-                "grid-search",
-                "models.encoder.out_channels=128",
-                "models.encoder.kernel_size=32",
+                "models.encoder.kernel_size=16",
                 "models.encoder.num_layers=3",
                 "training.temperature=0.5",
-                "experiment.name=Grid Point 74: C_out=128 Kern_size=32 L=3",
-                "experiment.group=Grid Search 2"
+                "optimizers.baseline_lr=0.001",
+                "experiment.name=Grid Point 96: C_out=128 Kern_size=16 baseline_lr=0.001",
+                "experiment.group=Grid Search CNN 3"
             ],
-            "name": "Grid Point 74: C_out=128 Kern_size=32 L=3",
-            "group": "Grid Search 2"
+            "name": "Grid Point 96: C_out=128 Kern_size=16 baseline_lr=0.001",
+            "group": "Grid Search CNN 3"
         },
         "models": {
             "encoder": {
                 "out_channels": 128,
-                "kernel_size": 32,
+                "kernel_size": 16,
                 "num_layers": 3
             }
         },
         "training": {
             "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=0.0001",
+                "experiment.name=Grid Point 97: C_out=128 Kern_size=16 baseline_lr=0.0001",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 97: C_out=128 Kern_size=16 baseline_lr=0.0001",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 0.0001
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-05",
+                "experiment.name=Grid Point 98: C_out=128 Kern_size=16 baseline_lr=1e-05",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 98: C_out=128 Kern_size=16 baseline_lr=1e-05",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-05
+        }
+    },
+    {
+        "experiment": {
+            "tags": [
+                "cnn",
+                "simclr",
+                "grid-search",
+                "models.encoder.out_channels=128",
+                "models.encoder.kernel_size=16",
+                "models.encoder.num_layers=3",
+                "training.temperature=0.5",
+                "optimizers.baseline_lr=1e-06",
+                "experiment.name=Grid Point 99: C_out=128 Kern_size=16 baseline_lr=1e-06",
+                "experiment.group=Grid Search CNN 3"
+            ],
+            "name": "Grid Point 99: C_out=128 Kern_size=16 baseline_lr=1e-06",
+            "group": "Grid Search CNN 3"
+        },
+        "models": {
+            "encoder": {
+                "out_channels": 128,
+                "kernel_size": 16,
+                "num_layers": 3
+            }
+        },
+        "training": {
+            "temperature": 0.5
+        },
+        "optimizers": {
+            "baseline_lr": 1e-06
         }
     }
 ]
