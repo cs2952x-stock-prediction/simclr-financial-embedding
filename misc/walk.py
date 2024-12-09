@@ -55,9 +55,8 @@ exp_walks = [np.exp(walk) for walk in walks]
 for walk in exp_walks:
     plt.plot(walk)
 
-plt.title("Exponential Random Walk with Drift")
 plt.xlabel("Steps")
-plt.ylabel("Position")
+plt.ylabel("Value")
 plt.show()
 
 # --- Plot 2: Exponential Random Walk Slices ---
@@ -77,8 +76,7 @@ for i in range(n_slices):
     # Plot as line plot
     plt.plot(bin_centers, hist, label=f"After {slice_indices[i+1]} Steps")
 
-plt.title("Distribution of Exponential Random Walk Values")
-plt.xlabel("Final Value")
+plt.xlabel("Value")
 plt.ylabel("Density")
 plt.legend()
 plt.show()
@@ -88,9 +86,8 @@ plt.figure(figsize=(10, 6))
 for walk in walks:
     plt.plot(walk)
 
-plt.title("Linear Random Walks (Multiplicative Walk After Talking Log)")
 plt.xlabel("Steps")
-plt.ylabel("Position")
+plt.ylabel("Value")
 plt.show()
 
 # --- Plot 4: Slices of Linear Random Walks ---
@@ -110,7 +107,6 @@ for i in range(n_slices):
     # Plot as line plot
     plt.plot(bin_centers, hist, label=f"After {slice_indices[i+1]} Steps")
 
-plt.title("Distribution of Linear Random Walk Values")
 plt.xlabel("Value")
 plt.ylabel("Density")
 plt.legend()
@@ -135,7 +131,6 @@ for i in range(n_slices):
     # Plot as line plot
     plt.plot(bin_centers, hist, label=f"After {slice_indices[i+1]} Steps")
 
-plt.title("Distribution of Linear Walk Differences")
 plt.xlabel("Value")
 plt.ylabel("Density")
 plt.legend()
