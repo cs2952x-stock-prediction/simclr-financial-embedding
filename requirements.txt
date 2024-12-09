@@ -12,3 +12,4 @@ torch_summary
 tqdm
 wandb
 statsmodels
+gdown
