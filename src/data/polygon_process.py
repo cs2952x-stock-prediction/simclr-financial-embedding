@@ -392,7 +392,7 @@ def create_train_test_files(config, scaler):
     test_dir = f"{config['destination']}/test"
     training_cutoff = pd.to_datetime(config["training_cutoff"])
     pd.set_option("display.max_columns", None)
-    for filename in tqdm(os.listdir(config["source"])):
+    for filename in tqdm(os.listdir(intermediate_dir)):
         if not filename.endswith(".csv"):
             logger.warning(f"Skipping non-CSV file: {filename}")
             continue
