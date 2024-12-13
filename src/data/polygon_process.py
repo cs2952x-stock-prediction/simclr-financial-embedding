@@ -50,7 +50,6 @@ DEFAULT_LOG_TRANSFORM = [
     "high",
     "volume",
     "close",
-    "adj_close",
     "close_sma20",
     "close_ema20",
     "close_sma50",
@@ -63,7 +62,6 @@ DEFAULT_DIFF_TRANSFORM = [
     "high",
     # "volume", # volue is more stationary than other features and often not differenced
     "close",
-    "adj_close",
     # "close_sma20", # moving averages encode long-term trends. Differencing would remove this information.
     # "close_ema20",
     # "close_sma50",
@@ -76,7 +74,6 @@ DEFAULT_SCALE_TRANSFORM = [
     "high",
     "volume",
     "close",
-    "adj_close",
     "close_sma20",
     "close_ema20",
     "close_sma50",
@@ -349,7 +346,7 @@ def create_scaler(config):
     intermediate_dir = f"{config['destination']}/intermediate"
     training_cutoff = pd.to_datetime(config["training_cutoff"])
     scaler = StandardScaler()
-    for filename in tqdm(os.listdir(config["source"])):
+    for filename in tqdm(os.listdir(intermediate_dir)):
         if not filename.endswith(".csv"):
             logger.warning(f"Skipping non-CSV file: {filename}")
             continue
