@@ -41,7 +41,7 @@ def mask_with_added_gaussian(
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.dim())
     ]
-    mask = (torch.rand(mask_shape) < mask_prob)
+    mask = torch.rand(mask_shape) < mask_prob
 
     # Apply the noise only where the mask is True
     return torch.where(mask, data + noise, data).to(data.device)
@@ -74,24 +74,24 @@ def mask_with_multiplied_lognormal(
     - ndarray: The input data with Lognormal noise applied to selected elements or examples.
     """
     # Calculate means and stds across specified stat_axis if not provided
-    log_data = np.log(data + 1e-8)  # Avoid log(0) by adding a small value
+    log_data = torch.log(data + 1e-8)  # Avoid log(0) by adding a small value
     if means is None:
         means = 0
 
     if stds is None:
-        stds = np.std(log_data, axis=stat_axis, keepdims=True) * std_multiplier
+        stds = torch.std(log_data, dim=stat_axis, keepdim=True) * std_multiplier
 
     # Generate lognormal noise based on the calculated or provided means and stds
-    noise = np.exp(np.random.randn(*data.shape) * stds + means)
+    noise = torch.exp(torch.randn_like(*data.shape) * stds + means)
 
     # Generate mask based on mask_shape to apply masking by example, feature, or otherwise
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.ndim)
     ]
-    mask = np.random.rand(*mask_shape) < mask_prob
+    mask = torch.rand(*mask_shape) < mask_prob
 
     # Apply the noise only where the mask is True
-    return np.where(mask, data * noise, data)
+    return torch.where(mask, data * noise, data)
 
 
 def mask_with_constant(
@@ -116,10 +116,10 @@ def mask_with_constant(
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.ndim)
     ]
-    mask = np.random.rand(*mask_shape) < mask_prob
+    mask = torch.rand(*mask_shape) < mask_prob
 
     # Replaces with constant only where the mask is True
-    return np.where(mask, constant, data)
+    return torch.where(mask, constant, data)
 
 
 def mask_with_gaussian(
@@ -150,22 +150,22 @@ def mask_with_gaussian(
     """
     # Calculate means and stds across specified stat_axis if not provided
     if means is None:
-        means = np.mean(data, axis=stat_axis, keepdims=True)
+        means = torch.mean(data, dim=stat_axis, keepdim=True)
 
     if stds is None:
-        stds = np.std(data, axis=stat_axis, keepdims=True) * std_multiplier
+        stds = torch.std(data, dim=stat_axis, keepdim=True) * std_multiplier
 
     # Generate Gaussian noise based on the calculated or provided means and stds
-    rand_vals = np.random.randn(*data.shape) * stds + means
+    rand_vals = torch.randn_like(data) * stds + means
 
     # Generate mask based on mask_shape to apply masking by example, feature, or otherwise
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.ndim)
     ]
-    mask = np.random.rand(*mask_shape) < mask_prob
+    mask = torch.rand(*mask_shape) < mask_prob
 
     # Replace with random value only where the mask is True
-    return np.where(mask, rand_vals, data)  # data + noise, data)
+    return torch.where(mask, rand_vals, data)  # data + noise, data)
 
 
 def mask_with_lognormal(
@@ -195,21 +195,21 @@ def mask_with_lognormal(
     - ndarray: The input data with Lognormal values replacing selected elements or examples.
     """
     # Calculate means and stds across specified stat_axis if not provided
-    log_data = np.log(data + 1e-8)  # Avoid log(0) by adding a small value
+    log_data = torch.log(data + 1e-8)  # Avoid log(0) by adding a small value
     if means is None:
-        means = np.mean(log_data, axis=stat_axis, keepdims=True)
+        means = torch.mean(log_data, dim=stat_axis, keepdim=True)
 
     if stds is None:
-        stds = np.std(log_data, axis=stat_axis, keepdims=True) * std_multiplier
+        stds = torch.std(log_data, dim=stat_axis, keepdim=True) * std_multiplier
 
     # Generate lognormal values based on the calculated or provided means and stds
-    rand_vals = np.exp(np.random.randn(*data.shape) * stds + means)
+    rand_vals = torch.exp(torch.randn_like(data) * stds + means)
 
     # Generate mask based on mask_shape to apply masking by example, feature, or otherwise
     mask_shape = [
         data.shape[dim] if dim in mask_axis else 1 for dim in range(data.ndim)
     ]
-    mask = np.random.rand(*mask_shape) < mask_prob
+    mask = torch.rand(*mask_shape) < mask_prob
 
     # Replace with random values only where the mask is True
-    return np.where(mask, rand_vals, data)
+    return torch.where(mask, rand_vals, data)
