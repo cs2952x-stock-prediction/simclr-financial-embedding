@@ -8,7 +8,11 @@ from tqdm import tqdm
 
 from .datasets import TimeSeriesDataset
 from .evaluation import nt_xent_loss
-from .transformations import mask_with_added_gaussian
+from .transformations import (
+    mask_with_added_gaussian,
+    mask_with_smoothing,
+    pairwise_swaps,
+)
 
 ############################# GLOBAL VARIABLES #####################################################
 
@@ -92,8 +96,15 @@ def simclr_epoch(encoder, projector, dataloader, optimizer, temp, **kwargs):
     total_loss = 0
     for i, (x, _) in enumerate(pbar):
         # transform data to create two views
-        x_i = mask_with_added_gaussian(x, mask_prob=1.0, std_multiplier=0.1)
-        x_j = x
+        # TODO: Make these transformations configurable
+        x_i = x_j = x
+        x_i = pairwise_swaps(x_i, swap_prob=0.2)
+        x_i = mask_with_added_gaussian(x_i, mask_prob=0.1, std_multiplier=0.1)
+        x_i = mask_with_smoothing(x_i, smooth_prob=0.2)
+
+        x_j = pairwise_swaps(x_j, swap_prob=0.2)
+        x_j = mask_with_added_gaussian(x_j, mask_prob=0.1, std_multiplier=0.1)
+        x_j = mask_with_smoothing(x_j, smooth_prob=0.2)
 
         # create representations
         h_i = encoder(x_i)

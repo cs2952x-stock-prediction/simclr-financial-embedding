@@ -213,3 +213,98 @@ def mask_with_lognormal(
 
     # Replace with random values only where the mask is True
     return torch.where(mask, rand_vals, data)
+
+
+def pairwise_swaps(data, swap_prob=0.1, axis=1):
+    """
+    Randomly swaps adjacent pairs of elements along the specified axis.
+
+    Parameters:
+    - data (ndarray): Input array with shape (batch_sz, seq_len, n_features) or similar.
+    - swap_prob (float): Probability of shuffling each pair of adjacent elements. Default is 0.1.
+    - axis (int): Dimension along which to shuffle pairs of elements.
+
+    Returns:
+    - ndarray: The input data with randomm pairs of adjacent elements swapped along the specified axis.
+    """
+    # Clone to avoid modifying the original in-place
+    data_swapped = data.clone()
+
+    # Step 1: Move the specified axis -> dimension=1 using permute().
+    # This ensures the axis we want to swap is dimension 1, making the code simpler.
+    ndims = data_swapped.ndim
+    dims = list(range(ndims))
+    # Swap 'axis' with '1' in dims
+    dims[axis], dims[1] = dims[1], dims[axis]
+    data_reoriented = data_swapped.permute(
+        *dims
+    )  # Now shape is: (..., L, ...), with L at dim=1
+
+    # L is the length along the (now) dimension=1
+    L = data_reoriented.shape[1]
+
+    # Step 2: Iterate over adjacent pairs along dimension=1
+    for i in range(L - 1):
+        # Step 3: Make a random boolean mask (one per "batch" in dim=0),
+        # deciding whether to swap this pair (i, i+1).
+        # If data is 3D, dim=0 is typically the batch dimension.
+        mask = torch.rand(data_reoriented.shape[0], device=data.device) < swap_prob
+
+        # Step 4: Swap the entire "row" (covering all features) if mask[b] == True
+        tmp = data_reoriented[mask, i, :].clone()
+        data_reoriented[mask, i, :] = data_reoriented[mask, i + 1, :]
+        data_reoriented[mask, i + 1, :] = tmp
+
+    # Step 5: Move the axis back to its original position
+    dims[axis], dims[1] = dims[1], dims[axis]
+    data_swapped = data_reoriented.permute(*dims)
+
+    return data_swapped
+
+
+def mask_with_smoothing(data, smooth_prob=0.1, window_sz=3, axis=1):
+    """
+    Smooths the data by averaging adjacent pairs of elements along the specified axis.
+
+    Parameters:
+    - data (ndarray): Input array with shape (batch_sz, seq_len, n_features) or similar.
+    - smooth_prob (float): Probability of smoothing each pair of adjacent elements. Default is 0.1.
+    - window_sz (int): Size of the window for smoothing. Default is 3.
+    - axis (int): Dimension along which to smooth pairs of elements.
+
+    Returns:
+    - ndarray: The input data with random pairs of adjacent elements smoothed along the specified axis.
+    """
+    # Clone to avoid modifying the original in-place
+    data_smoothed = data.clone()
+
+    # Step 1: Move the specified axis -> dimension=1 using permute().
+    # This ensures the axis we want to smooth is dimension 1, making the code simpler.
+    ndims = data_smoothed.ndim
+    dims = list(range(ndims))
+    # Swap 'axis' with '1' in dims
+    dims[axis], dims[1] = dims[1], dims[axis]
+    data_reoriented = data_smoothed.permute(
+        *dims
+    )  # Now shape is: (..., L, ...), with L at dim=1
+
+    # L is the length along the (now) dimension=1
+    L = data_reoriented.shape[1]
+
+    # Step 2: Iterate over adjacent pairs along dimension=1
+    for i in range(L - 1):
+        # Step 3: Make a random boolean mask (one per "batch" in dim=0),
+        # deciding whether to smooth this pair (i, i+1).
+        # If data is 3D, dim=0 is typically the batch dimension.
+        mask = torch.rand(data_reoriented.shape[0], device=data.device) < smooth_prob
+
+        # Step 4: Smooth the entire "row" (covering all features) if mask[b] == True
+        data_reoriented[mask, i, :] = torch.mean(
+            data_reoriented[mask, i : i + window_sz, :], dim=1, keepdim=False
+        )
+
+    # Step 5: Move the axis back to its original position
+    dims[axis], dims[1] = dims[1], dims[axis]
+    data_smoothed = data_reoriented.permute(*dims)
+
+    return data_smoothed
