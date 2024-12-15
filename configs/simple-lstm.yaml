@@ -1,11 +1,11 @@
 # config.yaml
 data:
-  train_dir: "data/processed/kaggle/v2/train"
-  test_dir: "data/processed/kaggle/v2/test"
-  scaler_file: "data/processed/kaggle/v2/scaler.pkl"
+  train_dir: "data/processed/polygon/train"
+  test_dir: "data/processed/polygon/test"
+  scaler_file: "data/processed/polygon/scaler.pkl"
   batch_size: 128
   segment_length: 30
-  segment_step: 5
+  segment_step: 10
   targets: ["next_close"]
   features: ["open", "min", "max", "close", "volume"]
 models:
@@ -27,8 +27,8 @@ models:
       - [32, "relu"]
     output_size: 1
 optimizers:
-  simclr_lr: 1.0e-6
-  finetuning_lr: 1.0e-3
+  simclr_lr: 1.0e-5
+  finetuning_lr: 1.0e-2
   baseline_lr: 1.0e-3
 training:
   num_epochs: 500
